@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bộ công cụ - Viện Kiểm Sát Nhân Dân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+            --white-soft: rgba(255, 255, 255, 0.96);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            background:
+                linear-gradient(135deg, rgba(93, 169, 217, 0.78) 0%, rgba(123, 45, 66, 0.55) 55%, rgba(201, 149, 46, 0.45) 100%),
+                url('./static/Nen.jpg') center / cover no-repeat fixed;
+        }
+
+        /* --- MÀN HÌNH CHỜ --- */
+        #landing-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            transition: opacity 0.5s ease;
+        }
+
+        .orbit-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .logo-static {
+            width: 220px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.15));
+            animation: logo_sang 5s ease-in-out infinite;
+        }
+
+        .logo-shine-beam {
+            position: absolute;
+            inset: -60%;
+            z-index: 3;
+            pointer-events: none;
+            background: linear-gradient(
+                45deg,
+                transparent 38%,
+                rgba(232, 198, 117, 0.08) 44%,
+                rgba(255, 248, 220, 0.55) 50%,
+                rgba(232, 198, 117, 0.08) 56%,
+                transparent 62%
+            );
+            animation: chieu_sang 4.5s ease-in-out infinite;
+            mix-blend-mode: soft-light;
+        }
+
+        .logo-shine-glow {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            z-index: 1;
+            background: radial-gradient(
+                circle at 30% 30%,
+                rgba(232, 198, 117, 0.35) 0%,
+                rgba(93, 169, 217, 0.12) 45%,
+                transparent 70%
+            );
+            animation: vong_sang 5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .orbit-container:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes chieu_sang {
+            0% { transform: translate(-65%, -65%); opacity: 0.4; }
+            35% { opacity: 1; }
+            70% { transform: translate(65%, 65%); opacity: 1; }
+            100% { transform: translate(65%, 65%); opacity: 0.4; }
+        }
+
+        @keyframes vong_sang {
+            0%, 100% { opacity: 0.45; transform: rotate(0deg) scale(0.95); }
+            70% { opacity: 0.85; transform: rotate(45deg) scale(1.05); }
+        }
+
+        @keyframes logo_sang {
+            0%, 100% { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15)) brightness(1); }
+            50% { filter: drop-shadow(0 0 22px rgba(232, 198, 117, 0.45)) brightness(1.06); }
+        }
+
+        .instruction {
+            font-size: 24px;
+            color: var(--plum-dark);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            animation: nhap_nhay 2s infinite;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes nhap_nhay {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* --- DASHBOARD --- */
+        #dashboard-page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 70px 20px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        #dashboard-page.visible-layout {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 2px solid var(--bronze);
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(30, 90, 138, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--bronze-light);
+            box-shadow: 0 8px 20px rgba(123, 45, 66, 0.35);
+        }
+
+        .back-btn.visible {
+            display: inline-flex;
+        }
+
+        .idle-notice {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 100;
+            display: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(30, 90, 138, 0.88);
+            color: var(--bronze-light);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .idle-notice.visible {
+            display: block;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: clamp(22px, 4vw, 32px);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(90, 31, 48, 0.45);
+            letter-spacing: 1px;
+        }
+
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--bronze), var(--plum-light), var(--sky), transparent);
+            width: 75%;
+            margin: 0 auto 40px auto;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .section-divider.footer-divider {
+            margin-top: auto;
+            margin-bottom: 24px;
+            padding-top: 4px;
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 0 20px 36px;
+            flex-shrink: 0;
+        }
+
+        .site-footer p {
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: var(--bronze-light);
+            font-style: italic;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            flex: 1;
+        }
+
+        .tool-card {
+            border-radius: 12px;
+            padding: 28px 22px;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 110px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-top-width: 5px;
+        }
+
+        .tool-label {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .tool-title {
+            font-size: clamp(19px, 2.2vw, 24px);
+            font-weight: 800;
+            line-height: 1.35;
+            letter-spacing: 0.3px;
+        }
+
+        .tool-card.accent-sky {
+            background: linear-gradient(160deg, rgba(168, 212, 240, 0.32), rgba(255, 255, 255, 0.94));
+            border-top-color: var(--sky);
+            color: var(--sky-dark);
+        }
+
+        .tool-card.accent-sky .tool-label {
+            color: var(--bronze);
+        }
+
+        .tool-card.accent-sky:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 24px rgba(30, 90, 138, 0.28);
+            border-color: var(--sky-dark);
+        }
+
+        .tool-card.accent-bronze {
+            background: linear-gradient(160deg, rgba(232, 198, 117, 0.35), rgba(255, 255, 255, 0.94));
+            border-top-color: var(--bronze);
+            color: var(--plum-dark);
+        }
+
+        .tool-card.accent-bronze .tool-label {
+            color: var(--sky-dark);
+        }
+
+        .tool-card.accent-bronze:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 24px rgba(201, 149, 46, 0.32);
+            border-color: var(--bronze);
+        }
+
+        .tool-card.accent-plum {
+            background: linear-gradient(160deg, rgba(168, 69, 96, 0.18), rgba(255, 255, 255, 0.94));
+            border-top-color: var(--plum);
+            color: var(--plum-dark);
+        }
+
+        .tool-card.accent-plum .tool-label {
+            color: var(--bronze);
+        }
+
+        .tool-card.accent-plum:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 24px rgba(123, 45, 66, 0.28);
+            border-color: var(--plum);
+        }
+
+        .tool-card.disabled {
+            background: rgba(240, 240, 240, 0.9);
+            color: #888;
+            border-top-color: #bbb;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .tool-card.disabled .tool-label {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="back-btn" class="back-btn" type="button" onclick="showLanding()" aria-label="Quay lại màn hình chờ">
+        &#8592; Quay lại
+    </button>
+    <div id="idle-notice" class="idle-notice">Tự quay về màn hình chờ sau 3 phút không thao tác</div>
+
+    <div id="landing-page">
+        <div class="orbit-container" onclick="showTools()">
+            <div class="logo-shine-glow"></div>
+            <div class="logo-shine-beam"></div>
+            <img src=".\static\logo_moi.png" alt="Logo Viện Kiểm Sát" class="logo-static">
+        </div>
+        <div class="instruction">BẤM VÀO LOGO ĐỂ BẮT ĐẦU</div>
+    </div>
+
+    <div id="dashboard-page">
+        <div class="header">
+            <h1>BỘ CÔNG CỤ HỖ TRỢ NGÀNH KIỂM SÁT NHÂN DÂN</h1>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="tools-grid">
+            <a href="https://app-tinh-lai-suat.onrender.com/" target="_blank" rel="noopener noreferrer" class="tool-card accent-sky">
+                <span class="tool-label">Công cụ</span>
+                <span class="tool-title">Tính lãi suất</span>
+            </a>
+
+            <a href="https://an-phi-kiem-sat.onrender.com" target="_blank" rel="noopener noreferrer" class="tool-card accent-bronze">
+                <span class="tool-label">Công cụ</span>
+                <span class="tool-title">Tính án phí</span>
+            </a>
+
+            <a href="https://udify.app/chat/FoGbxKbFMFZSylhe" target="_blank" rel="noopener noreferrer" class="tool-card accent-plum">
+                <span class="tool-label">Công cụ</span>
+                <span class="tool-title">Kiểm sát Bản án hình sự, dân sự</span>
+            </a>
+
+            <a href="https://udify.app/chat/Ho3TdpoYQ9OjTbIq" target="_blank" rel="noopener noreferrer" class="tool-card accent-plum">
+                <span class="tool-label">Công cụ</span>
+                <span class="tool-title">Kiểm sát Bản án — Viện KSND KV5 Bắc Ninh</span>
+            </a>
+
+            <a href="https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee" target="_blank" rel="noopener noreferrer" class="tool-card accent-sky">
+                <span class="tool-label">Hỏi đáp AI</span>
+                <span class="tool-title">Hình sự &amp; Tố tụng hình sự</span>
+            </a>
+
+            <div class="tool-card disabled">
+                <span class="tool-label">Sắp ra mắt</span>
+                <span class="tool-title">Công cụ đang phát triển</span>
+            </div>
+        </div>
+
+        <div class="section-divider footer-divider"></div>
+
+        <footer class="site-footer">
+            <p>Phát triển bởi: Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</p>
+        </footer>
+    </div>
+
+    <script>
+        var IDLE_TIMEOUT_MS = 3 * 60 * 1000;
+        var idleTimer = null;
+        var isDashboardVisible = false;
+
+        var landing = document.getElementById('landing-page');
+        var dashboard = document.getElementById('dashboard-page');
+        var backBtn = document.getElementById('back-btn');
+        var idleNotice = document.getElementById('idle-notice');
+
+        function fadeToDashboard() {
+            landing.style.opacity = '0';
+            setTimeout(function () {
+                landing.style.display = 'none';
+                dashboard.style.display = 'flex';
+                dashboard.classList.add('visible-layout');
+                backBtn.classList.add('visible');
+                idleNotice.classList.add('visible');
+                setTimeout(function () {
+                    dashboard.style.opacity = '1';
+                }, 50);
+                isDashboardVisible = true;
+                resetIdleTimer();
+            }, 500);
+        }
+
+        function fadeToLanding() {
+            dashboard.style.opacity = '0';
+            setTimeout(function () {
+                dashboard.style.display = 'none';
+                dashboard.classList.remove('visible-layout');
+                landing.style.display = 'flex';
+                backBtn.classList.remove('visible');
+                idleNotice.classList.remove('visible');
+                setTimeout(function () {
+                    landing.style.opacity = '1';
+                }, 50);
+                isDashboardVisible = false;
+                clearIdleTimer();
+            }, 500);
+        }
+
+        function showTools() {
+            fadeToDashboard();
+        }
+
+        function showLanding() {
+            fadeToLanding();
+        }
+
+        function clearIdleTimer() {
+            if (idleTimer) {
+                clearTimeout(idleTimer);
+                idleTimer = null;
+            }
+        }
+
+        function resetIdleTimer() {
+            if (!isDashboardVisible) {
+                return;
+            }
+            clearIdleTimer();
+            idleTimer = setTimeout(function () {
+                showLanding();
+            }, IDLE_TIMEOUT_MS);
+        }
+
+        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function (eventName) {
+            document.addEventListener(eventName, resetIdleTimer, { passive: true });
+        });
+    </script>
+</body>
+</html>
