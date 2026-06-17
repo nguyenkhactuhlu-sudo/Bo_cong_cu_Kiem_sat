@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính tuổi - Tính thời hạn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* FORM SECTION */
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .form-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(30, 90, 138, 0.15);
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            backdrop-filter: blur(8px);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .form-card:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--sky-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--sky-light);
+            padding-bottom: 12px;
+        }
+
+        .card-title i {
+            color: var(--bronze);
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label .optional {
+            font-weight: 400;
+            color: #999;
+            font-size: 11px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-5 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row-5 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .form-row-3, .form-row-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid rgba(30, 90, 138, 0.2);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            background: #fff;
+            transition: all 0.25s ease;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--sky);
+            box-shadow: 0 0 0 3px rgba(93, 169, 217, 0.15);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        /* Buttons */
+        .btn-calculate {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            box-shadow: 0 4px 16px rgba(30, 90, 138, 0.3);
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(30, 90, 138, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-calculate i {
+            margin-right: 8px;
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(30, 90, 138, 0.06), rgba(123, 45, 66, 0.06));
+            border: 2px solid var(--bronze-light);
+            border-radius: 16px;
+            padding: 32px 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .result-header h2 {
+            font-size: 20px;
+            color: var(--sky-dark);
+            font-weight: 800;
+        }
+
+        .result-header h2 i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        .result-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-item .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--plum-dark);
+        }
+
+        .result-item .value.highlight {
+            color: var(--bronze);
+        }
+
+        .result-item .value.time-value {
+            font-size: 22px;
+        }
+
+        /* Summary */
+        .result-summary {
+            text-align: center;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(201, 149, 46, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .result-summary p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .result-summary .big-date {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--plum-dark);
+        }
+
+        .result-summary .arrow-icon {
+            color: var(--bronze);
+            font-size: 20px;
+            margin: 0 8px;
+        }
+
+        /* HOLIDAY WARNINGS */
+        .holiday-warning {
+            background: rgba(220, 38, 38, 0.06);
+            border: 1.5px solid rgba(220, 38, 38, 0.25);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-top: 16px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .holiday-warning .warning-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #b91c1c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .holiday-warning .warning-title i {
+            font-size: 18px;
+        }
+
+        .holiday-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .holiday-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            color: #991b1b;
+        }
+
+        .holiday-tag i {
+            margin-right: 5px;
+            font-size: 11px;
+        }
+
+        /* INFO SECTION */
+        .info-section {
+            margin-top: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: var(--bronze);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .info-item p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .info-item p strong {
+            color: var(--sky-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 14px;
+            }
+            .form-card {
+                padding: 20px 16px;
+            }
+            .result-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .result-item .value {
+                font-size: 22px;
+            }
+        }
+
+        /* TABS FOR CALCULATION TYPE */
+        .calc-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: rgba(30, 90, 138, 0.06);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+        }
+
+        .calc-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .calc-tab:hover {
+            color: var(--sky-dark);
+            background: rgba(255,255,255,0.5);
+        }
+
+        .calc-tab.active {
+            background: #fff;
+            color: var(--plum-dark);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .calc-tab i {
+            font-size: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .calc-tab {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(93, 169, 217, 0.12);
+            color: var(--sky-dark);
+        }
+
+        .info-badge i {
+            font-size: 11px;
+        }
+
+        .holiday-note-positive {
+            background: rgba(201, 149, 46, 0.08);
+            border: 1.5px solid rgba(201, 149, 46, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .holiday-note-positive p {
+            font-size: 13px;
+            color: #7a6a30;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .holiday-note-positive p i {
+            color: var(--bronze);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-icon">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <div>
+            <div class="header-title">TÍNH TUỔI - <span>TÍNH THỜI HẠN</span></div>
+            <div class="header-sub"><i class="fa-regular fa-clock"></i> Công cụ tính toán thời gian tố tụng</div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- FORM SECTION -->
+        <div class="form-section">
+
+            <!-- CỘT TRÁI: THỜI GIAN GỐC -->
+            <div class="form-card">
+                <div class="card-title">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    Thời gian gốc
+                    <span class="info-badge"><i class="fa-regular fa-star"></i> Mốc bắt đầu</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Giờ <span class="optional">(không bắt buộc)</span></label>
+                    <div class="form-row">
+                        <div>
+                            <input type="number" id="start-hour" min="0" max="23" placeholder="Giờ (0-23)" value="0">
+                        </div>
+                        <div>
+                            <input type="number" id="start-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ngày - Tháng - Năm</label>
+                    <div class="form-row-3">
+                        <div>
+                            <input type="number" id="start-day" min="1" max="31" placeholder="Ngày" value="1">
+                        </div>
+                        <div>
+                            <input type="number" id="start-month" min="1" max="12" placeholder="Tháng" value="1">
+                        </div>
+                        <div>
+                            <input type="number" id="start-year" min="1" max="9999" placeholder="Năm" value="2026">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fill current date/time button -->
+                <div style="margin-top: 8px; text-align: right;">
+                    <button onclick="fillCurrentTime()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
+                        <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
+                    </button>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: TUỔI / THỜI HẠN -->
+            <div class="form-card">
+                <div class="card-title">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    Tuổi / Thời hạn tố tụng
+                </div>
+
+                <div class="calc-tabs" id="calc-tabs">
+                    <button class="calc-tab active" data-mode="add" onclick="setMode('add')">
+                        <i class="fa-solid fa-plus"></i> Cộng thêm
+                    </button>
+                    <button class="calc-tab" data-mode="subtract" onclick="setMode('subtract')">
+                        <i class="fa-solid fa-minus"></i> Trừ đi
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Thời hạn (điền các giá trị mong muốn, có thể để trống)</label>
+                    <div class="form-row-5">
+                        <div>
+                            <label style="font-size:11px;color:#999;font-weight:600;">Năm</label>
+                            <input type="number" id="dur-year" min="0" placeholder="0" value="0">
+                        </div>
+                        <div>
+                            <label style="font-size:11px;color:#999;font-weight:600;">Tháng</label>
+                            <input type="number" id="dur-month" min="0" placeholder="0" value="0">
+                        </div>
+                        <div>
+                            <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
+                            <input type="number" id="dur-day" min="0" placeholder="0" value="0">
+                        </div>
+                        <div>
+                            <label style="font-size:11px;color:#999;font-weight:600;">Giờ</label>
+                            <input type="number" id="dur-hour" min="0" placeholder="0" value="0">
+                        </div>
+                        <div>
+                            <label style="font-size:11px;color:#999;font-weight:600;">Phút</label>
+                            <input type="number" id="dur-minute" min="0" placeholder="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ví dụ nhanh</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                        <button class="quick-example" onclick="quickExample(18,0,0,0,0)">18 tuổi</button>
+                        <button class="quick-example" onclick="quickExample(0,0,20,0,0)">20 ngày</button>
+                        <button class="quick-example" onclick="quickExample(0,1,0,0,0)">1 tháng</button>
+                        <button class="quick-example" onclick="quickExample(0,3,0,0,0)">3 tháng</button>
+                        <button class="quick-example" onclick="quickExample(0,6,0,0,0)">6 tháng</button>
+                        <button class="quick-example" onclick="quickExample(1,0,0,0,0)">1 năm</button>
+                        <button class="quick-example" onclick="quickExample(2,0,0,0,0)">2 năm</button>
+                        <button class="quick-example" onclick="quickExample(1,2,15,0,0)">1n2th15ng</button>
+                        <button class="quick-example" onclick="quickExample(0,0,0,12,30)">12g30p</button>
+                    </div>
+                </div>
+
+                <style>
+                    .quick-example {
+                        padding: 6px 14px;
+                        border: 1.5px solid rgba(201, 149, 46, 0.25);
+                        border-radius: 20px;
+                        background: rgba(201, 149, 46, 0.06);
+                        font-family: inherit;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: var(--plum-dark);
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    }
+                    .quick-example:hover {
+                        background: rgba(201, 149, 46, 0.15);
+                        border-color: var(--bronze);
+                        transform: translateY(-1px);
+                    }
+                    .quick-example:active {
+                        transform: translateY(0);
+                    }
+                </style>
+
+                <button class="btn-calculate" onclick="calculate()">
+                    <i class="fa-solid fa-calculator"></i> TÍNH TOÁN
+                </button>
+            </div>
+        </div>
+
+
+        <!-- RESULT SECTION -->
+        <div class="result-section" id="result-section">
+            <div class="result-card" id="result-card">
+                <div class="result-header">
+                    <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ TÍNH TOÁN</h2>
+                </div>
+
+                <div class="result-summary" id="result-summary">
+                    <!-- Dynamically filled -->
+                </div>
+
+                <div class="result-display" id="result-display">
+                    <!-- Dynamically filled -->
+                </div>
+
+                <div id="holiday-section">
+                    <!-- Dynamically filled -->
+                </div>
+            </div>
+        </div>
+
+        <!-- INFO SECTION -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <p><strong>Cách sử dụng:</strong> Nhập thời gian bắt đầu (ngày/tháng/năm, giờ/phút không bắt buộc), chọn "Cộng thêm" hoặc "Trừ đi", nhập giá trị và đơn vị thời hạn. Kết quả sẽ hiển thị ngày/tháng/năm tương ứng.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-calendar-alt"></i>
+                    <p><strong>Tính chính xác theo lịch:</strong> Công cụ tự động tính toán dựa trên lịch thực tế (số ngày trong tháng, năm nhuận). Phù hợp với nghiệp vụ tính thời hạn tố tụng.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                    <p><strong>Lưu ý ngày lễ:</strong> Nếu khoảng thời gian tính toán nằm trong cùng một năm, công cụ sẽ liệt kê các ngày lễ, Tết rơi vào khoảng đó để tiện theo dõi.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // BIẾN TOÀN CỤC
+        // ============================================================
+        var currentMode = 'add';
+
+        // Danh sách ngày lễ cố định (dương lịch)
+        var FIXED_HOLIDAYS = [
+            { day: 1, month: 1, name: 'Tết Dương lịch', icon: 'fa-calendar' },
+            { day: 30, month: 4, name: 'Ngày Giải phóng miền Nam (30/4)', icon: 'fa-flag' },
+            { day: 1, month: 5, name: 'Quốc tế Lao động (1/5)', icon: 'fa-briefcase' },
+            { day: 2, month: 9, name: 'Quốc khánh (2/9)', icon: 'fa-star' },
+        ];
+
+        // Các ngày lễ âm lịch cần lưu ý (thông báo chung)
+        var LUNAR_HOLIDAY_NOTES = [
+            { name: 'Tết Nguyên đán', note: '(thường rơi vào cuối tháng 1 - đầu tháng 2 dương lịch)' },
+            { name: 'Giỗ Tổ Hùng Vương (10/3 ÂL)', note: '(thường rơi vào tháng 4 dương lịch)' },
+            { name: 'Tết Trung thu (15/8 ÂL)', note: '(thường rơi vào tháng 9 - 10 dương lịch)' },
+        ];
+
+        // ============================================================
+        // KHỞI TẠO
+        // ============================================================
+        (function init() {
+            // Đặt giá trị mặc định cho thời gian gốc là hôm nay
+            var now = new Date();
+            document.getElementById('start-hour').value = now.getHours();
+            document.getElementById('start-minute').value = now.getMinutes();
+            document.getElementById('start-day').value = now.getDate();
+            document.getElementById('start-month').value = now.getMonth() + 1;
+            document.getElementById('start-year').value = now.getFullYear();
+        })();
+
+        // ============================================================
+        // CHỨC NĂNG
+        // ============================================================
+
+        function setMode(mode) {
+            currentMode = mode;
+            var tabs = document.querySelectorAll('.calc-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.querySelector('.calc-tab[data-mode="' + mode + '"]').classList.add('active');
+        }
+
+        function fillCurrentTime() {
+            var now = new Date();
+            document.getElementById('start-hour').value = now.getHours();
+            document.getElementById('start-minute').value = now.getMinutes();
+            document.getElementById('start-day').value = now.getDate();
+            document.getElementById('start-month').value = now.getMonth() + 1;
+            document.getElementById('start-year').value = now.getFullYear();
+        }
+
+        function quickExample(y, m, d, h, min) {
+            document.getElementById('dur-year').value = y;
+            document.getElementById('dur-month').value = m;
+            document.getElementById('dur-day').value = d;
+            document.getElementById('dur-hour').value = h;
+            document.getElementById('dur-minute').value = min;
+            calculate();
+        }
+
+        // ============================================================
+        // HÀM TÍNH TOÁN NGÀY THÁNG
+        // ============================================================
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function getDaysInMonth(year, month) {
+            var daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (month === 2 && isLeapYear(year)) return 29;
+            return daysInMonths[month - 1];
+        }
+
+        function isValidDate(year, month, day) {
+            if (month < 1 || month > 12) return false;
+            var maxDay = getDaysInMonth(year, month);
+            return day >= 1 && day <= maxDay;
+        }
+
+        function normalizeDate(year, month, day) {
+            while (month > 12) { month -= 12; year++; }
+            while (month < 1) { month += 12; year--; }
+            var maxDay = getDaysInMonth(year, month);
+            if (day > maxDay) day = maxDay;
+            return { year: year, month: month, day: day };
+        }
+
+        function pad(n) {
+            return String(n).padStart(2, '0');
+        }
+
+        // ============================================================
+        // TÍNH TOÁN CHÍNH
+        // ============================================================
+
+        function calculate() {
+            // Đọc dữ liệu đầu vào
+            var startHour = parseInt(document.getElementById('start-hour').value) || 0;
+            var startMinute = parseInt(document.getElementById('start-minute').value) || 0;
+            var startDay = parseInt(document.getElementById('start-day').value) || 1;
+            var startMonth = parseInt(document.getElementById('start-month').value) || 1;
+            var startYear = parseInt(document.getElementById('start-year').value) || 2026;
+
+            // Đọc thời hạn từ 5 trường
+            var durYear = parseInt(document.getElementById('dur-year').value) || 0;
+            var durMonth = parseInt(document.getElementById('dur-month').value) || 0;
+            var durDay = parseInt(document.getElementById('dur-day').value) || 0;
+            var durHour = parseInt(document.getElementById('dur-hour').value) || 0;
+            var durMinute = parseInt(document.getElementById('dur-minute').value) || 0;
+
+            var totalNonZero = (durYear > 0 ? 1 : 0) + (durMonth > 0 ? 1 : 0) + (durDay > 0 ? 1 : 0) + (durHour > 0 ? 1 : 0) + (durMinute > 0 ? 1 : 0);
+
+            var hasTime = (document.getElementById('start-hour').value !== '' && document.getElementById('start-hour').value !== '0') ||
+                          (document.getElementById('start-minute').value !== '' && document.getElementById('start-minute').value !== '0');
+
+            // Kiểm tra dữ liệu hợp lệ
+            if (totalNonZero === 0) {
+                alert('Vui lòng nhập ít nhất một giá trị thời hạn (lớn hơn 0).');
+                return;
+            }
+
+            if (!isValidDate(startYear, startMonth, startDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            if (startHour < 0 || startHour > 23 || startMinute < 0 || startMinute > 59) {
+                alert('Giờ hoặc phút không hợp lệ!');
+                return;
+            }
+
+            // Tính toán tuần tự: năm -> tháng -> ngày -> giờ -> phút
+            var result = { year: startYear, month: startMonth, day: startDay, hour: startHour, minute: startMinute };
+            result = calculateDate(result, durYear, 'year', currentMode);
+            result = calculateDate(result, durMonth, 'month', currentMode);
+            result = calculateDate(result, durDay, 'day', currentMode);
+            result = calculateDate(result, durHour, 'hour', currentMode);
+            result = calculateDate(result, durMinute, 'minute', currentMode);
+
+            // Hiển thị kết quả
+            displayResult(result, startYear, startMonth, startDay, startHour, startMinute, durYear, durMonth, durDay, durHour, durMinute, hasTime);
+        }
+
+        function calculateDate(current, value, unit, mode) {
+            if (value === 0) return current;
+            var sign = (mode === 'add') ? 1 : -1;
+            var dateObj;
+
+            switch (unit) {
+                case 'year':
+                    current.year += sign * value;
+                    // Xử lý ngày 29/2 trong năm nhuận
+                    if (current.day === 29 && current.month === 2) {
+                        if (!isLeapYear(current.year)) {
+                            current.day = 28;
+                        }
+                    }
+                    break;
+
+                case 'month':
+                    current.month += sign * value;
+                    // Chuẩn hóa
+                    var norm = normalizeDate(current.year, current.month, current.day);
+                    current.year = norm.year;
+                    current.month = norm.month;
+                    current.day = norm.day;
+                    break;
+
+                case 'day':
+                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
+                    dateObj.setDate(dateObj.getDate() + sign * value);
+                    current.year = dateObj.getFullYear();
+                    current.month = dateObj.getMonth() + 1;
+                    current.day = dateObj.getDate();
+                    current.hour = dateObj.getHours();
+                    current.minute = dateObj.getMinutes();
+                    break;
+
+                case 'hour':
+                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
+                    dateObj.setHours(dateObj.getHours() + sign * value);
+                    current.year = dateObj.getFullYear();
+                    current.month = dateObj.getMonth() + 1;
+                    current.day = dateObj.getDate();
+                    current.hour = dateObj.getHours();
+                    current.minute = dateObj.getMinutes();
+                    break;
+
+                case 'minute':
+                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
+                    dateObj.setMinutes(dateObj.getMinutes() + sign * value);
+                    current.year = dateObj.getFullYear();
+                    current.month = dateObj.getMonth() + 1;
+                    current.day = dateObj.getDate();
+                    current.hour = dateObj.getHours();
+                    current.minute = dateObj.getMinutes();
+                    break;
+            }
+
+            return current;
+        }
+
+        // ============================================================
+        // HIỂN THỊ KẾT QUẢ
+        // ============================================================
+
+        function displayResult(result, startYear, startMonth, startDay, startHour, startMinute, durYear, durMonth, durDay, durHour, durMinute, hasTime) {
+            var section = document.getElementById('result-section');
+            section.classList.add('visible');
+
+            // Scroll to result
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // --- Build duration string ---
+            var durationParts = [];
+            if (durYear > 0) durationParts.push(durYear + ' năm');
+            if (durMonth > 0) durationParts.push(durMonth + ' tháng');
+            if (durDay > 0) durationParts.push(durDay + ' ngày');
+            if (durHour > 0) durationParts.push(durHour + ' giờ');
+            if (durMinute > 0) durationParts.push(durMinute + ' phút');
+            var durationStr = durationParts.length > 0 ? durationParts.join(', ') : '0';
+
+            var modeLabel = (currentMode === 'add') ? 'cộng thêm' : 'trừ đi';
+
+            var startDateStr = pad(startDay) + '/' + pad(startMonth) + '/' + startYear;
+            if (hasTime) {
+                startDateStr += ' ' + pad(startHour) + ':' + pad(startMinute);
+            }
+
+            var endDateStr = pad(result.day) + '/' + pad(result.month) + '/' + result.year;
+            var hasResultTime = (document.getElementById('start-hour').value !== '' && document.getElementById('start-hour').value !== '0') ||
+                               (document.getElementById('start-minute').value !== '' && document.getElementById('start-minute').value !== '0');
+            if (hasResultTime) {
+                endDateStr += ' ' + pad(result.hour) + ':' + pad(result.minute);
+            }
+
+            var summaryHtml = '<p>';
+            summaryHtml += 'Từ mốc <span class="big-date">' + startDateStr + '</span>';
+            summaryHtml += ' <span class="arrow-icon">' + (currentMode === 'add' ? '→' : '←') + '</span> ';
+            summaryHtml += modeLabel + ' <strong>' + durationStr + '</strong>';
+            summaryHtml += ' <span class="arrow-icon">→</span> ';
+            summaryHtml += 'Kết quả: <span class="big-date" style="color:var(--bronze);">' + endDateStr + '</span>';
+            summaryHtml += '</p>';
+            document.getElementById('result-summary').innerHTML = summaryHtml;
+
+            // --- Result display items ---
+            var displayHtml = '';
+
+            // Nếu có giờ/phút
+            if (hasResultTime) {
+                displayHtml += '<div class="result-item">';
+                displayHtml += '<div class="label">Giờ</div>';
+                displayHtml += '<div class="value time-value">' + pad(result.hour) + '</div>';
+                displayHtml += '</div>';
+                displayHtml += '<div class="result-item">';
+                displayHtml += '<div class="label">Phút</div>';
+                displayHtml += '<div class="value time-value">' + pad(result.minute) + '</div>';
+                displayHtml += '</div>';
+            }
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Ngày</div>';
+            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + pad(result.day) + '</div>';
+            displayHtml += '</div>';
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Tháng</div>';
+            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + pad(result.month) + '</div>';
+            displayHtml += '</div>';
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Năm</div>';
+            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + result.year + '</div>';
+            displayHtml += '</div>';
+
+            // Thêm thứ trong tuần
+            var dateObj = new Date(result.year, result.month - 1, result.day, result.hour, result.minute);
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Thứ</div>';
+            displayHtml += '<div class="value time-value">' + dayNames[dateObj.getDay()] + '</div>';
+            displayHtml += '</div>';
+
+            document.getElementById('result-display').innerHTML = displayHtml;
+
+            // --- Holiday section ---
+            showHolidayNotes(result, startYear, startMonth, startDay, hasResultTime);
+        }
+
+        function showHolidayNotes(result, startYear, startMonth, startDay, hasTime) {
+            var holidaySection = document.getElementById('holiday-section');
+            var html = '';
+
+            // Kiểm tra nếu kết quả nằm trong cùng năm với năm bắt đầu
+            if (result.year === startYear) {
+                // Tạo mốc thời gian bắt đầu và kết thúc
+                var startDate = new Date(startYear, startMonth - 1, startDay);
+                var endDate = new Date(result.year, result.month - 1, result.day);
+
+                // Đảm bảo startDate <= endDate
+                if (startDate > endDate) {
+                    var temp = startDate;
+                    startDate = endDate;
+                    endDate = temp;
+                }
+
+                // Tìm các ngày lễ rơi vào khoảng này
+                var holidaysInRange = [];
+                for (var i = 0; i < FIXED_HOLIDAYS.length; i++) {
+                    var h = FIXED_HOLIDAYS[i];
+                    var holidayDate = new Date(startYear, h.month - 1, h.day);
+                    if (holidayDate >= startDate && holidayDate <= endDate) {
+                        holidaysInRange.push(h);
+                    }
+                }
+
+                if (holidaysInRange.length > 0) {
+                    html += '<div class="holiday-warning">';
+                    html += '<div class="warning-title"><i class="fa-solid fa-triangle-exclamation"></i> Lưu ý ngày lễ, Tết</div>';
+                    html += '<p style="font-size:13px;color:#991b1b;margin-bottom:10px;">Khoảng thời gian tính toán nằm trong cùng năm ' + startYear + ' và có các ngày lễ sau:</p>';
+                    html += '<div class="holiday-list">';
+                    for (var i = 0; i < holidaysInRange.length; i++) {
+                        var h = holidaysInRange[i];
+                        html += '<span class="holiday-tag"><i class="fa-solid ' + h.icon + '"></i> ' + h.name + ' (' + pad(h.day) + '/' + pad(h.month) + ')</span>';
+                    }
+                    html += '</div>';
+                    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(220,38,38,0.1);">';
+                    html += '<p style="font-size:12px;color:#991b1b;font-weight:600;"><i class="fa-regular fa-clock"></i> Đề nghị lưu ý khi tính thời hạn tố tụng có thể bị ảnh hưởng bởi ngày nghỉ lễ.</p>';
+                    // Thêm thông báo về các ngày lễ âm lịch
+                    html += '<div style="margin-top:8px;">';
+                    html += '<p style="font-size:12px;color:#856404;font-weight:600;"><i class="fa-regular fa-moon"></i> Ngoài ra, lưu ý các ngày lễ Âm lịch có thể rơi vào khoảng này:</p>';
+                    html += '<div class="holiday-list" style="margin-top:6px;">';
+                    for (var j = 0; j < LUNAR_HOLIDAY_NOTES.length; j++) {
+                        var ln = LUNAR_HOLIDAY_NOTES[j];
+                        html += '<span class="holiday-tag" style="background:rgba(133,100,4,0.08);border-color:rgba(133,100,4,0.2);color:#856404;">';
+                        html += '<i class="fa-regular fa-calendar"></i> ' + ln.name + ' ' + ln.note + '</span>';
+                    }
+                    html += '</div></div>';
+                    html += '</div>';
+                    html += '</div>';
+                } else {
+                    // Cùng năm nhưng không có ngày lễ nào
+                    html += '<div class="holiday-note-positive">';
+                    html += '<p><i class="fa-regular fa-circle-check"></i> Khoảng thời gian tính toán nằm trong cùng năm ' + startYear + ', không phát hiện ngày lễ chính thức nào. Tuy nhiên, hãy lưu ý các ngày lễ Âm lịch có thể thay đổi theo từng năm.</p>';
+                    html += '</div>';
+                }
+            } else if (result.year > startYear) {
+                // Khác năm
+                html += '<div class="holiday-note-positive">';
+                html += '<p><i class="fa-regular fa-calendar-plus"></i> Khoảng thời gian tính toán trải qua nhiều năm (' + startYear + ' - ' + result.year + '). Lưu ý kiểm tra ngày lễ, Tết theo từng năm tương ứng.</p>';
+                html += '</div>';
+            } else {
+                // result.year < startYear (trường hợp trừ)
+                html += '<div class="holiday-note-positive">';
+                html += '<p><i class="fa-regular fa-calendar-plus"></i> Khoảng thời gian tính toán trải qua nhiều năm (' + result.year + ' - ' + startYear + '). Lưu ý kiểm tra ngày lễ, Tết theo từng năm tương ứng.</p>';
+                html += '</div>';
+            }
+
+            holidaySection.innerHTML = html;
+        }
+    </script>
+
+</body>
+</html>
