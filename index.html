@@ -434,16 +434,17 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== OS BACK BUTTON (FIXED) ===== */
+        /* ===== OS BACK BUTTON (BOTTOM CENTER - KHÔNG ĐÈ LÊN LOGO) ===== */
         .back-btn {
             position: fixed;
-            top: 16px;
-            left: 16px;
+            bottom: calc(var(--taskbar-height) + 16px);
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 1010;
             display: none;
             align-items: center;
             gap: 8px;
-            padding: 10px 18px;
+            padding: 10px 22px;
             border: 2px solid var(--bronze);
             border-radius: 12px;
             background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
@@ -460,14 +461,14 @@
         }
 
         .back-btn:hover {
-            transform: translateY(-2px) scale(1.03);
+            transform: translateX(-50%) translateY(-3px) scale(1.04);
             box-shadow: 0 8px 28px rgba(123, 45, 66, 0.45);
             background: linear-gradient(135deg, #1e6aa8, #6d2a3a);
             border-color: var(--bronze-light);
         }
 
         .back-btn:active {
-            transform: scale(0.97);
+            transform: translateX(-50%) scale(0.97);
         }
 
         .back-btn.visible {
@@ -577,9 +578,8 @@
                 grid-template-columns: 1fr;
             }
             .back-btn {
-                top: 10px;
-                left: 10px;
-                padding: 8px 14px;
+                bottom: calc(var(--taskbar-height) + 12px);
+                padding: 8px 16px;
                 font-size: 13px;
             }
         }
@@ -587,7 +587,7 @@
 </head>
 <body>
 
-    <!-- ===== NÚT QUAY LẠI (luôn ở góc trái trên) ===== -->
+    <!-- ===== NÚT QUAY LẠI (ở dưới cùng, giữa trang) ===== -->
     <button id="back-btn" class="back-btn" type="button" onclick="closeTool()" aria-label="Quay lại Menu chính">
         Quay lại Menu chính
     </button>
@@ -692,6 +692,14 @@
                 subtitle: 'notebookLM',
                 url: 'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee',
                 accent: 'accent-sky'
+            },
+            {
+                id: 'huong-dan-so-do-tu-duy',
+                label: 'HƯỚNG DẪN',
+                title: 'Tạo sơ đồ tư duy tự động',
+                subtitle: 'AI Mindmap Automation',
+                url: 'Data/HuongDan.html',
+                accent: 'accent-bronze'
             }
         ];
 
