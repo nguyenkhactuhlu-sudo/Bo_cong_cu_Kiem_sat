@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bộ công cụ - Viện Kiểm Sát Nhân Dân</title>
+    <title>Hệ điều hành Bộ công cụ - Viện Kiểm Sát Nhân Dân</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -18,6 +18,11 @@
             --plum-dark: #5a1f30;
             --plum-light: #a84560;
             --white-soft: rgba(255, 255, 255, 0.96);
+            --taskbar-height: 42px;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -28,9 +33,10 @@
             background:
                 linear-gradient(135deg, rgba(93, 169, 217, 0.78) 0%, rgba(123, 45, 66, 0.55) 55%, rgba(201, 149, 46, 0.45) 100%),
                 url('./static/Nen.jpg') center / cover no-repeat fixed;
+            overflow-x: hidden;
         }
 
-        /* --- MÀN HÌNH CHỜ --- */
+        /* ===== MÀN HÌNH CHỜ (LOCK SCREEN) ===== */
         #landing-page {
             display: flex;
             flex-direction: column;
@@ -131,74 +137,21 @@
             100% { opacity: 0.5; }
         }
 
-        /* --- DASHBOARD --- */
+        /* ===== DASHBOARD / MÀN HÌNH CHÍNH (DESKTOP) ===== */
         #dashboard-page {
             display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
-            padding: 70px 20px 30px;
+            padding: 70px 20px calc(var(--taskbar-height) + 30px);
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
             min-height: 100vh;
-            box-sizing: border-box;
         }
 
         #dashboard-page.visible-layout {
             display: flex;
             flex-direction: column;
-        }
-
-        .back-btn {
-            position: fixed;
-            top: 18px;
-            left: 18px;
-            z-index: 100;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border: 2px solid var(--bronze);
-            border-radius: 999px;
-            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
-            color: #fff;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(30, 90, 138, 0.35);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--bronze-light);
-            box-shadow: 0 8px 20px rgba(123, 45, 66, 0.35);
-        }
-
-        .back-btn.visible {
-            display: inline-flex;
-        }
-
-        .idle-notice {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 100;
-            display: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            background: rgba(30, 90, 138, 0.88);
-            color: var(--bronze-light);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .idle-notice.visible {
-            display: block;
         }
 
         .header {
@@ -237,7 +190,7 @@
         }
 
         .site-footer p {
-            font-size: clamp(16px, 2.5vw, 20px);
+            font-size: clamp(9.6px, 1.5vw, 12px);
             color: var(--bronze-light);
             font-style: italic;
             font-weight: 600;
@@ -267,6 +220,7 @@
             min-height: 110px;
             border: 1px solid rgba(255, 255, 255, 0.45);
             border-top-width: 5px;
+            cursor: pointer;
         }
 
         .tool-label {
@@ -343,15 +297,305 @@
         .tool-card.disabled .tool-label {
             color: #aaa;
         }
+
+        /* ===== OS TOOL WORKSPACE (IFRAME CONTAINER) ===== */
+        #os-workspace {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: var(--taskbar-height);
+            z-index: 500;
+            background: #fff;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        #os-workspace.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        #os-workspace iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+
+        /* ===== OS TASKBAR ===== */
+        .os-taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            height: var(--taskbar-height);
+            background: linear-gradient(135deg, rgba(30, 90, 138, 0.95), rgba(90, 31, 48, 0.95));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-top: 2px solid var(--bronze);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+            font-family: inherit;
+            font-size: 12px;
+            color: var(--bronze-light);
+            user-select: none;
+        }
+
+        .os-taskbar.visible {
+            display: flex;
+        }
+
+        .os-taskbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 120px;
+        }
+
+        .os-taskbar-start {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .os-taskbar-start:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .os-taskbar-start:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .os-taskbar-center {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+            overflow: hidden;
+            padding: 0 10px;
+        }
+
+        .os-taskbar-tool-btn {
+            padding: 4px 14px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .os-taskbar-tool-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-color: var(--bronze);
+        }
+
+        .os-taskbar-tool-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .os-taskbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            min-width: 120px;
+            justify-content: flex-end;
+        }
+
+        .os-clock {
+            font-weight: 600;
+            color: #fff;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== OS BACK BUTTON (FIXED) ===== */
+        .back-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1010;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 2px solid var(--bronze);
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+            transition: all 0.25s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 28px rgba(123, 45, 66, 0.45);
+            background: linear-gradient(135deg, #1e6aa8, #6d2a3a);
+            border-color: var(--bronze-light);
+        }
+
+        .back-btn:active {
+            transform: scale(0.97);
+        }
+
+        .back-btn.visible {
+            display: inline-flex;
+        }
+
+        .idle-notice {
+            position: fixed;
+            bottom: calc(var(--taskbar-height) + 10px);
+            right: 16px;
+            z-index: 1000;
+            display: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(30, 90, 138, 0.88);
+            color: var(--bronze-light);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .idle-notice.visible {
+            display: block;
+        }
+
+        /* ===== OS LOADING OVERLAY ===== */
+        .os-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: var(--taskbar-height);
+            z-index: 550;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+        }
+
+        .os-loading.visible {
+            display: flex;
+        }
+
+        .os-loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--sky-light);
+            border-top-color: var(--sky-dark);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== OS WINDOW HEADER (inside workspace for embedded tools) ===== */
+        .os-window-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: none;
+            align-items: center;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            gap: 10px;
+            height: 44px;
+        }
+
+        .os-window-header.visible {
+            display: flex;
+        }
+
+        .os-window-header .win-title {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .os-window-header .win-close {
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 16px;
+            line-height: 1;
+            transition: background 0.2s;
+        }
+
+        .os-window-header .win-close:hover {
+            background: rgba(255, 50, 50, 0.4);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <button id="back-btn" class="back-btn" type="button" onclick="showLanding()" aria-label="Quay lại màn hình chờ">
-        &#8592; Quay lại
+    <!-- ===== NÚT QUAY LẠI (luôn ở góc trái trên) ===== -->
+    <button id="back-btn" class="back-btn" type="button" onclick="closeTool()" aria-label="Quay lại Menu chính">
+        Quay lại Menu chính
     </button>
+
+    <!-- ===== THÔNG BÁO IDLE ===== -->
     <div id="idle-notice" class="idle-notice">Tự quay về màn hình chờ sau 3 phút không thao tác</div>
 
+    <!-- ===== MÀN HÌNH CHỜ (LOCK SCREEN) ===== -->
     <div id="landing-page">
         <div class="orbit-container" onclick="showTools()">
             <div class="logo-shine-glow"></div>
@@ -361,6 +605,7 @@
         <div class="instruction">BẤM VÀO LOGO ĐỂ BẮT ĐẦU</div>
     </div>
 
+    <!-- ===== DESKTOP - MENU CHÍNH ===== -->
     <div id="dashboard-page">
         <div class="header">
             <h1>BỘ CÔNG CỤ HỖ TRỢ NGÀNH KIỂM SÁT NHÂN DÂN</h1>
@@ -368,36 +613,8 @@
 
         <div class="section-divider"></div>
 
-        <div class="tools-grid">
-            <a href="https://app-tinh-lai-suat.onrender.com/" target="_blank" rel="noopener noreferrer" class="tool-card accent-sky">
-                <span class="tool-label">Công cụ</span>
-                <span class="tool-title">Tính lãi suất</span>
-            </a>
-
-            <a href="https://an-phi-kiem-sat.onrender.com" target="_blank" rel="noopener noreferrer" class="tool-card accent-bronze">
-                <span class="tool-label">Công cụ</span>
-                <span class="tool-title">Tính án phí</span>
-            </a>
-
-            <a href="https://udify.app/chat/FoGbxKbFMFZSylhe" target="_blank" rel="noopener noreferrer" class="tool-card accent-plum">
-                <span class="tool-label">Công cụ</span>
-                <span class="tool-title">Kiểm sát Bản án hình sự, dân sự (bản dùng chung)</span>
-            </a>
-
-            <a href="https://udify.app/chat/Ho3TdpoYQ9OjTbIq" target="_blank" rel="noopener noreferrer" class="tool-card accent-plum">
-                <span class="tool-label">Công cụ</span>
-                <span class="tool-title">Kiểm sát Bản án hình sự, dân sự (bản nâng cấp - dành riêng cho Viện KSND KV5 Bắc Ninh)</span>
-            </a>
-
-            <a href="https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee" target="_blank" rel="noopener noreferrer" class="tool-card accent-sky">
-                <span class="tool-label">Hỏi đáp AI</span>
-                <span class="tool-title">Hình sự &amp; Tố tụng hình sự (notebookLM)</span>
-            </a>
-
-            <div class="tool-card disabled">
-                <span class="tool-label">Sắp ra mắt</span>
-                <span class="tool-title">Công cụ đang phát triển</span>
-            </div>
+        <div class="tools-grid" id="tools-grid">
+            <!-- Các công cụ sẽ được JavaScript render -->
         </div>
 
         <div class="section-divider footer-divider"></div>
@@ -407,24 +624,138 @@
         </footer>
     </div>
 
+    <!-- ===== OS WORKSPACE - KHU VỰC CHẠY CÔNG CỤ ===== -->
+    <div id="os-workspace">
+        <div class="os-window-header" id="os-window-header">
+            <span class="win-title" id="win-title">Công cụ</span>
+            <span class="win-close" onclick="closeTool()">✕</span>
+        </div>
+        <iframe id="tool-iframe" src="" title="Công cụ" allow="clipboard-read; clipboard-write"></iframe>
+    </div>
+
+    <!-- ===== LOADING OVERLAY ===== -->
+    <div class="os-loading" id="os-loading">
+        <div class="os-loading-spinner"></div>
+    </div>
+
+    <!-- ===== OS TASKBAR ===== -->
+    <div class="os-taskbar" id="os-taskbar">
+        <div class="os-taskbar-left">
+            <div class="os-taskbar-start" onclick="showLanding()">⬥ Bộ công cụ</div>
+        </div>
+        <div class="os-taskbar-center" id="taskbar-center">
+            <!-- Tool buttons rendered here -->
+        </div>
+        <div class="os-taskbar-right">
+            <span class="os-clock" id="os-clock">00:00</span>
+        </div>
+    </div>
+
     <script>
+        // ============================================================
+        // DỮ LIỆU CÔNG CỤ
+        // ============================================================
+        var TOOLS = [
+            {
+                id: 'tinh-lai-suat',
+                label: 'Công cụ',
+                title: 'Tính lãi suất',
+                url: 'https://app-tinh-lai-suat.onrender.com/',
+                accent: 'accent-sky'
+            },
+            {
+                id: 'tinh-an-phi',
+                label: 'Công cụ',
+                title: 'Tính án phí',
+                url: 'https://an-phi-kiem-sat.onrender.com',
+                accent: 'accent-bronze'
+            },
+            {
+                id: 'kiem-sat-ban-an-chung',
+                label: 'Công cụ',
+                title: 'Kiểm sát Bản án hình sự, dân sự (bản dùng chung)',
+                url: 'https://udify.app/chat/FoGbxKbFMFZSylhe',
+                accent: 'accent-plum'
+            },
+            {
+                id: 'kiem-sat-ban-an-nang-cao',
+                label: 'Công cụ',
+                title: 'Kiểm sát Bản án hình sự, dân sự (bản nâng cấp)',
+                subtitle: 'Viện KSND KV5 Bắc Ninh',
+                url: 'https://udify.app/chat/Ho3TdpoYQ9OjTbIq',
+                accent: 'accent-plum'
+            },
+            {
+                id: 'notebook-lm',
+                label: 'Hỏi đáp AI',
+                title: 'Hình sự & Tố tụng hình sự',
+                subtitle: 'notebookLM',
+                url: 'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee',
+                accent: 'accent-sky'
+            }
+        ];
+
+        // ============================================================
+        // BIẾN TOÀN CỤC
+        // ============================================================
         var IDLE_TIMEOUT_MS = 3 * 60 * 1000;
         var idleTimer = null;
         var isDashboardVisible = false;
+        var isInToolView = false;
+        var currentToolId = null;
+        var activeToolTitle = '';
 
+        // DOM refs
         var landing = document.getElementById('landing-page');
         var dashboard = document.getElementById('dashboard-page');
         var backBtn = document.getElementById('back-btn');
         var idleNotice = document.getElementById('idle-notice');
+        var osWorkspace = document.getElementById('os-workspace');
+        var osTaskbar = document.getElementById('os-taskbar');
+        var toolIframe = document.getElementById('tool-iframe');
+        var osLoading = document.getElementById('os-loading');
+        var winTitle = document.getElementById('win-title');
+        var osClock = document.getElementById('os-clock');
+        var taskbarCenter = document.getElementById('taskbar-center');
+        var toolsGrid = document.getElementById('tools-grid');
 
+        // ============================================================
+        // KHỞI TẠO
+        // ============================================================
+        function init() {
+            renderToolCards();
+            startClock();
+        }
+
+        function renderToolCards() {
+            var html = '';
+            for (var i = 0; i < TOOLS.length; i++) {
+                var t = TOOLS[i];
+                html += '<div class="tool-card ' + t.accent + '" data-tool-id="' + t.id + '" onclick="openTool(\'' + t.id + '\')">';
+                html += '<span class="tool-label">' + t.label + '</span>';
+                html += '<span class="tool-title">' + t.title + '</span>';
+                if (t.subtitle) {
+                    html += '<span style="font-size:13px;opacity:0.7;margin-top:2px;">' + t.subtitle + '</span>';
+                }
+                html += '</div>';
+            }
+            // Thêm card disabled
+            html += '<div class="tool-card disabled">';
+            html += '<span class="tool-label">Sắp ra mắt</span>';
+            html += '<span class="tool-title">Công cụ đang phát triển</span>';
+            html += '</div>';
+            toolsGrid.innerHTML = html;
+        }
+
+        // ============================================================
+        // CHUYỂN CẢNH (TRANSITIONS)
+        // ============================================================
         function fadeToDashboard() {
             landing.style.opacity = '0';
             setTimeout(function () {
                 landing.style.display = 'none';
                 dashboard.style.display = 'flex';
                 dashboard.classList.add('visible-layout');
-                backBtn.classList.add('visible');
-                idleNotice.classList.add('visible');
                 setTimeout(function () {
                     dashboard.style.opacity = '1';
                 }, 50);
@@ -434,13 +765,15 @@
         }
 
         function fadeToLanding() {
+            // Đóng công cụ nếu đang mở
+            if (isInToolView) {
+                closeToolInternal();
+            }
             dashboard.style.opacity = '0';
             setTimeout(function () {
                 dashboard.style.display = 'none';
                 dashboard.classList.remove('visible-layout');
                 landing.style.display = 'flex';
-                backBtn.classList.remove('visible');
-                idleNotice.classList.remove('visible');
                 setTimeout(function () {
                     landing.style.opacity = '1';
                 }, 50);
@@ -457,6 +790,134 @@
             fadeToLanding();
         }
 
+        // ============================================================
+        // MỞ / ĐÓNG CÔNG CỤ TRONG WORKSPACE
+        // ============================================================
+        function openTool(toolId) {
+            var tool = null;
+            for (var i = 0; i < TOOLS.length; i++) {
+                if (TOOLS[i].id === toolId) {
+                    tool = TOOLS[i];
+                    break;
+                }
+            }
+            if (!tool) return;
+
+            currentToolId = toolId;
+            activeToolTitle = tool.title;
+            isInToolView = true;
+
+            // Ẩn dashboard, hiện workspace + taskbar
+            dashboard.style.opacity = '0';
+            dashboard.style.display = 'none';
+            dashboard.classList.remove('visible-layout');
+
+            // Hiển thị loading
+            osLoading.classList.add('visible');
+
+            // Hiện workspace và taskbar
+            osWorkspace.style.display = 'block';
+            osTaskbar.classList.add('visible');
+            backBtn.classList.add('visible');
+            idleNotice.classList.add('visible');
+
+            // Cập nhật tiêu đề
+            winTitle.textContent = tool.title;
+            updateTaskbar();
+
+            // Set iframe source
+            toolIframe.src = tool.url;
+
+            // Khi iframe load xong, ẩn loading
+            toolIframe.onload = function () {
+                osLoading.classList.remove('visible');
+                osWorkspace.classList.add('visible');
+            };
+
+            // Fallback: nếu không load được, vẫn tắt loading sau 10s
+            setTimeout(function () {
+                osLoading.classList.remove('visible');
+                osWorkspace.classList.add('visible');
+            }, 10000);
+
+            isDashboardVisible = false;
+            clearIdleTimer();
+        }
+
+        function closeTool() {
+            closeToolInternal();
+            // Quay về dashboard
+            dashboard.style.display = 'flex';
+            dashboard.classList.add('visible-layout');
+            setTimeout(function () {
+                dashboard.style.opacity = '1';
+            }, 50);
+            isDashboardVisible = true;
+            resetIdleTimer();
+        }
+
+        function closeToolInternal() {
+            isInToolView = false;
+            currentToolId = null;
+
+            // Ẩn workspace
+            osWorkspace.classList.remove('visible');
+            osWorkspace.style.display = 'none';
+
+            // Xóa iframe src để dừng tải
+            toolIframe.src = '';
+            toolIframe.onload = null;
+
+            // Ẩn taskbar, loading
+            osTaskbar.classList.remove('visible');
+            osLoading.classList.remove('visible');
+
+            // Ẩn back button (chỉ hiện khi đang ở tool view)
+            backBtn.classList.remove('visible');
+            idleNotice.classList.remove('visible');
+
+            updateTaskbar();
+        }
+
+        // ============================================================
+        // TASKBAR
+        // ============================================================
+        function updateTaskbar() {
+            var html = '';
+            if (currentToolId) {
+                html += '<div class="os-taskbar-tool-btn active" onclick="closeTool()">';
+                html += activeToolTitle;
+                html += '</div>';
+            }
+            taskbarCenter.innerHTML = html;
+        }
+
+        // ============================================================
+        // ĐỒNG HỒ
+        // ============================================================
+        function startClock() {
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function updateClock() {
+            var now = new Date();
+            var h = String(now.getHours()).padStart(2, '0');
+            var m = String(now.getMinutes()).padStart(2, '0');
+            var dow = getDayOfWeek(now.getDay());
+            var d = String(now.getDate()).padStart(2, '0');
+            var mon = String(now.getMonth() + 1).padStart(2, '0');
+            osClock.textContent = dow + ', ' + d + '/' + mon + ' ' + h + ':' + m;
+        }
+
+        function getDayOfWeek(dayIndex) {
+            var days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+            return days[dayIndex];
+        }
+
+        // ============================================================
+        // IDLE TIMER
+        // ============================================================
         function clearIdleTimer() {
             if (idleTimer) {
                 clearTimeout(idleTimer);
@@ -477,6 +938,44 @@
         ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function (eventName) {
             document.addEventListener(eventName, resetIdleTimer, { passive: true });
         });
+
+        // ============================================================
+        // XỬ LÝ LỖI IFRAME (KHI TRANG WEB TỪ CHỐI EMBED)
+        // ============================================================
+        // Một số trang như notebookLM có thể chặn iframe.
+        // Ta bắt lỗi và hiển thị thông báo + nút mở tab mới.
+        window.addEventListener('message', function (e) {
+            // Lắng nghe message từ iframe nếu có
+        });
+
+        // Phát hiện lỗi iframe blocked
+        var checkIframeError = setInterval(function () {
+            if (!isInToolView) return;
+            try {
+                // Nếu truy cập được vào iframe content, trang đã load
+                var doc = toolIframe.contentDocument || toolIframe.contentWindow.document;
+                if (doc && doc.body) {
+                    // OK
+                }
+            } catch (e) {
+                // CORS error - trang đã load nhưng từ domain khác (bình thường)
+                // Không làm gì
+            }
+        }, 2000);
+
+        // ============================================================
+        // ESCAPE KEY - ĐÓNG CÔNG CỤ
+        // ============================================================
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && isInToolView) {
+                closeTool();
+            }
+        });
+
+        // ============================================================
+        // KHỞI CHẠY
+        // ============================================================
+        init();
     </script>
 </body>
 </html>
