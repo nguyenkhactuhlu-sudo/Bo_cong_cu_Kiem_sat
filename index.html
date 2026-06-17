@@ -178,24 +178,24 @@
         }
 
         .section-divider.footer-divider {
-            margin-top: auto;
+            margin-top: 40px;
             margin-bottom: 24px;
             padding-top: 4px;
         }
 
         .site-footer {
             text-align: center;
-            padding: 0 20px 36px;
+            padding: 0 20px 50px;
             flex-shrink: 0;
         }
 
         .site-footer p {
             font-size: clamp(9.6px, 1.5vw, 12px);
-            color: var(--bronze-light);
-            font-style: italic;
+            color: #ffffff;
             font-weight: 600;
             margin: 0;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+            line-height: 1.6;
         }
 
         .tools-grid {
@@ -354,8 +354,8 @@
         .os-taskbar-left {
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-width: 120px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .os-taskbar-start {
@@ -381,40 +381,71 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .os-taskbar-center {
+        /* ===== NÚT QUAY LẠI + BREADCRUMB TRONG TASKBAR ===== */
+        .os-taskbar-back-btn {
             display: flex;
             align-items: center;
             gap: 6px;
-            flex: 1;
-            justify-content: center;
-            overflow: hidden;
-            padding: 0 10px;
-        }
-
-        .os-taskbar-tool-btn {
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.06);
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-            white-space: nowrap;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .os-taskbar-tool-btn.active {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
-            border-color: var(--bronze);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
         }
 
-        .os-taskbar-tool-btn:hover {
+        .os-taskbar-back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .os-taskbar-back-btn:active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .os-taskbar-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            flex-wrap: nowrap;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .os-taskbar-breadcrumb .breadcrumb-item {
+            padding: 3px 7px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .os-taskbar-breadcrumb .breadcrumb-item:hover {
             background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        .os-taskbar-breadcrumb .breadcrumb-item.active {
+            color: var(--bronze-light);
+            cursor: default;
+        }
+
+        .os-taskbar-breadcrumb .breadcrumb-item.active:hover {
+            background: transparent;
+        }
+
+        .os-taskbar-breadcrumb .breadcrumb-sep {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 14px;
+            font-weight: 300;
+            flex-shrink: 0;
         }
 
         .os-taskbar-right {
@@ -425,6 +456,7 @@
             color: rgba(255, 255, 255, 0.7);
             min-width: 120px;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
 
         .os-clock {
@@ -432,69 +464,6 @@
             color: #fff;
             font-size: 13px;
             letter-spacing: 0.5px;
-        }
-
-        /* ===== OS BACK BUTTON (BOTTOM CENTER - KHÔNG ĐÈ LÊN LOGO) ===== */
-        .back-btn {
-            position: fixed;
-            bottom: calc(var(--taskbar-height) + 16px);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1010;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 22px;
-            border: 2px solid var(--bronze);
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
-            color: #fff;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-            transition: all 0.25s ease;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .back-btn:hover {
-            transform: translateX(-50%) translateY(-3px) scale(1.04);
-            box-shadow: 0 8px 28px rgba(123, 45, 66, 0.45);
-            background: linear-gradient(135deg, #1e6aa8, #6d2a3a);
-            border-color: var(--bronze-light);
-        }
-
-        .back-btn:active {
-            transform: translateX(-50%) scale(0.97);
-        }
-
-        .back-btn.visible {
-            display: inline-flex;
-        }
-
-        .idle-notice {
-            position: fixed;
-            bottom: calc(var(--taskbar-height) + 10px);
-            right: 16px;
-            z-index: 1000;
-            display: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            background: rgba(30, 90, 138, 0.88);
-            color: var(--bronze-light);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .idle-notice.visible {
-            display: block;
         }
 
         /* ===== OS LOADING OVERLAY ===== */
@@ -577,23 +546,10 @@
             .tools-grid {
                 grid-template-columns: 1fr;
             }
-            .back-btn {
-                bottom: calc(var(--taskbar-height) + 12px);
-                padding: 8px 16px;
-                font-size: 13px;
-            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== NÚT QUAY LẠI (ở dưới cùng, giữa trang) ===== -->
-    <button id="back-btn" class="back-btn" type="button" onclick="closeTool()" aria-label="Quay lại Menu chính">
-        Quay lại Menu chính
-    </button>
-
-    <!-- ===== THÔNG BÁO IDLE ===== -->
-    <div id="idle-notice" class="idle-notice">Tự quay về màn hình chờ sau 3 phút không thao tác</div>
 
     <!-- ===== MÀN HÌNH CHỜ (LOCK SCREEN) ===== -->
     <div id="landing-page">
@@ -620,7 +576,7 @@
         <div class="section-divider footer-divider"></div>
 
         <footer class="site-footer">
-            <p>Phát triển bởi: Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</p>
+            <p>Phát triển bởi: Nguyễn Khắc Tú<br>Đơn vị: Viện Kiểm sát nhân dân khu vực 5 - Bắc Ninh<br>© 2026 - Công cụ nghiệp vụ Kiểm sát nội bộ</p>
         </footer>
     </div>
 
@@ -641,10 +597,10 @@
     <!-- ===== OS TASKBAR ===== -->
     <div class="os-taskbar" id="os-taskbar">
         <div class="os-taskbar-left">
-            <div class="os-taskbar-start" onclick="showLanding()">⬥ Bộ công cụ</div>
-        </div>
-        <div class="os-taskbar-center" id="taskbar-center">
-            <!-- Tool buttons rendered here -->
+            <div class="os-taskbar-start" onclick="closeTool()">⬥ Bộ công cụ</div>
+            <div class="os-taskbar-breadcrumb" id="taskbar-breadcrumb">
+                <!-- Breadcrumb rendered here by JS -->
+            </div>
         </div>
         <div class="os-taskbar-right">
             <span class="os-clock" id="os-clock">00:00</span>
@@ -706,8 +662,6 @@
         // ============================================================
         // BIẾN TOÀN CỤC
         // ============================================================
-        var IDLE_TIMEOUT_MS = 3 * 60 * 1000;
-        var idleTimer = null;
         var isDashboardVisible = false;
         var isInToolView = false;
         var currentToolId = null;
@@ -716,15 +670,13 @@
         // DOM refs
         var landing = document.getElementById('landing-page');
         var dashboard = document.getElementById('dashboard-page');
-        var backBtn = document.getElementById('back-btn');
-        var idleNotice = document.getElementById('idle-notice');
         var osWorkspace = document.getElementById('os-workspace');
         var osTaskbar = document.getElementById('os-taskbar');
         var toolIframe = document.getElementById('tool-iframe');
         var osLoading = document.getElementById('os-loading');
         var winTitle = document.getElementById('win-title');
         var osClock = document.getElementById('os-clock');
-        var taskbarCenter = document.getElementById('taskbar-center');
+        var breadcrumb = document.getElementById('taskbar-breadcrumb');
         var toolsGrid = document.getElementById('tools-grid');
 
         // ============================================================
@@ -768,12 +720,10 @@
                     dashboard.style.opacity = '1';
                 }, 50);
                 isDashboardVisible = true;
-                resetIdleTimer();
             }, 500);
         }
 
         function fadeToLanding() {
-            // Đóng công cụ nếu đang mở
             if (isInToolView) {
                 closeToolInternal();
             }
@@ -786,7 +736,6 @@
                     landing.style.opacity = '1';
                 }, 50);
                 isDashboardVisible = false;
-                clearIdleTimer();
             }, 500);
         }
 
@@ -826,12 +775,10 @@
             // Hiện workspace và taskbar
             osWorkspace.style.display = 'block';
             osTaskbar.classList.add('visible');
-            backBtn.classList.add('visible');
-            idleNotice.classList.add('visible');
 
             // Cập nhật tiêu đề
             winTitle.textContent = tool.title;
-            updateTaskbar();
+            updateBreadcrumb();
 
             // Set iframe source
             toolIframe.src = tool.url;
@@ -849,7 +796,6 @@
             }, 10000);
 
             isDashboardVisible = false;
-            clearIdleTimer();
         }
 
         function closeTool() {
@@ -861,7 +807,6 @@
                 dashboard.style.opacity = '1';
             }, 50);
             isDashboardVisible = true;
-            resetIdleTimer();
         }
 
         function closeToolInternal() {
@@ -880,24 +825,26 @@
             osTaskbar.classList.remove('visible');
             osLoading.classList.remove('visible');
 
-            // Ẩn back button (chỉ hiện khi đang ở tool view)
-            backBtn.classList.remove('visible');
-            idleNotice.classList.remove('visible');
-
-            updateTaskbar();
+            updateBreadcrumb();
         }
 
         // ============================================================
-        // TASKBAR
+        // BREADCRUMB (Sơ đồ cây)
         // ============================================================
-        function updateTaskbar() {
+        function updateBreadcrumb() {
             var html = '';
+            // Mục "Bộ công cụ"
+            html += '<span class="breadcrumb-item" onclick="closeTool()">Bộ công cụ</span>';
+            html += '<span class="breadcrumb-sep">›</span>';
+            // Mục "Menu chính"
+            html += '<span class="breadcrumb-item" onclick="closeTool()">Menu chính</span>';
+
             if (currentToolId) {
-                html += '<div class="os-taskbar-tool-btn active" onclick="closeTool()">';
-                html += activeToolTitle;
-                html += '</div>';
+                html += '<span class="breadcrumb-sep">›</span>';
+                html += '<span class="breadcrumb-item active">' + activeToolTitle + '</span>';
             }
-            taskbarCenter.innerHTML = html;
+
+            breadcrumb.innerHTML = html;
         }
 
         // ============================================================
@@ -924,34 +871,8 @@
         }
 
         // ============================================================
-        // IDLE TIMER
-        // ============================================================
-        function clearIdleTimer() {
-            if (idleTimer) {
-                clearTimeout(idleTimer);
-                idleTimer = null;
-            }
-        }
-
-        function resetIdleTimer() {
-            if (!isDashboardVisible) {
-                return;
-            }
-            clearIdleTimer();
-            idleTimer = setTimeout(function () {
-                showLanding();
-            }, IDLE_TIMEOUT_MS);
-        }
-
-        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function (eventName) {
-            document.addEventListener(eventName, resetIdleTimer, { passive: true });
-        });
-
-        // ============================================================
         // XỬ LÝ LỖI IFRAME (KHI TRANG WEB TỪ CHỐI EMBED)
         // ============================================================
-        // Một số trang như notebookLM có thể chặn iframe.
-        // Ta bắt lỗi và hiển thị thông báo + nút mở tab mới.
         window.addEventListener('message', function (e) {
             // Lắng nghe message từ iframe nếu có
         });
@@ -960,14 +881,12 @@
         var checkIframeError = setInterval(function () {
             if (!isInToolView) return;
             try {
-                // Nếu truy cập được vào iframe content, trang đã load
                 var doc = toolIframe.contentDocument || toolIframe.contentWindow.document;
                 if (doc && doc.body) {
                     // OK
                 }
             } catch (e) {
                 // CORS error - trang đã load nhưng từ domain khác (bình thường)
-                // Không làm gì
             }
         }, 2000);
 
