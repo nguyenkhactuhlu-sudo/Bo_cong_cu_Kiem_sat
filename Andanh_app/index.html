@@ -304,9 +304,9 @@
             <div class="note-box">
                 <i class="fas fa-lightbulb"></i>
                 <p>
-                    <strong>Lưu ý:</strong> Sau khi nhấn "Khởi chạy công cụ", trình duyệt có thể yêu cầu 
-                    xác nhận tải xuống tệp <strong>AnDanhTool.exe</strong>. Vui lòng cho phép tải xuống, 
-                    sau đó mở tệp để sử dụng công cụ.
+                    <strong>Lưu ý:</strong> Sau khi nhấn "Khởi chạy công cụ", trình duyệt sẽ tải xuống 
+                    tệp <strong>AnDanhTool.zip</strong>. Vui lòng giải nén và chạy tệp 
+                    <strong>AnDanhTool.exe</strong> bên trong để sử dụng công cụ.
                 </p>
             </div>
         </div>
@@ -318,15 +318,16 @@
             var confirmed = confirm(
                 'Công cụ AnDanhTool sẽ được khởi chạy.\n\n' +
                 'Vui lòng làm theo hướng dẫn:\n' +
-                '1. Nhấn OK để tải tệp AnDanhTool.exe\n' +
-                '2. Mở tệp đã tải xuống để sử dụng'
+                '1. Nhấn OK để tải tệp AnDanhTool.zip\n' +
+                '2. Giải nén tệp vừa tải xuống\n' +
+                '3. Chạy tệp AnDanhTool.exe bên trong để sử dụng'
             );
 
             if (confirmed) {
-                // Tạo một link tải xuống file exe
+                // Tạo một link tải xuống file zip (tránh bị chặn tải .exe)
                 var link = document.createElement('a');
-                link.href = 'AnDanhTool.exe';
-                link.download = 'AnDanhTool.exe';
+                link.href = 'AnDanhTool.zip';
+                link.download = 'AnDanhTool.zip';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -334,8 +335,8 @@
                 // Hiển thị thông báo hướng dẫn thêm
                 setTimeout(function() {
                     alert(
-                        '✅ Tệp AnDanhTool.exe đã được tải xuống.\n\n' +
-                        '👉 Vui lòng mở tệp từ thư mục tải xuống để sử dụng công cụ.'
+                        '✅ Tệp AnDanhTool.zip đã được tải xuống.\n\n' +
+                        '👉 Vui lòng giải nén và chạy tệp AnDanhTool.exe để sử dụng công cụ.'
                     );
                 }, 500);
             }
