@@ -642,11 +642,11 @@
                 accent: 'accent-plum'
             },
             {
-                id: 'notebook-lm',
+                id: 'hoi-dap-ai-cong-phap-luat',
                 label: 'Hỏi đáp AI',
-                title: 'Hình sự & Tố tụng hình sự',
-                subtitle: 'notebookLM',
-                url: 'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee',
+                title: 'Cổng pháp luật Quốc gia',
+                subtitle: 'ai.phapluat.gov.vn',
+                url: 'https://ai.phapluat.gov.vn/',
                 accent: 'accent-sky'
             },
             {
@@ -776,8 +776,8 @@
             }
             if (!tool) return;
 
-            // Nếu là công cụ notebook-lm (Hỏi đáp AI), mở tab mới thay vì nhúng iframe
-            if (toolId === 'notebook-lm') {
+            // Nếu là công cụ Hỏi đáp AI, mở tab mới thay vì nhúng iframe
+            if (toolId === 'hoi-dap-ai-cong-phap-luat') {
                 window.open(tool.url, '_blank');
                 return;
             }
