@@ -672,7 +672,7 @@
                 subtitle: 'Phát triển bởi Trần Huy - Viện KSND KV11 - Đắk Lắk',
                 url: 'Andanh_app/index.html',
                 accent: 'accent-plum'
-            }
+            },
         ];
 
         // ============================================================
@@ -775,6 +775,12 @@
                 }
             }
             if (!tool) return;
+
+            // Nếu là công cụ notebook-lm (Hỏi đáp AI), mở tab mới thay vì nhúng iframe
+            if (toolId === 'notebook-lm') {
+                window.open(tool.url, '_blank');
+                return;
+            }
 
             currentToolId = toolId;
             activeToolTitle = tool.title;
