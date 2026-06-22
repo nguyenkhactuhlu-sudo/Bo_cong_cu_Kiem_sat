@@ -854,8 +854,10 @@
                 title: 'Hình sự & Tố tụng hình sự',
                 subtitle: 'notebookLM',
                 url: 'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee',
-                accent: 'accent-sky'
+                accent: 'accent-sky',
+                newTab: true
             },
+
             {
                 id: 'tinh-tuoi-thoi-han',
                 label: 'CÔNG CỤ',
@@ -983,6 +985,12 @@
             }
             if (!tool) return;
 
+            // Nếu công cụ có flag newTab, mở tab mới thay vì iframe
+            if (tool.newTab) {
+                window.open(tool.url, '_blank');
+                return;
+            }
+
             currentToolId = toolId;
             activeToolTitle = tool.title;
             isInToolView = true;
@@ -1020,6 +1028,7 @@
 
             isDashboardVisible = false;
         }
+
 
         function closeTool() {
             closeToolInternal();
