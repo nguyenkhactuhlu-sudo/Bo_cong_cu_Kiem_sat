@@ -55,7 +55,6 @@
             justify-content: center;
             cursor: pointer;
             margin-bottom: 20px;
-            overflow: hidden;
             border-radius: 50%;
         }
 
@@ -63,81 +62,231 @@
             width: 220px;
             height: auto;
             position: relative;
-            z-index: 2;
+            z-index: 5;
             filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.15));
             animation: logo_sang 5s ease-in-out infinite;
         }
 
-        .logo-shine-beam {
+
+        /* ===== VÒNG SÁNG RADAR ===== */
+        .radar-ring {
             position: absolute;
-            inset: -60%;
-            z-index: 3;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 2px solid rgba(232, 198, 117, 0.2);
+            animation: radarRingPulse 3s ease-in-out infinite;
             pointer-events: none;
-            background: linear-gradient(
-                45deg,
-                transparent 38%,
-                rgba(232, 198, 117, 0.08) 44%,
-                rgba(255, 248, 220, 0.55) 50%,
-                rgba(232, 198, 117, 0.08) 56%,
-                transparent 62%
-            );
-            animation: chieu_sang 4.5s ease-in-out infinite;
-            mix-blend-mode: soft-light;
+            z-index: 1;
         }
 
-        .logo-shine-glow {
+        .radar-ring-2 {
             position: absolute;
-            width: 240px;
-            height: 240px;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(93, 169, 217, 0.12);
+            animation: radarRingPulse2 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ===== TIA QUÉT RADAR ===== */
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%);
             border-radius: 50%;
             z-index: 1;
-            background: radial-gradient(
-                circle at 30% 30%,
-                rgba(232, 198, 117, 0.35) 0%,
-                rgba(93, 169, 217, 0.12) 45%,
-                transparent 70%
-            );
-            animation: vong_sang 5s ease-in-out infinite;
             pointer-events: none;
+            overflow: hidden;
+        }
+
+        .radar-sweep::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                transparent 0deg,
+                transparent 295deg,
+                rgba(232, 198, 117, 0.06) 305deg,
+                rgba(255, 248, 220, 0.15) 315deg,
+                rgba(232, 198, 117, 0.25) 320deg,
+                rgba(255, 248, 220, 0.35) 325deg,
+                rgba(232, 198, 117, 0.15) 330deg,
+                rgba(232, 198, 117, 0.04) 340deg,
+                transparent 350deg,
+                transparent 360deg
+            );
+            animation: radarSweepRotate 4s linear infinite;
+            border-radius: 50%;
+        }
+
+        /* ===== ĐỐM SÁNG MỤC TIÊU RADAR (JS sinh ngẫu nhiên) ===== */
+        .radar-target {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .radar-target.visible {
+            opacity: 1;
+        }
+
+        .radar-target.hit {
+            animation: targetHit 0.6s ease-out forwards;
+        }
+
+        @keyframes targetHit {
+            0% { transform: scale(0); opacity: 0; }
+            20% { transform: scale(2); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.6; }
         }
 
         .orbit-container:active {
+
+
             transform: scale(0.98);
         }
 
-        @keyframes chieu_sang {
-            0% { transform: translate(-65%, -65%); opacity: 0.4; }
-            35% { opacity: 1; }
-            70% { transform: translate(65%, 65%); opacity: 1; }
-            100% { transform: translate(65%, 65%); opacity: 0.4; }
+        @keyframes radarRingPulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 0.6; 
+                border-color: rgba(232, 198, 117, 0.2);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.05); 
+                opacity: 1; 
+                border-color: rgba(232, 198, 117, 0.4);
+            }
         }
 
-        @keyframes vong_sang {
-            0%, 100% { opacity: 0.45; transform: rotate(0deg) scale(0.95); }
-            70% { opacity: 0.85; transform: rotate(45deg) scale(1.05); }
+        @keyframes radarRingPulse2 {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 0.4; 
+                border-color: rgba(93, 169, 217, 0.12);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.08); 
+                opacity: 0.8; 
+                border-color: rgba(93, 169, 217, 0.25);
+            }
+        }
+
+        @keyframes radarSweepRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @keyframes logo_sang {
+
             0%, 100% { filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15)) brightness(1); }
-            50% { filter: drop-shadow(0 0 22px rgba(232, 198, 117, 0.45)) brightness(1.06); }
+            50% { filter: drop-shadow(0 0 30px rgba(232, 198, 117, 0.5)) brightness(1.08); }
         }
 
-        .instruction {
-            font-size: 24px;
-            color: var(--plum-dark);
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            animation: nhap_nhay 2s infinite;
-            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+
+        /* ===== TIÊU ĐỀ LANDING (DẠNG INTRO) ===== */
+        .landing-title {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            animation: titleCycle 8s ease-in-out infinite;
+            line-height: 2.0;
+            text-align: center;
+            margin-top: 10px;
+            padding: 12px 30px;
+            max-width: 95vw;
         }
 
-        @keyframes nhap_nhay {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+
+
+
+        .landing-title .landing-title-highlight {
+            background: linear-gradient(135deg, #e8c675, #f5d98a, #c9952e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
+        @keyframes titleCycle {
+            0% { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95);
+                clip-path: inset(0 0 100% 0);
+            }
+            15% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                clip-path: inset(0 0 0 0);
+            }
+            85% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                clip-path: inset(0 0 0 0);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-20px) scale(0.95);
+                clip-path: inset(100% 0 0 0);
+            }
+        }
+
+        .landing-divider {
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(232, 198, 117, 0.6), transparent);
+            margin: 12px auto;
+            border-radius: 2px;
+            animation: dividerCycle 8s ease-in-out infinite;
+        }
+
+        @keyframes dividerCycle {
+            0% { width: 0; opacity: 0; }
+            15% { width: 60%; max-width: 400px; opacity: 1; }
+            85% { width: 60%; max-width: 400px; opacity: 1; }
+            100% { width: 0; opacity: 0; }
+        }
+
+        .landing-subtitle {
+            font-size: clamp(12px, 1.8vw, 18px);
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: subtitleCycle 8s ease-in-out infinite;
+        }
+
+        @keyframes subtitleCycle {
+            0% { opacity: 0; transform: translateY(10px); letter-spacing: 20px; }
+            15% { opacity: 1; transform: translateY(0); letter-spacing: 8px; }
+            85% { opacity: 1; transform: translateY(0); letter-spacing: 8px; }
+            100% { opacity: 0; transform: translateY(-10px); letter-spacing: 20px; }
+        }
+
 
         /* ===== DASHBOARD / MÀN HÌNH CHÍNH (DESKTOP) ===== */
+
         #dashboard-page {
             display: none;
             opacity: 0;
@@ -546,19 +695,77 @@
             .tools-grid {
                 grid-template-columns: 1fr;
             }
+            .orbit-container {
+                width: 240px;
+                height: 240px;
+            }
+            .logo-static {
+                width: 160px;
+            }
+            .radar-ring {
+                width: 210px;
+                height: 210px;
+            }
+            .radar-ring-2 {
+                width: 240px;
+                height: 240px;
+            }
+            .radar-sweep {
+                width: 210px;
+                height: 210px;
+            }
         }
+
+        @media (max-width: 480px) {
+
+            .orbit-container {
+                width: 180px;
+                height: 180px;
+            }
+            .logo-static {
+                width: 120px;
+            }
+            .radar-ring {
+                width: 160px;
+                height: 160px;
+            }
+            .radar-ring-2 {
+                width: 180px;
+                height: 180px;
+            }
+            .radar-sweep {
+                width: 160px;
+                height: 160px;
+            }
+        }
+
     </style>
+
 </head>
 <body>
 
     <!-- ===== MÀN HÌNH CHỜ (LOCK SCREEN) ===== -->
     <div id="landing-page">
         <div class="orbit-container" onclick="showTools()">
-            <div class="logo-shine-glow"></div>
-            <div class="logo-shine-beam"></div>
+            <div class="radar-ring"></div>
+            <div class="radar-ring-2"></div>
+            <div class="radar-sweep"></div>
+            <div id="radar-targets-container"></div>
             <img src=".\static\logo_moi.png" alt="Logo Viện Kiểm Sát" class="logo-static">
+
         </div>
-        <div class="instruction">BẤM VÀO LOGO ĐỂ BẮT ĐẦU</div>
+
+        <!-- Tiêu đề dạng intro -->
+        <div class="landing-title">
+            BỘ CÔNG CỤ <span class="landing-title-highlight">NGHIỆP VỤ</span>
+
+        </div>
+
+        <div class="landing-divider"></div>
+        <div class="landing-subtitle">
+            VIỆN KIỂM SÁT NHÂN DÂN
+        </div>
+
     </div>
 
     <!-- ===== DESKTOP - MENU CHÍNH ===== -->
@@ -916,9 +1123,155 @@
         });
 
         // ============================================================
+        // RADAR TARGETS - ĐỐM SÁNG MỤC TIÊU NGẪU NHIÊN
+        // ============================================================
+        var radarContainer = document.getElementById('radar-targets-container');
+        var radarTargets = [];
+        var sweepAngle = 0;
+        var sweepRadius = 140; // bán kính vùng quét
+
+        // Màu sắc cho các đốm mục tiêu
+        var targetColors = [
+            { bg: 'rgba(232, 198, 117, 0.9)', shadow: 'rgba(232, 198, 117, 0.6)' },
+            { bg: 'rgba(93, 169, 217, 0.8)', shadow: 'rgba(93, 169, 217, 0.5)' },
+            { bg: 'rgba(255, 248, 220, 0.9)', shadow: 'rgba(232, 198, 117, 0.7)' },
+            { bg: 'rgba(232, 198, 117, 0.7)', shadow: 'rgba(232, 198, 117, 0.4)' },
+            { bg: 'rgba(168, 69, 96, 0.7)', shadow: 'rgba(168, 69, 96, 0.4)' },
+        ];
+
+        function getOrbitSize() {
+            // Lấy kích thước orbit-container thực tế
+            var container = document.querySelector('.orbit-container');
+            var w = container.offsetWidth || 320;
+            return w / 2 - 20; // trừ lề
+        }
+
+        function getRandomPosition() {
+            var r = getOrbitSize();
+            // Tạo góc ngẫu nhiên (radian)
+            var angle = Math.random() * 2 * Math.PI;
+            // Bán kính ngẫu nhiên từ 75% đến 95% bán kính quét
+            // (nằm giữa rìa logo và vòng radar bên ngoài)
+            var dist = (0.75 + Math.random() * 0.2) * r;
+            var x = 50 + (dist * Math.cos(angle)) / (r / 50);
+            var y = 50 + (dist * Math.sin(angle)) / (r / 50);
+            return { x: x, y: y, angle: angle, dist: dist };
+        }
+
+
+        function createTarget() {
+            var pos = getRandomPosition();
+            var color = targetColors[Math.floor(Math.random() * targetColors.length)];
+            var size = 2 + Math.random() * 3; // 2-5px
+
+            var el = document.createElement('div');
+            el.className = 'radar-target';
+            el.style.width = size + 'px';
+            el.style.height = size + 'px';
+            el.style.left = pos.x + '%';
+            el.style.top = pos.y + '%';
+            el.style.marginLeft = (-size/2) + 'px';
+            el.style.marginTop = (-size/2) + 'px';
+            el.style.background = color.bg;
+            el.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + color.shadow + ', 0 0 ' + (size * 4) + 'px ' + color.shadow;
+
+            radarContainer.appendChild(el);
+
+            return {
+                el: el,
+                angle: pos.angle,
+                dist: pos.dist,
+                hit: false,
+                visible: false
+            };
+        }
+
+        function spawnTargets() {
+            // Xóa các target cũ
+            for (var i = 0; i < radarTargets.length; i++) {
+                if (radarTargets[i].el.parentNode) {
+                    radarTargets[i].el.parentNode.removeChild(radarTargets[i].el);
+                }
+            }
+            radarTargets = [];
+
+            // Sinh ngẫu nhiên 5-8 target mới
+            var count = 5 + Math.floor(Math.random() * 4); // 5-8
+
+            for (var i = 0; i < count; i++) {
+                radarTargets.push(createTarget());
+            }
+        }
+
+        function updateRadarTargets() {
+            // Lấy góc quét hiện tại từ animation (0-360)
+            // Do CSS animation quay 4s/vòng, ta tính góc dựa trên thời gian
+            var now = Date.now();
+            sweepAngle = ((now / 1000) * 90) % 360; // 360 độ / 4s = 90 độ/s
+
+            for (var i = 0; i < radarTargets.length; i++) {
+                var t = radarTargets[i];
+                // Góc của target (độ)
+                var targetAngleDeg = (t.angle * 180 / Math.PI + 360) % 360;
+                // Tính chênh lệch góc giữa tia quét và target
+                var diff = (sweepAngle - targetAngleDeg + 360) % 360;
+
+                // Nếu tia quét vừa đi qua target (trong khoảng 8 độ)
+                if (diff >= 0 && diff <= 8 && !t.hit) {
+                    t.hit = true;
+                    t.visible = true;
+                    t._detectedTime = now;
+                    t.el.classList.add('hit');
+                    // Sau khi hit xong, giữ visible
+                    setTimeout(function(el) {
+                        return function() {
+                            el.classList.remove('hit');
+                            el.classList.add('visible');
+                        };
+                    }(t.el), 600);
+                }
+
+                // Nếu target đã được phát hiện, giảm dần độ sáng
+                if (t.visible && !t.el.classList.contains('hit')) {
+                    var age = (now - t._detectedTime) / 1000;
+                    if (age > 3) {
+                        // Mờ dần sau 3 giây
+                        var opacity = Math.max(0, 1 - (age - 3) / 2);
+                        t.el.style.opacity = opacity;
+                        if (opacity <= 0) {
+                            t.visible = false;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        // Khởi tạo radar targets
+        function initRadar() {
+            spawnTargets();
+            // Cập nhật mỗi 100ms để kiểm tra góc quét
+            setInterval(function() {
+                updateRadarTargets();
+            }, 100);
+            // Thay đổi vị trí targets mỗi 12 giây
+            setInterval(function() {
+                spawnTargets();
+            }, 12000);
+        }
+
+        // Ghi đè hàm init để thêm radar
+        var originalInit = init;
+        init = function() {
+            originalInit();
+            initRadar();
+        };
+
+        // ============================================================
         // KHỞI CHẠY
         // ============================================================
         init();
     </script>
+
 </body>
 </html>
