@@ -1,0 +1,12 @@
+# Build artifacts
+build/
+dist/
+__pycache__/
+*.spec
+
+# Executable files (too large for git)
+*.exe
+
+# Python cache
+*.pyc
+*.pyo

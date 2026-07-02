@@ -1,0 +1,119 @@
+====================================================================
+  FILE RENAMER - CÔNG CỤ ĐỔI TÊN HÀNG LOẠT FILE
+  Phiên bản: 1.0 | Dành cho Windows
+====================================================================
+
+GIỚI THIỆU
+----------
+File Renamer là công cụ giúp bạn tự động quét và chuẩn hóa tên file
+trong một thư mục. Công cụ sẽ phát hiện và đề xuất đổi tên cho các file:
+  - Có tên chứa tiếng Việt có dấu (khó xử lý trên một số hệ thống)
+  - Tên quá dài (>60 ký tự)
+  - Chứa ký tự đặc biệt, nhiều khoảng trắng thừa
+
+Công cụ gồm 2 phiên bản:
+  1. FileRenamerGUI.exe - Giao diện đồ họa (web), dễ sử dụng, khuyên dùng
+  2. FileRenamer.exe    - Dòng lệnh (CLI), dành cho người dùng nâng cao
+
+
+============================================================
+  A. SỬ DỤNG FILE RENAMER GUI (KHUYÊN DÙNG)
+============================================================
+
+CÁCH KHỞI CHẠY
+---------------
+1. Nhấp đúp vào file FileRenamerGUI.exe
+2. Trình duyệt sẽ tự động mở giao diện web tại địa chỉ http://127.0.0.1:5788
+3. Nếu trình duyệt không tự mở, hãy mở trình duyệt và nhập: http://127.0.0.1:5788
+
+CÁC BƯỚC SỬ DỤNG
+------------------
+Bước 1: Chọn thư mục cần quét
+  - Nhập đường dẫn thư mục hoặc bấm nút "Chọn thư mục" để duyệt
+  - Bấm "Quét ngay" để tool quét toàn bộ file trong thư mục (bao gồm thư mục con)
+
+Bước 2: Xem xét danh sách file có vấn đề
+  - Tool hiển thị danh sách file theo cây thư mục
+  - Mỗi file hiển thị: tên cũ (màu đỏ) -> tên đề xuất (màu xanh) + lý do
+  - Mặc định tất cả file đều được tích chọn
+
+Bước 3: Chọn file muốn đổi tên
+  - Tích/bỏ tích từng file hoặc cả thư mục
+  - Có thể dùng nút "Chọn tất cả" / "Bỏ chọn tất cả"
+
+Bước 4: Thực thi đổi tên
+  - Bấm nút "Thực thi đổi tên"
+  - Xác nhận trong hộp thoại
+  - Tool sẽ đổi tên các file đã chọn và hiển thị kết quả
+
+LƯU Ý
+-----
+- Tool chỉ đổi tên các file được tích chọn
+- File không được chọn sẽ giữ nguyên tên cũ
+- LUÔN xem trước danh sách trước khi bấm "Thực thi đổi tên"
+- Sau khi đổi tên, có thể quét lại để kiểm tra kết quả
+- Để thoát, đóng cửa sổ dòng lệnh (cmd) hoặc nhấn Ctrl+C
+
+
+============================================================
+  B. SỬ DỤNG FILE RENAMER CLI (DÒNG LỆNH - NÂNG CAO)
+============================================================
+
+CÁCH KHỞI CHẠY
+---------------
+1. Mở Command Prompt (cmd) hoặc PowerShell
+2. Di chuyển đến thư mục chứa FileRenamer.exe
+3. Chạy lệnh theo cú pháp:
+
+   FileRenamer.exe --path "ĐƯỜNG_DẪN" [tùy chọn]
+
+CÁC LỆNH CƠ BẢN
+----------------
+
+1. XEM TRƯỚC (AN TOÀN - không đổi tên thật):
+   FileRenamer.exe --path "D:\TaiLieu" --dry-run
+
+2. ĐỔI TÊN THẬT (CẨN THẬN!):
+   FileRenamer.exe --path "D:\TaiLieu" --execute
+
+3. CHỈ QUÉT MỘT THƯ MỤC CON:
+   FileRenamer.exe --path "D:\TaiLieu" --subdir "HoSo" --dry-run
+
+4. CHỈ ĐỔI TÊN MỘT FILE CỤ THỂ:
+   FileRenamer.exe --path "D:\TaiLieu" --file "Quyết định số 123.docx" --dry-run
+
+5. TÙY CHỈNH ĐỘ DÀI TỐI ĐA TÊN FILE:
+   FileRenamer.exe --path "D:\TaiLieu" --max-length 80 --dry-run
+
+CÁC TÙY CHỌN ĐẦY ĐỦ
+--------------------
+  --path, -p       Đường dẫn đến thư mục cần quét (BẮT BUỘC)
+  --dry-run, -n    Chỉ xem trước, không đổi tên thật (mặc định)
+  --execute, -x    Thực thi đổi tên thật (hãy dùng --dry-run trước!)
+  --subdir, -s     Chỉ quét trong thư mục con cụ thể
+  --file, -f       Chỉ đổi tên 1 file cụ thể
+  --max-length, -m Độ dài tối đa của tên file (mặc định: 60)
+  --help, -h       Hiển thị trợ giúp này
+
+
+============================================================
+  LƯU Ý CHUNG
+============================================================
+- LUÔN chạy với chế độ xem trước (--dry-run hoặc GUI) trước khi đổi tên thật
+- Chỉ thực thi khi bạn đã hài lòng với kết quả xem trước
+- Công cụ sẽ tự động bỏ qua các thư mục hệ thống (.git, __pycache__, ...)
+- File đã bị đổi tên KHÔNG thể hoàn tác tự động
+- Tên file mới sẽ được chuẩn hóa: bỏ dấu tiếng Việt, viết tắt,
+  loại bỏ ký tự đặc biệt, rút gọn nếu quá dài
+
+VÍ DỤ THỰC TẾ
+--------------
+Trước: "Quyết định về việc khởi tố vụ án hình sự số 123-QĐ-VKS.pdf"
+Sau:   "QD ve viec KTo vu an HS so 123-QD-VKS.pdf"
+
+Trước: "Báo cáo tổng kết công tác năm 2024 - Viện kiểm sát nhân dân.docx"
+Sau:   "BC tong ket cong tac nam 2024 - VKS nhan dan.docx"
+
+====================================================================
+  Mọi thắc mắc vui lòng liên hệ nhà phát triển
+====================================================================
