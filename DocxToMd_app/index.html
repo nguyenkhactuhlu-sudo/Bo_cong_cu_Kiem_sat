@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ chuyển đổi file Word (.doc/.docx) sang Markdown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+            --green: #2e7d32;
+            --green-light: #e8f5e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* INFO CARD */
+        .info-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93, 169, 217, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 i {
+            color: var(--bronze);
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-card ul li i {
+            color: var(--bronze);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* FEATURE GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            border: 1px solid #e8ecf0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-item i {
+            color: var(--bronze);
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .feature-item strong {
+            color: #333;
+        }
+
+        /* LAUNCH BUTTON */
+        .launch-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #fff;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 138, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 90, 138, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-launch i {
+            font-size: 24px;
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
+
+        /* DEVELOPER INFO */
+        .dev-info {
+            background: linear-gradient(135deg, rgba(93, 169, 217, 0.08), rgba(123, 45, 66, 0.06));
+            border-radius: 12px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--bronze);
+            margin-top: 20px;
+        }
+
+        .dev-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .dev-info i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        /* NOTE */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .note-box i {
+            color: #f9a825;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .note-box p {
+            font-size: 14px;
+            color: #6d4c00;
+            line-height: 1.6;
+        }
+
+        /* REQUIREMENTS */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .req-item {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.06), rgba(93, 169, 217, 0.06));
+            border: 1px solid #e0e8e0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .req-item i.fa-circle-check {
+            color: var(--green);
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .req-item i.fa-triangle-exclamation {
+            color: #f9a825;
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 12px;
+            }
+            .info-card {
+                padding: 20px 16px;
+            }
+            .btn-launch {
+                padding: 14px 28px;
+                font-size: 17px;
+                width: 100%;
+                justify-content: center;
+            }
+            .feature-grid,
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-icon">
+            <i class="fas fa-file-word"></i>
+        </div>
+        <div>
+            <div class="header-title">Công cụ <span>chuyển đổi Word</span> sang Markdown</div>
+            <div class="header-sub"><i class="fas fa-folder-tree"></i> .doc / .docx → .md — Hàng loạt, tự động</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- GIỚI THIỆU -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Giới thiệu</h2>
+            <p>
+                Công cụ <strong>DocxToMd</strong> giúp bạn chuyển đổi hàng loạt file Word 
+                (<strong>.docx</strong> và <strong>.doc</strong>) sang định dạng <strong>Markdown (.md)</strong> 
+                một cách nhanh chóng và tự động. Công cụ quét đệ quy toàn bộ thư mục cha và các thư mục con, 
+                tạo file .md bên cạnh file gốc — <strong>giữ nguyên file gốc</strong> để bạn tiện đối chiếu.
+            </p>
+            <p style="font-weight:600;color:var(--sky-dark);">
+                <i class="fas fa-star" style="color:var(--bronze);"></i> 
+                Điểm nổi bật: Xử lý hàng loạt — Tự động chuyển .doc thành .docx rồi sang .md — 
+                Giữ nguyên file gốc — Giao diện trực quan!
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span><strong>Chọn thư mục cha</strong><br>Tự động quét toàn bộ thư mục con, tìm file .doc/.docx</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-list-check"></i>
+                    <span><strong>Xem trước danh sách</strong><br>Hiển thị file theo cây thư mục, đánh dấu file đã có .md</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check-square"></i>
+                    <span><strong>Tích chọn linh hoạt</strong><br>Chọn/bỏ chọn từng file hoặc cả thư mục để chuyển đổi</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-rocket"></i>
+                    <span><strong>Thực thi một lần</strong><br>Chuyển đổi tất cả file đã chọn, hiển thị kết quả chi tiết</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- YÊU CẦU HỆ THỐNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-desktop"></i> Yêu cầu hệ thống</h2>
+            <div class="requirements-grid">
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Windows 10/11</strong><br>Hệ điều hành Windows (cần cho việc xử lý file .doc)</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Microsoft Word</strong><br>Cần cài đặt để chuyển đổi file .doc cũ (không bắt buộc với .docx)</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Python 3.8+</strong><br>Đã được tích hợp sẵn trong file .exe (không cần cài đặt)</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <span><strong>Lưu ý về file .doc</strong><br>File .doc định dạng cũ cần MS Word để chuyển đổi. Nếu không có Word, hãy chọn "Bỏ qua file .doc"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHỞI CHẠY -->
+        <div class="launch-section">
+            <button class="btn-launch" onclick="launchTool()">
+                <i class="fas fa-download"></i>
+                <span>
+                    TẢI XUỐNG CÔNG CỤ
+                    <span class="sub-text">Tải DocxToMdGUI.exe (giao diện đồ họa, dễ sử dụng)</span>
+                </span>
+            </button>
+            <p style="margin-top:12px;font-size:13px;color:#888;">
+                Hoặc tải <a href="DocxToMd.exe" download style="color:var(--sky-dark);">DocxToMd.exe</a> (dòng lệnh, nâng cao)
+            </p>
+        </div>
+
+        <!-- CÁCH SỬ DỤNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-list-ol"></i> Cách sử dụng (GUI)</h2>
+            <ul>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>DocxToMdGUI.exe</strong> về máy và nhấp đúp để chạy</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Trình duyệt tự mở giao diện web. Nhập hoặc chọn thư mục cha chứa file Word</span></li>
+                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Bấm "Quét ngay" để xem danh sách file .doc/.docx trong toàn bộ thư mục con</span></li>
+                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Tích chọn file muốn chuyển đổi (mặc định chọn tất cả file chưa có .md)</span></li>
+                <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Bấm "Thực thi chuyển đổi" để tạo file .md bên cạnh file gốc</span></li>
+            </ul>
+
+            <h2 style="margin-top:24px;"><i class="fas fa-terminal"></i> Cách sử dụng (Dòng lệnh)</h2>
+            <ul>
+                <li><i class="fas fa-chevron-right"></i> <span><strong>Quét thư mục mặc định:</strong> <code>DocxToMd.exe</code></span></li>
+                <li><i class="fas fa-chevron-right"></i> <span><strong>Chỉ định thư mục:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu"</code></span></li>
+                <li><i class="fas fa-chevron-right"></i> <span><strong>Xem trước (không convert thật):</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --dry-run</code></span></li>
+                <li><i class="fas fa-chevron-right"></i> <span><strong>Ghi đè file .md cũ:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --force</code></span></li>
+                <li><i class="fas fa-chevron-right"></i> <span><strong>Bỏ qua file .doc:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --skip-doc</code></span></li>
+            </ul>
+
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>
+                    <strong>Lưu ý quan trọng:</strong> Công cụ <strong>giữ nguyên file gốc</strong> (.doc/.docx), 
+                    chỉ tạo thêm file .md bên cạnh. File .doc (định dạng Word cũ) sẽ được tự động chuyển thành 
+                    .docx tạm thời qua Microsoft Word, sau đó trích xuất nội dung sang .md. 
+                    Nếu máy bạn không cài Microsoft Word, hãy dùng tùy chọn <strong>--skip-doc</strong> 
+                    hoặc tích chọn "Bỏ qua file .doc" trong giao diện GUI.
+                </p>
+            </div>
+        </div>
+
+        <!-- KẾT QUẢ MẪU -->
+        <div class="info-card">
+            <h2><i class="fas fa-eye"></i> Kết quả sau khi chuyển đổi</h2>
+            <p>
+                Sau khi chạy công cụ, mỗi file Word sẽ có một file .md tương ứng nằm cùng thư mục:
+            </p>
+            <div style="background:#f5f5f5;border-radius:10px;padding:16px;font-family:monospace;font-size:13px;line-height:2;margin-top:12px;">
+                📁 <strong>TaiLieuGoc/</strong><br>
+                &nbsp;&nbsp;├── Quyet dinh so 123.docx &nbsp;&nbsp;&nbsp;<span style="color:var(--sky-dark);">← File gốc (giữ nguyên)</span><br>
+                &nbsp;&nbsp;├── Quyet dinh so 123.md &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green);">← File .md mới tạo ✓</span><br>
+                &nbsp;&nbsp;├── Bao cao tong ket.doc &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--sky-dark);">← File gốc (giữ nguyên)</span><br>
+                &nbsp;&nbsp;└── Bao cao tong ket.md &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green);">← File .md mới tạo ✓</span><br>
+            </div>
+            <p style="margin-top:14px;">
+                <i class="fas fa-check-circle" style="color:var(--green);"></i> 
+                File .md chứa toàn bộ nội dung văn bản (paragraphs + tables) từ file Word gốc.
+            </p>
+        </div>
+
+        <!-- THÔNG TIN PHÁT TRIỂN -->
+        <div class="info-card">
+            <h2><i class="fas fa-code-branch"></i> Thông tin phát triển</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-cog"></i> Engine: <strong>python-docx + win32com</strong> — Trích xuất text từ Word sang Markdown</p>
+                <p><i class="fas fa-shield-alt"></i> An toàn: <strong>Giữ nguyên file gốc</strong> — Chỉ tạo thêm file .md, không sửa/xóa file Word</p>
+                <p><i class="fas fa-network-wired"></i> Công nghệ: <strong>Flask + HTML/CSS/JS</strong> — Giao diện web trực quan</p>
+                <p><i class="fas fa-file-code"></i> Hỗ trợ: <strong>.docx</strong> (python-docx) + <strong>.doc</strong> (Word COM Automation)</p>
+                <p><i class="fas fa-user"></i> Phát triển bởi: <strong>Nguyễn Khắc Tú</strong></p>
+                <p><i class="fas fa-building"></i> Đơn vị: <strong>Viện KSND khu vực 5 - Bắc Ninh</strong></p>
+                <p><i class="fas fa-tools"></i> Phiên bản: <strong>1.0</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function launchTool() {
+            var confirmed = confirm(
+                'Bạn sắp tải xuống DocxToMdGUI.exe.\n\n' +
+                'Hướng dẫn sử dụng:\n' +
+                '1. Nhấn OK để tải tệp DocxToMdGUI.exe\n' +
+                '2. Nhấp đúp vào DocxToMdGUI.exe để chạy\n' +
+                '3. Trình duyệt sẽ tự động mở giao diện sử dụng\n' +
+                '4. Chọn thư mục cha → Quét → Chọn file → Chuyển đổi'
+            );
+
+            if (confirmed) {
+                var link = document.createElement('a');
+                link.href = 'DocxToMdGUI.exe';
+                link.download = 'DocxToMdGUI.exe';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(function() {
+                    alert(
+                        '✅ Tệp DocxToMdGUI.exe đã được tải xuống.\n\n' +
+                        '👉 Nhấp đúp vào DocxToMdGUI.exe để khởi chạy công cụ.\n\n' +
+                        '📝 Yêu cầu: Microsoft Word (để xử lý file .doc cũ).\n' +
+                        '   Nếu không có Word, hãy chọn "Bỏ qua file .doc".'
+                    );
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
