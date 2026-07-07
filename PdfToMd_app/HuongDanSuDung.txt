@@ -1,0 +1,67 @@
+============================================================
+HƯỚNG DẪN SỬ DỤNG PdfToMdGUI
+============================================================
+
+PdfToMdGUI là công cụ chuyển đổi file PDF/Ảnh sang Markdown,
+sử dụng Gemini API (Google AI) để OCR. Công cụ hỗ trợ
+chuyển đổi hàng loạt, quét đệ quy thư mục con, tạo file .md
+bên cạnh file gốc.
+
+============================================================
+YÊU CẦU HỆ THỐNG
+============================================================
+- Python 3.8+ đã cài đặt
+- Các thư viện Python:
+  + flask
+  + pypdf
+  + aiohttp
+  + nest_asyncio
+- Gemini API Key (lấy miễn phí tại https://aistudio.google.com/apikey)
+
+Cài đặt thư viện:
+  pip install flask pypdf aiohttp nest_asyncio
+
+============================================================
+CÁCH SỬ DỤNG
+============================================================
+
+1. Chạy file pdf_to_md_gui.py:
+   python pdf_to_md_gui.py
+
+2. Trình duyệt tự động mở giao diện web.
+
+3. Nhập Gemini API Key vào ô "API Key".
+
+4. Chọn thư mục cha chứa file PDF/Ảnh (hoặc nhập đường dẫn).
+
+5. Bấm "Quét ngay" để xem danh sách file.
+
+6. Tích chọn file muốn chuyển đổi.
+
+7. Bấm "Thực thi chuyển đổi" để tạo file .md.
+
+============================================================
+LƯU Ý QUAN TRỌNG
+============================================================
+- File gốc (.pdf, .jpg, .png...) được GIỮ NGUYÊN.
+- File .md được tạo cùng thư mục, cùng tên với file gốc.
+- PDF có text (pypdf đọc được) sẽ xử lý nhanh, miễn phí.
+- PDF scan/ảnh sẽ gọi Gemini API (tốn token, chậm hơn).
+- API Key được lưu trong localStorage của trình duyệt.
+- Mỗi file < 20MB (giới hạn của Gemini API).
+
+============================================================
+HỖ TRỢ ĐỊNH DẠNG
+============================================================
+- .pdf (cả text và scan)
+- .jpg, .jpeg
+- .png
+- .tiff, .tif
+- .bmp
+- .gif
+- .webp
+
+============================================================
+Phát triển bởi: Nguyễn Khắc Tú
+Đơn vị: Viện KSND khu vực 5 - Bắc Ninh
+============================================================

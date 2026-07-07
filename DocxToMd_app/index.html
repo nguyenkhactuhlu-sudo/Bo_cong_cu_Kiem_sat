@@ -398,32 +398,20 @@
                 <i class="fas fa-download"></i>
                 <span>
                     TẢI XUỐNG CÔNG CỤ
-                    <span class="sub-text">Tải DocxToMdGUI.exe (giao diện đồ họa, dễ sử dụng)</span>
+                    <span class="sub-text">Tải file .zip — Giải nén, chạy DocxToMdGUI.exe, không cần cài Python</span>
                 </span>
             </button>
-            <p style="margin-top:12px;font-size:13px;color:#888;">
-                Hoặc tải <a href="DocxToMd.exe" download style="color:var(--sky-dark);">DocxToMd.exe</a> (dòng lệnh, nâng cao)
-            </p>
         </div>
 
         <!-- CÁCH SỬ DỤNG -->
         <div class="info-card">
-            <h2><i class="fas fa-list-ol"></i> Cách sử dụng (GUI)</h2>
+            <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
             <ul>
-                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>DocxToMdGUI.exe</strong> về máy và nhấp đúp để chạy</span></li>
-                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Trình duyệt tự mở giao diện web. Nhập hoặc chọn thư mục cha chứa file Word</span></li>
-                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Bấm "Quét ngay" để xem danh sách file .doc/.docx trong toàn bộ thư mục con</span></li>
-                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Tích chọn file muốn chuyển đổi (mặc định chọn tất cả file chưa có .md)</span></li>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải file <strong>DocxToMd.zip</strong> về máy và giải nén</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Nhấp đúp vào <strong>DocxToMdGUI.exe</strong> để chạy</span></li>
+                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Trình duyệt tự mở giao diện web. Nhập hoặc chọn thư mục cha chứa file Word</span></li>
+                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Bấm "Quét ngay" để xem danh sách file, tích chọn file muốn chuyển đổi</span></li>
                 <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Bấm "Thực thi chuyển đổi" để tạo file .md bên cạnh file gốc</span></li>
-            </ul>
-
-            <h2 style="margin-top:24px;"><i class="fas fa-terminal"></i> Cách sử dụng (Dòng lệnh)</h2>
-            <ul>
-                <li><i class="fas fa-chevron-right"></i> <span><strong>Quét thư mục mặc định:</strong> <code>DocxToMd.exe</code></span></li>
-                <li><i class="fas fa-chevron-right"></i> <span><strong>Chỉ định thư mục:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu"</code></span></li>
-                <li><i class="fas fa-chevron-right"></i> <span><strong>Xem trước (không convert thật):</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --dry-run</code></span></li>
-                <li><i class="fas fa-chevron-right"></i> <span><strong>Ghi đè file .md cũ:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --force</code></span></li>
-                <li><i class="fas fa-chevron-right"></i> <span><strong>Bỏ qua file .doc:</strong> <code>DocxToMd.exe --dir "D:\TaiLieu" --skip-doc</code></span></li>
             </ul>
 
             <div class="note-box">
@@ -475,28 +463,32 @@
     <script>
         function launchTool() {
             var confirmed = confirm(
-                'Bạn sắp tải xuống DocxToMdGUI.exe.\n\n' +
+                'Bạn sắp tải xuống file DocxToMd.zip chứa DocxToMdGUI.exe.\n\n' +
                 'Hướng dẫn sử dụng:\n' +
-                '1. Nhấn OK để tải tệp DocxToMdGUI.exe\n' +
-                '2. Nhấp đúp vào DocxToMdGUI.exe để chạy\n' +
-                '3. Trình duyệt sẽ tự động mở giao diện sử dụng\n' +
-                '4. Chọn thư mục cha → Quét → Chọn file → Chuyển đổi'
+                '1. Nhấn OK để tải tệp DocxToMd.zip\n' +
+                '2. Giải nén file .zip vào một thư mục\n' +
+                '3. Nhấp đúp vào DocxToMdGUI.exe để chạy\n' +
+                '4. Trình duyệt sẽ tự động mở giao diện sử dụng\n' +
+                '5. Chọn thư mục cha → Quét → Chọn file → Chuyển đổi\n\n' +
+                'Do file .exe dễ bị chặn, chúng tôi đóng gói trong .zip để đảm bảo tải về thành công.'
             );
 
             if (confirmed) {
                 var link = document.createElement('a');
-                link.href = 'DocxToMdGUI.exe';
-                link.download = 'DocxToMdGUI.exe';
+                link.href = 'DocxToMd.zip';
+                link.download = 'DocxToMd.zip';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
                 setTimeout(function() {
                     alert(
-                        '✅ Tệp DocxToMdGUI.exe đã được tải xuống.\n\n' +
-                        '👉 Nhấp đúp vào DocxToMdGUI.exe để khởi chạy công cụ.\n\n' +
+                        '✅ Đã tải xuống DocxToMd.zip.\n\n' +
+                        '1. Giải nén file .zip vào một thư mục\n' +
+                        '2. Nhấp đúp vào DocxToMdGUI.exe để khởi chạy công cụ\n\n' +
                         '📝 Yêu cầu: Microsoft Word (để xử lý file .doc cũ).\n' +
-                        '   Nếu không có Word, hãy chọn "Bỏ qua file .doc".'
+                        '   Nếu không có Word, hãy chọn "Bỏ qua file .doc".\n\n' +
+                        'Không cần cài Python hay thư viện gì cả!'
                     );
                 }, 500);
             }
