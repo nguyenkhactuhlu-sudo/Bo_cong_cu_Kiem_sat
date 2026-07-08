@@ -1,0 +1,63 @@
+============================================================
+HƯỚNG DẪN SỬ DỤNG PdfToMdGUI
+============================================================
+
+PdfToMdGUI là công cụ chuyển đổi file PDF/Ảnh sang Markdown,
+sử dụng Gemini API (Google AI) để OCR. Công cụ hỗ trợ
+chuyển đổi hàng loạt, quét đệ quy thư mục con, tạo file .md
+bên cạnh file gốc.
+
+============================================================
+YÊU CẦU HỆ THỐNG
+============================================================
+- Windows 10/11
+- Không cần cài Python (đã tích hợp sẵn trong file .exe)
+
+============================================================
+CÁCH SỬ DỤNG
+============================================================
+
+1. Chạy file PdfToMdGUI.exe (nhấp đúp chuột).
+
+2. Trình duyệt tự động mở giao diện web.
+   Nếu không mở, hãy truy cập: http://127.0.0.1:5789
+
+3. Bước 0 - Nhập Gemini API Key:
+   - Lấy key miễn phí tại https://aistudio.google.com/apikey
+   - Dán key vào ô "API Key" và bấm "Lưu API Key"
+   - Key được lưu vào file API keys.txt
+
+4. Bước 1 - Chọn thư mục:
+   - Bấm "Chọn thư mục" để mở hộp thoại chọn thư mục
+   - Hoặc dán đường dẫn thủ công vào ô nhập
+   - Bấm "Quét ngay" để xem danh sách file
+
+5. Bước 2 - Chọn file & chuyển đổi:
+   - Tích chọn file muốn chuyển đổi
+   - Bấm "Thực thi chuyển đổi" để tạo file .md
+
+============================================================
+LƯU Ý QUAN TRỌNG
+============================================================
+- File gốc (.pdf, .jpg, .png...) được GIỮ NGUYÊN.
+- File .md được tạo cùng thư mục, cùng tên với file gốc.
+- PDF có text (pypdf đọc được) sẽ xử lý nhanh, miễn phí.
+- PDF scan/ảnh sẽ gọi Gemini API (tốn token, chậm hơn).
+- API Key được lưu trong file API keys.txt và localStorage.
+- Mỗi file < 20MB (giới hạn của Gemini API).
+
+============================================================
+HỖ TRỢ ĐỊNH DẠNG
+============================================================
+- .pdf (cả text và scan)
+- .jpg, .jpeg
+- .png
+- .tiff, .tif
+- .bmp
+- .gif
+- .webp
+
+============================================================
+Phát triển bởi: Nguyễn Khắc Tú
+Đơn vị: Viện KSND khu vực 5 - Bắc Ninh
+============================================================

@@ -1,0 +1,198 @@
+====================================================================
+  DocxToMd - CÔNG CỤ CHUYỂN ĐỔI WORD SANG MARKDOWN
+  Phiên bản: 1.0 | Dành cho Windows
+====================================================================
+
+GIỚI THIỆU
+----------
+DocxToMd là công cụ giúp bạn tự động chuyển đổi hàng loạt file Word
+(.doc và .docx) sang định dạng Markdown (.md). Công cụ quét đệ quy 
+thư mục cha và tất cả thư mục con, giữ nguyên file gốc, tạo file .md 
+tương ứng bên cạnh để bạn tiện đối chiếu.
+
+Công cụ gồm 2 phiên bản:
+  1. DocxToMdGUI.exe - Giao diện đồ họa (web), dễ sử dụng, khuyên dùng
+  2. DocxToMd.exe     - Dòng lệnh (CLI), dành cho người dùng nâng cao
+
+YÊU CẦU
+-------
+- Hệ điều hành: Windows 10/11
+- Microsoft Word: Cần thiết để chuyển đổi file .doc cũ (file .docx 
+  không yêu cầu MS Word)
+- Python: Không cần cài đặt riêng (đã được tích hợp trong file .exe)
+
+
+============================================================
+  A. SỬ DỤNG DOCX TO MD GUI (KHUYÊN DÙNG)
+============================================================
+
+CÁCH KHỞI CHẠY
+---------------
+1. Nhấp đúp vào file DocxToMdGUI.exe
+2. Trình duyệt sẽ tự động mở giao diện web tại địa chỉ http://127.0.0.1:5788
+3. Nếu trình duyệt không tự mở, hãy mở trình duyệt và nhập: http://127.0.0.1:5788
+
+CÁC BƯỚC SỬ DỤNG
+------------------
+Bước 1: Chọn thư mục cần quét
+  - Nhập đường dẫn thư mục hoặc bấm nút "Chọn thư mục" để duyệt
+  - Bấm "Quét ngay" để tool quét toàn bộ file .doc/.docx trong thư mục
+    (bao gồm tất cả thư mục con)
+
+Bước 2: Xem xét danh sách file
+  - Tool hiển thị danh sách file theo cây thư mục
+  - File .docx: hiển thị màu xanh dương, sẵn sàng chuyển đổi
+  - File .doc: hiển thị màu cam, cần MS Word để chuyển đổi
+  - File đã có .md: đánh dấu "đã tồn tại" (mặc định bỏ chọn)
+
+Bước 3: Tùy chọn xử lý
+  - [x] Bỏ qua file .doc: Chỉ xử lý file .docx (không cần MS Word)
+  - [x] Ghi đè file .md cũ: Ghi đè nếu file .md đã tồn tại
+  - Tích/bỏ tích từng file hoặc cả thư mục
+  - Có thể dùng nút "Chọn tất cả" / "Bỏ chọn tất cả"
+
+Bước 4: Thực thi chuyển đổi
+  - Bấm nút "Thực thi chuyển đổi"
+  - Xác nhận trong hộp thoại
+  - Tool sẽ chuyển đổi các file đã chọn và hiển thị kết quả
+
+LƯU Ý
+-----
+- File gốc (.doc/.docx) LUÔN ĐƯỢC GIỮ NGUYÊN
+- File .md được tạo cùng thư mục với file gốc
+- File .doc (Word cũ) sẽ mất thời gian lâu hơn do cần khởi động MS Word
+- Nếu không có MS Word, hãy bỏ chọn "Bỏ qua file .doc"
+- Để thoát, đóng cửa sổ dòng lệnh (cmd) hoặc nhấn Ctrl+C
+
+
+============================================================
+  B. SỬ DỤNG DOCX TO MD CLI (DÒNG LỆNH - NÂNG CAO)
+============================================================
+
+CÁCH KHỞI CHẠY
+---------------
+1. Mở Command Prompt (cmd) hoặc PowerShell
+2. Di chuyển đến thư mục chứa DocxToMd.exe
+3. Chạy lệnh theo cú pháp:
+
+   DocxToMd.exe [tùy chọn]
+
+CÁC LỆNH CƠ BẢN
+----------------
+
+1. QUÉT VÀ CHUYỂN ĐỔI THƯ MỤC MẶC ĐỊNH:
+   DocxToMd.exe
+
+2. CHỈ ĐỊNH THƯ MỤC KHÁC:
+   DocxToMd.exe --dir "D:\TaiLieu"
+
+3. XEM TRƯỚC (AN TOÀN - không convert thật):
+   DocxToMd.exe --dir "D:\TaiLieu" --dry-run
+
+4. GHI ĐÈ FILE .MD CŨ:
+   DocxToMd.exe --dir "D:\TaiLieu" --force
+
+5. BỎ QUA FILE .DOC (chỉ xử lý .docx):
+   DocxToMd.exe --dir "D:\TaiLieu" --skip-doc
+
+6. LOG CHI TIẾT (DEBUG):
+   DocxToMd.exe --dir "D:\TaiLieu" --verbose
+
+CÁC TÙY CHỌN ĐẦY ĐỦ
+--------------------
+  --dir, -d       Đường dẫn đến thư mục cần quét
+  --dry-run       Chỉ liệt kê file sẽ xử lý, không convert thật
+  --force, -f     Ghi đè file .md nếu đã tồn tại
+  --verbose, -v   Log chi tiết (DEBUG level)
+  --skip-doc      Bỏ qua file .doc, chỉ xử lý .docx
+  --help, -h      Hiển thị trợ giúp
+
+
+============================================================
+  C. CƠ CHẾ HOẠT ĐỘNG
+============================================================
+
+XỬ LÝ FILE .DOCX
+-----------------
+- Sử dụng thư viện python-docx để đọc trực tiếp file .docx
+- Trích xuất toàn bộ paragraphs và tables
+- Định dạng bảng thành Markdown table (pipe-separated)
+- Không cần cài đặt Microsoft Word
+
+XỬ LÝ FILE .DOC
+----------------
+- File .doc là định dạng Word 97-2003 (định dạng nhị phân cũ)
+- Công cụ sử dụng Microsoft Word (COM Automation) để mở file .doc
+- Lưu tạm thành file .docx
+- Đọc file .docx tạm bằng python-docx
+- Xóa file tạm sau khi hoàn tất
+- YÊU CẦU: Microsoft Word phải được cài đặt trên máy
+
+KẾT QUẢ ĐẦU RA
+---------------
+- File .md được tạo cùng thư mục với file gốc
+- File gốc (.doc/.docx) được giữ nguyên, không bị sửa đổi
+- File không có nội dung text sẽ bị bỏ qua (log [NO_TEXT])
+- File có lỗi sẽ được ghi log và bỏ qua
+
+
+============================================================
+  D. VÍ DỤ THỰC TẾ
+============================================================
+
+CẤU TRÚC THƯ MỤC TRƯỚC KHI CHẠY
+---------------------------------
+📁 D:\HoSo\
+  ├── Quyet dinh so 123.docx
+  ├── Bao cao tong ket.doc
+  └── 📁 PhuLuc\
+      └── Bang ke chi tiet.docx
+
+SAU KHI CHẠY LỆNH:
+  DocxToMd.exe --dir "D:\HoSo"
+
+CẤU TRÚC THƯ MỤC SAU KHI CHẠY
+-------------------------------
+📁 D:\HoSo\
+  ├── Quyet dinh so 123.docx     ← File gốc (giữ nguyên)
+  ├── Quyet dinh so 123.md       ← File .md mới tạo ✓
+  ├── Bao cao tong ket.doc       ← File gốc (giữ nguyên)
+  ├── Bao cao tong ket.md        ← File .md mới tạo ✓
+  └── 📁 PhuLuc\
+      ├── Bang ke chi tiet.docx  ← File gốc (giữ nguyên)
+      └── Bang ke chi tiet.md    ← File .md mới tạo ✓
+
+
+============================================================
+  E. KHẮC PHỤC LỖI THƯỜNG GẶP
+============================================================
+
+Lỗi: "Thiếu python-docx"
+  → Nguyên nhân: Thư viện python-docx chưa được cài đặt
+  → Cách khắc phục: Cài đặt bằng lệnh: pip install python-docx
+  → Lưu ý: File .exe đã tích hợp sẵn, lỗi này chỉ xảy ra khi chạy 
+    trực tiếp file .py
+
+Lỗi: "Không tìm thấy Microsoft Word"
+  → Nguyên nhân: Máy chưa cài Microsoft Word
+  → Cách khắc phục: Dùng tùy chọn --skip-doc để bỏ qua file .doc,
+    hoặc cài đặt Microsoft Word
+
+Lỗi: "File không tồn tại"
+  → Nguyên nhân: Đường dẫn sai hoặc file đã bị di chuyển
+  → Cách khắc phục: Kiểm tra lại đường dẫn thư mục
+
+Lỗi: "[NO_TEXT]"
+  → Nguyên nhân: File Word không chứa nội dung văn bản (chỉ có ảnh, 
+    hoặc file trống)
+  → Đây không phải lỗi, tool sẽ bỏ qua file này
+
+Lỗi: "File .doc mất nhiều thời gian"
+  → Nguyên nhân: File .doc yêu cầu khởi động MS Word, quá trình này 
+    có thể mất vài giây cho mỗi file
+  → Công cụ có delay 0.5 giây giữa các file .doc để tránh quá tải Word
+
+
+============================================================
+  Mọi thắc mắc vui lòng liên hệ nhà phát triển
+====================================================================

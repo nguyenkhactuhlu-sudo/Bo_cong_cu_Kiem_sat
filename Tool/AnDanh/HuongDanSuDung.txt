@@ -1,0 +1,54 @@
+HƯỚNG DẪN SỬ DỤNG CÔNG CỤ ẨN DANH VĂN BẢN
+================================================
+
+Tác giả: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
+Phiên bản: 1.0
+
+================================================
+I. GIỚI THIỆU
+================================================
+
+Công cụ tự động che thông tin trong văn bản giúp phát hiện và che giấu 
+các thông tin nhạy cảm như: họ tên, số điện thoại, số CMND/CCCD, địa chỉ, 
+ngày tháng năm sinh, số tài khoản ngân hàng trong file văn bản .docx.
+
+TÍNH NĂNG:
+- Hỗ trợ định dạng .docx
+- Tự động nhận diện thông tin cần che, KHÔNG CẦN INTERNET
+- Giao diện trực quan, dễ sử dụng
+- Xử lý nhanh chóng, chính xác
+- Bảo mật tuyệt đối - xử lý hoàn toàn OFFLINE trên máy
+- Tự động xóa file sau khi tắt phần mềm
+
+================================================
+II. CÀI ĐẶT
+================================================
+
+1. Giải nén file AnDanhTool.zip vào một thư mục
+2. Không cần cài đặt Python hay thư viện gì thêm
+3. File .exe đã được đóng gói đầy đủ
+
+================================================
+III. CÁCH SỬ DỤNG
+================================================
+
+1. Nhấp đúp vào AnDanhTool.exe để khởi chạy
+2. Trình duyệt sẽ tự động mở giao diện web
+3. Chọn file .docx cần che thông tin
+4. Công cụ tự động quét và đánh dấu các thông tin nhạy cảm
+5. Xem trước kết quả và tải file đã được che thông tin
+
+================================================
+IV. YÊU CẦU HỆ THỐNG
+================================================
+
+- Hệ điều hành: Windows 10/11
+- Không yêu cầu cài đặt thêm phần mềm
+- File .exe chạy độc lập
+
+================================================
+V. LIÊN HỆ
+================================================
+
+Tác giả: Trần Huy
+Đơn vị: Viện KSND khu vực 11 - Đắk Lắk

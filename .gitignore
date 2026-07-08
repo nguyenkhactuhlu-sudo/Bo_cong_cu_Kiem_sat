@@ -7,6 +7,12 @@ __pycache__/
 # Executable files (too large for git)
 *.exe
 
+# Zip archives (build artifacts, too large for git)
+*.zip
+
 # Python cache
 *.pyc
 *.pyo
+
+# API Keys (chứa thông tin nhạy cảm)
+Tool/PdfToMd/API keys.txt
