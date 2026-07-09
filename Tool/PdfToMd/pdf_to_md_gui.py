@@ -7,11 +7,32 @@ Sử dụng: python pdf_to_md_gui.py
 """
 import os
 import sys
+import subprocess
+import importlib
+
+# ============================================================
+# AUTO-INSTALL THƯ VIỆN THIẾU (dùng module chung auto_install.py)
+# ============================================================
+_TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
+_PARENT_DIR = os.path.dirname(_TOOL_DIR)  # Tool/
+if _PARENT_DIR not in sys.path:
+    sys.path.insert(0, _PARENT_DIR)
+from auto_install import check_and_install
+
+check_and_install({
+    "flask": "flask",
+    "pypdf": "pypdf",
+    "aiohttp": "aiohttp",
+    "nest_asyncio": "nest-asyncio",
+    "docx": "python-docx",
+})
+
 import json
 import time
 import threading
 import webbrowser
 import ctypes
+import socket
 from ctypes import wintypes
 from pathlib import Path
 from flask import Flask, request, jsonify
@@ -26,6 +47,21 @@ try:
 except ImportError as e:
     ENGINE_AVAILABLE = False
     print(f"[WARNING] Không thể import pdf_to_md: {e}. Dùng engine dự phòng.")
+
+# ============================================================
+# FIND FREE PORT (tránh xung đột với FileRenamer:5789, DocxToMd:5788)
+# ============================================================
+def find_free_port(start_port=5790, max_attempts=100):
+    """Tìm cổng trống bắt đầu từ start_port."""
+    for port in range(start_port, start_port + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('127.0.0.1', port))
+                return port
+        except OSError:
+            continue
+    # Fallback: để Flask tự chọn
+    return 0
 
 def browse_folder_windows(title="Chọn thư mục"):
     BIF_RETURNONLYFSDIRS = 0x0001
@@ -52,7 +88,13 @@ def browse_folder_windows(title="Chọn thư mục"):
     CoInitialize.restype = wintypes.HRESULT
     CoInitialize.argtypes = [ctypes.c_void_p]
     CoUninitialize = ctypes.windll.ole32.CoUninitialize
-    CoInitialize(None)
+
+    # Khởi tạo COM, kiểm tra lỗi
+    hr = CoInitialize(None)
+    if hr < 0 and hr != 0x00000001:  # S_FALSE (đã init) hoặc S_OK (0)
+        print(f"[ERROR] Không thể khởi tạo COM (HRESULT: 0x{hr & 0xFFFFFFFF:08X})")
+        return ""
+
     path_buffer = ctypes.create_unicode_buffer(260)
     bi = BROWSEINFO()
     bi.hwndOwner = 0
@@ -351,6 +393,7 @@ APP_TEMPLATE = r'''
         }
         .key-ok { background: var(--green-light); color: var(--green); }
         .key-missing { background: #fff3e0; color: var(--orange); }
+        .key-error { background: var(--red-light); color: var(--red); }
 
         /* Folder Section */
         .folder-row {
@@ -448,6 +491,13 @@ APP_TEMPLATE = r'''
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .alert-box {
+            padding: 12px 16px; border-radius: 8px; margin-top: 8px;
+            font-size: 13px; line-height: 1.5;
+        }
+        .alert-box.info { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+        .alert-box.error { background: var(--red-light); color: var(--red); border: 1px solid #ef9a9a; }
+
         @media (max-width: 600px) {
             .header { padding: 10px 14px; }
             .header-title { font-size: 15px; }
@@ -484,6 +534,7 @@ APP_TEMPLATE = r'''
                 <input type="text" id="folderPath" class="folder-input" placeholder="Đường dẫn thư mục chứa file PDF/Ảnh...">
                 <button class="btn btn-outline" onclick="browseFolder()"><i class="fas fa-folder"></i> Chọn thư mục</button>
             </div>
+            <div id="folderAlert"></div>
             <div class="scan-options">
                 <label><input type="checkbox" id="forceScan"> Quét cả file đã có .md</label>
                 <button class="btn btn-primary" onclick="scanFolder()"><i class="fas fa-search"></i> Quét ngay</button>
@@ -536,6 +587,19 @@ APP_TEMPLATE = r'''
         var allFiles = [];
         var folderChecks = {};
 
+        // ============ HELPER: Show message ============
+        function showAlert(elId, msg, type) {
+            var el = document.getElementById(elId);
+            if (!el) return;
+            type = type || 'info';
+            el.innerHTML = '<div class="alert-box ' + type + '"><i class="fas fa-' + 
+                (type === 'error' ? 'exclamation-circle' : 'info-circle') + '"></i> ' + msg + '</div>';
+        }
+        function clearAlert(elId) {
+            var el = document.getElementById(elId);
+            if (el) el.innerHTML = '';
+        }
+
         // ============ ON LOAD ============
         window.onload = function() {
             checkApiKey();
@@ -555,14 +619,14 @@ APP_TEMPLATE = r'''
                         statusEl.innerHTML = '<div class="key-status key-missing"><i class="fas fa-exclamation-triangle"></i> Chưa có API Key. Vui lòng nhập key từ Google AI Studio.</div>';
                     }
                 })
-                .catch(function() {
-                    statusEl.innerHTML = '<div class="key-status key-missing">Không thể kiểm tra API Key.</div>';
+                .catch(function(e) {
+                    statusEl.innerHTML = '<div class="key-status key-error">Lỗi kết nối máy chủ: ' + e + '</div>';
                 });
         }
 
         function saveApiKey() {
             var key = document.getElementById('apiKeyInput').value.trim();
-            if (!key) { alert('Vui lòng nhập API Key!'); return; }
+            if (!key) { showAlert('keyStatus', 'Vui lòng nhập API Key!', 'error'); return; }
             var statusEl = document.getElementById('keyStatus');
             statusEl.innerHTML = '<span class="spinner"></span> Đang lưu...';
             fetch('/api/save-key', {
@@ -576,22 +640,39 @@ APP_TEMPLATE = r'''
                     statusEl.innerHTML = '<div class="key-status key-ok"><i class="fas fa-check-circle"></i> Đã lưu API Key: ' + data.key_masked + '</div>';
                     document.getElementById('apiKeyInput').value = data.key_masked;
                 } else {
-                    statusEl.innerHTML = '<div class="key-status key-missing">Lỗi: ' + (data.error || 'Không thể lưu') + '</div>';
+                    statusEl.innerHTML = '<div class="key-status key-error">Lỗi: ' + (data.error || 'Không thể lưu') + '</div>';
                 }
             })
-            .catch(function() {
-                statusEl.innerHTML = '<div class="key-status key-missing">Lỗi kết nối khi lưu API Key.</div>';
+            .catch(function(e) {
+                statusEl.innerHTML = '<div class="key-status key-error">Lỗi kết nối khi lưu API Key: ' + e + '</div>';
             });
         }
 
         // ============ FOLDER ============
         function browseFolder() {
+            clearAlert('folderAlert');
+            var btn = document.querySelector('.btn-outline');  // Nút "Chọn thư mục"
+            var origText = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Đang mở...';
+            }
             fetch('/api/browse-folder')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
+                    if (btn) { btn.disabled = false; btn.innerHTML = origText; }
                     if (data.path) {
                         document.getElementById('folderPath').value = data.path;
+                        clearAlert('folderAlert');
+                    } else if (data.error) {
+                        showAlert('folderAlert', data.error + '<br><small>Bạn vẫn có thể dán đường dẫn thủ công vào ô bên trên và bấm "Quét ngay".</small>', 'error');
+                    } else {
+                        showAlert('folderAlert', 'Bạn đã hủy chọn thư mục, hoặc hộp thoại không khả dụng.<br><small>Vui lòng dán đường dẫn thư mục thủ công vào ô bên trên và bấm "Quét ngay".</small>', 'info');
                     }
+                })
+                .catch(function(e) {
+                    if (btn) { btn.disabled = false; btn.innerHTML = origText; }
+                    showAlert('folderAlert', 'Không thể mở hộp thoại chọn thư mục (lỗi: ' + e + ').<br><small>Vui lòng dán đường dẫn thư mục thủ công vào ô bên trên và bấm "Quét ngay".</small>', 'error');
                 });
         }
 
@@ -606,6 +687,7 @@ APP_TEMPLATE = r'''
             document.getElementById('btnConvert').disabled = true;
             document.getElementById('progressSection').style.display = 'none';
             document.getElementById('resultsContainer').innerHTML = '';
+            clearAlert('folderAlert');
 
             fetch('/api/scan', {
                 method: 'POST',
@@ -871,9 +953,14 @@ def browse_folder_api():
         folder = browse_folder_windows('Chọn thư mục cha chứa file PDF/Ảnh')
         if folder:
             folder = os.path.normpath(folder)
-        return jsonify({'path': folder or ''})
+            return jsonify({'path': folder})
+        else:
+            # Không có lỗi nhưng cũng không có kết quả (có thể user cancel hoặc COM lỗi)
+            return jsonify({'path': '', 'error': 'Không thể mở hộp thoại chọn thư mục. Hãy thử dán đường dẫn thủ công.'})
     except Exception as e:
-        return jsonify({'path': '', 'error': str(e)})
+        import traceback
+        traceback.print_exc()
+        return jsonify({'path': '', 'error': f'Lỗi khi mở hộp thoại: {str(e)}. Hãy dán đường dẫn thủ công.'})
 
 @app.route('/api/scan', methods=['POST'])
 def scan_folder_api():
@@ -1013,7 +1100,7 @@ def save_api_key():
 
 def main():
     host = '127.0.0.1'
-    port = 5789
+    port = find_free_port(start_port=5790)
 
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 

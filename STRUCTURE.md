@@ -51,6 +51,7 @@ Bo_cong_cu_Kiem_sat/
 │   └── Recording.mp4
 │
 └── Tool/                         ← Các công cụ Python GUI (có thể build .exe)
+    ├── auto_install.py           ← Module dùng chung: tự động kiểm tra & cài thư viện thiếu
     ├── DocxToMd/                 ← Word (.doc/.docx) → Markdown
     │   ├── convert_doc_to_md.py  ← Engine chuyển đổi (python-docx + win32com)
     │   ├── docx_to_md_gui.py     ← Flask GUI (port 5788)
@@ -258,6 +259,7 @@ exe = EXE(pyz, a.scripts, ..., name='TenToolGUI', console=True, ...)
 | **File .exe → .zip** | Nén lại để tránh bị trình duyệt/antivirus chặn khi tải |
 | **Deploy** | GitHub Pages phục vụ file tĩnh; file `.zip` >50MB nên dùng Git LFS nếu cần |
 | **Folder Browser** | Dùng `ctypes.windll.shell32.SHBrowseForFolderW` (native Windows, không phụ thuộc tkinter) |
+| **Auto-install library** | Mỗi tool GUI dùng module chung `Tool/auto_install.py` để tự động kiểm tra & cài thư viện thiếu khi chạy file `.py` |
 | **File .zip** | Không push lên Git (đã thêm `*.zip` vào `.gitignore`) — quá nặng, là build artifact |
 
 ---

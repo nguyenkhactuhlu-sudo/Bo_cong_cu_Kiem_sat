@@ -8,6 +8,20 @@ Sử dụng: python file_renamer_gui.py
 
 import os
 import sys
+
+# ============================================================
+# AUTO-INSTALL THƯ VIỆN THIẾU (dùng module chung auto_install.py)
+# ============================================================
+_TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
+_PARENT_DIR = os.path.dirname(_TOOL_DIR)  # Tool/
+if _PARENT_DIR not in sys.path:
+    sys.path.insert(0, _PARENT_DIR)
+from auto_install import check_and_install
+
+check_and_install({
+    "flask": "flask",
+})
+
 import json
 import threading
 import webbrowser

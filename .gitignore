@@ -2,13 +2,17 @@
 build/
 dist/
 __pycache__/
-*.spec
+
+# Spec files in build/dist (build artifacts)
+build/*.spec
+dist/*.spec
 
 # Executable files (too large for git)
 *.exe
 
-# Zip archives (build artifacts, too large for git)
-*.zip
+# Zip archives in build/dist (build artifacts, too large for git)
+build/*.zip
+dist/*.zip
 
 # Python cache
 *.pyc
