@@ -1,1 +1,2 @@
 Tool/*.zip filter=lfs diff=lfs merge=lfs -text
+Tool/OCR_PDF_Tool/OCR_PDF_Tool.zip filter=lfs diff=lfs merge=lfs -text
