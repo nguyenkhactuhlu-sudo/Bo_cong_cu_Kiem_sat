@@ -168,7 +168,8 @@ Bo_cong_cu_Kiem_sat/
 | **Files** | `Tool/FileRenamer/file_renamer.py`, `Tool/FileRenamer/file_renamer_gui.py` |
 | **Port** | 5789 |
 | **Backend** | Flask + ctypes native Windows folder browser |
-| **Đặc điểm** | 1 file `.py` chứa cả backend lẫn HTML template inline; quét đệ quy; xem trước trước khi đổi tên |
+| **Đặc điểm** | 1 file `.py` chứa cả backend lẫn HTML template inline; quét đệ quy; xem trước trước khi đổi tên; **click vào tên mới (màu xanh) để tự đặt tên file tùy chỉnh**, hỗ trợ khôi phục tên đề xuất |
+| **File phân phối** | `FileRenamer.zip` (chứa `FileRenamerGUI.exe`) |
 
 ### 3.10. DocxToMd – Word (.doc/.docx) sang Markdown
 | Thuộc tính | Giá trị |
@@ -260,7 +261,7 @@ exe = EXE(pyz, a.scripts, ..., name='TenToolGUI', console=True, ...)
 | **Deploy** | GitHub Pages phục vụ file tĩnh; file `.zip` >50MB nên dùng Git LFS nếu cần |
 | **Folder Browser** | Dùng `ctypes.windll.shell32.SHBrowseForFolderW` (native Windows, không phụ thuộc tkinter) |
 | **Auto-install library** | Mỗi tool GUI dùng module chung `Tool/auto_install.py` để tự động kiểm tra & cài thư viện thiếu khi chạy file `.py` |
-| **File .zip** | Không push lên Git (đã thêm `*.zip` vào `.gitignore`) — quá nặng, là build artifact |
+| **File .zip** | File `.zip` phân phối (trong `Tool/*/`) được push lên Git để người dùng tải về qua GitHub Pages; file `.zip` trong `build/` và `dist/` bị `.gitignore` chặn |
 
 ---
 

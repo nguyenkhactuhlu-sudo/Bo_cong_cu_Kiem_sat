@@ -252,11 +252,41 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         .file-icon { color: #aaa; flex-shrink: 0; width: 16px; text-align: center; }
         .file-old-name { color: var(--red); font-weight: 500; min-width: 0; word-break: break-all; }
         .file-arrow { color: #aaa; flex-shrink: 0; margin: 0 4px; }
-        .file-new-name { color: var(--green); font-weight: 500; min-width: 0; word-break: break-all; }
+        .file-new-name-input {
+            color: var(--green); font-weight: 500; min-width: 120px; flex: 1;
+            padding: 4px 8px; border: 2px solid transparent;
+            border-radius: 6px; font-size: 13px; font-family: inherit;
+            background: transparent; transition: all 0.2s;
+        }
+        .file-new-name-input:hover { border-color: #c8e6c9; background: #fafffa; }
+        .file-new-name-input:focus {
+            outline: none; border-color: var(--sky); background: #fff;
+            box-shadow: 0 0 0 3px rgba(93,169,217,0.15);
+        }
+        .file-new-name-input.modified {
+            border-color: var(--bronze-light); background: #fffdf5;
+            box-shadow: 0 0 0 2px rgba(201,149,46,0.12);
+        }
+        .btn-reset-name {
+            background: none; border: 1px solid #ddd; border-radius: 4px;
+            cursor: pointer; color: #999; font-size: 11px; padding: 2px 6px;
+            flex-shrink: 0; transition: all 0.15s; display: inline-flex;
+            align-items: center; gap: 3px;
+        }
+        .btn-reset-name:hover { background: #f0f0f0; color: #666; border-color: #bbb; }
+        .btn-reset-name.hidden { visibility: hidden; }
         .file-reason {
             font-size: 11px; color: #999; margin-left: auto; flex-shrink: 0;
             max-width: 200px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
+
+        .custom-name-hint {
+            background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px;
+            padding: 10px 16px; margin-top: 10px; margin-bottom: 4px;
+            font-size: 12px; color: #6d4c00;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .custom-name-hint i { color: #f9a825; font-size: 14px; }
 
         /* NOTIFICATION / MODAL */
         .toast {
@@ -362,7 +392,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
 
         <!-- STEP 2: Kết quả & thực thi -->
         <div class="step-card" id="step2" style="display:none;">
-            <h2><span class="step-num">2</span> <i class="fas fa-list-check"></i> Xem xét & xác nhận đổi tên</h2>
+            <h2><span class="step-num">2</span> <i class="fas fa-list-check"></i> Xem xét & đặt tên & xác nhận đổi tên</h2>
 
             <!-- Progress overlay -->
             <div class="progress-overlay" id="progressOverlay">
@@ -375,10 +405,17 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             <!-- Toast -->
             <div class="toast" id="toast"></div>
 
+            <!-- Hint về đặt tên tùy chỉnh -->
+            <div class="custom-name-hint" id="customNameHint" style="display:none;">
+                <i class="fas fa-pen-to-square"></i>
+                <span><strong>Mẹo:</strong> Bạn có thể click vào tên mới <span style="color:var(--green);font-weight:600;">(màu xanh)</span> để tự đặt tên file theo ý muốn. Dùng nút <i class="fas fa-undo"></i> để khôi phục tên đề xuất.</span>
+            </div>
+
             <!-- Stats -->
             <div class="stats-row" id="statsRow" style="display:none;">
                 <span class="stat-badge warning" id="statTotal">0 file có vấn đề</span>
                 <span class="stat-badge info" id="statSelected">0 file được chọn</span>
+                <span class="stat-badge success" id="statCustom" style="display:none;">0 tên tùy chỉnh</span>
             </div>
 
             <!-- Action bar -->
@@ -388,6 +425,10 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 </button>
                 <button class="btn btn-outline" onclick="deselectAll()">
                     <i class="fas fa-square"></i> Bỏ chọn tất cả
+                </button>
+                <span class="separator"></span>
+                <button class="btn btn-outline" onclick="resetAllNames()">
+                    <i class="fas fa-undo"></i> Khôi phục tên đề xuất
                 </button>
                 <span class="separator"></span>
                 <button class="btn btn-success" id="btnExecute" onclick="executeRename()">
@@ -419,7 +460,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 </li>
                 <li style="padding:6px 0;font-size:14px;display:flex;align-items:flex-start;gap:8px;">
                     <i class="fas fa-check-circle" style="color:var(--bronze);margin-top:2px;"></i>
-                    <span><strong>Bước 2:</strong> Xem danh sách file được đề xuất đổi tên (hiển thị theo cây thư mục)</span>
+                    <span><strong>Bước 2:</strong> Xem danh sách file được đề xuất đổi tên - <strong style="color:var(--bronze);">Click vào tên mới để tự đặt tên</strong> theo ý muốn</span>
                 </li>
                 <li style="padding:6px 0;font-size:14px;display:flex;align-items:flex-start;gap:8px;">
                     <i class="fas fa-check-circle" style="color:var(--bronze);margin-top:2px;"></i>
@@ -432,11 +473,12 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             </ul>
             <div class="dev-info">
                 <p><i class="fas fa-code"></i> Engine: <strong>FileRenamer</strong> - Chuẩn hóa Unicode, bỏ dấu, viết tắt, rút gọn tên</p>
+                <p><i class="fas fa-pen-to-square"></i> Tùy chỉnh: <strong>Click vào tên mới để đặt tên theo ý muốn</strong> - Tên tùy chỉnh sẽ được ghi nhận và sử dụng khi đổi tên</p>
                 <p><i class="fas fa-shield-alt"></i> An toàn: <strong>Luôn xem trước trước khi thực thi</strong> - Không tự động đổi tên</p>
             </div>
             <div class="note-box">
                 <i class="fas fa-lightbulb"></i>
-                <p><strong>Lưu ý:</strong> Tool chỉ đổi tên các file <strong>được tích chọn</strong>. Bạn có thể bỏ chọn bất kỳ file nào không muốn đổi tên. Các file không được chọn sẽ giữ nguyên tên cũ.</p>
+                <p><strong>Lưu ý:</strong> Tool chỉ đổi tên các file <strong>được tích chọn</strong>. Bạn có thể bỏ chọn bất kỳ file nào không muốn đổi tên. <strong style="color:var(--bronze);">Click vào ô tên mới (màu xanh) để tự đặt tên file</strong> - tên bạn nhập sẽ được ghi nhận và ưu tiên sử dụng thay vì tên đề xuất tự động.</p>
             </div>
         </div>
     </div>
@@ -497,6 +539,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             var statsRow = document.getElementById('statsRow');
             var actionBar = document.getElementById('actionBar');
             var resultSummary = document.getElementById('resultSummary');
+            var customNameHint = document.getElementById('customNameHint');
 
             step2.style.display = 'block';
             resultSummary.innerHTML = '';
@@ -507,12 +550,15 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 noFiles.style.display = 'block';
                 statsRow.style.display = 'none';
                 actionBar.style.display = 'none';
+                customNameHint.style.display = 'none';
+                document.getElementById('statCustom').style.display = 'none';
                 return;
             }
 
             noFiles.style.display = 'none';
             statsRow.style.display = 'flex';
             actionBar.style.display = 'flex';
+            customNameHint.style.display = 'flex';
 
             // Group by folder
             var folders = {};
@@ -548,12 +594,15 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 for (var fj = 0; fj < files.length; fj++) {
                     var f = files[fj];
                     var cbId = 'fcb_' + fileIdx;
+                    var inpId = 'fni_' + fileIdx;
+                    var rstId = 'frst_' + fileIdx;
                     html += '<div class="file-row">';
                     html += '<input type="checkbox" id="' + cbId + '" checked data-idx="' + fileIdx + '" data-folder="' + escHtml(fname) + '" onchange="updateStats()" />';
                     html += '<i class="fas fa-file-lines file-icon"></i>';
                     html += '<span class="file-old-name" title="' + escHtml(f.old_name) + '">' + escHtml(f.old_name) + '</span>';
                     html += '<i class="fas fa-arrow-right file-arrow"></i>';
-                    html += '<span class="file-new-name" title="' + escHtml(f.new_name) + '">' + escHtml(f.new_name) + '</span>';
+                    html += '<input type="text" class="file-new-name-input" id="' + inpId + '" value="' + escHtmlAttr(f.new_name) + '" data-idx="' + fileIdx + '" data-original="' + escHtmlAttr(f.new_name) + '" oninput="onNameModified(this)" />';
+                    html += '<button class="btn-reset-name hidden" id="' + rstId + '" title="Khôi phục tên đề xuất" onclick="resetSingleName(' + fileIdx + ')"><i class="fas fa-undo"></i></button>';
                     html += '<span class="file-reason" title="' + escHtml(f.reason) + '">' + escHtml(f.reason) + '</span>';
                     html += '</div>';
                     fileIdx++;
@@ -573,6 +622,11 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         function escHtml(str) {
             if (!str) return '';
             return str.replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');
+        }
+
+        function escHtmlAttr(str) {
+            if (!str) return '';
+            return str.replace(/&/g,'&').replace(/"/g,'"').replace(/</g,'<').replace(/>/g,'>');
         }
 
         function toggleFolder(header) {
@@ -599,6 +653,67 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             updateStats();
         }
 
+        // ============ CUSTOM NAME HANDLING ============
+        function onNameModified(input) {
+            var idx = input.getAttribute('data-idx');
+            var original = input.getAttribute('data-original');
+            var currentVal = input.value.trim();
+            var rstBtn = document.getElementById('frst_' + idx);
+
+            if (currentVal !== original && currentVal !== '') {
+                input.classList.add('modified');
+                if (rstBtn) rstBtn.classList.remove('hidden');
+            } else if (currentVal === original) {
+                input.classList.remove('modified');
+                if (rstBtn) rstBtn.classList.add('hidden');
+            } else {
+                // empty - keep modified style but allow reset
+                input.classList.add('modified');
+                if (rstBtn) rstBtn.classList.remove('hidden');
+            }
+            updateStats();
+        }
+
+        function resetSingleName(idx) {
+            var inp = document.getElementById('fni_' + idx);
+            var rstBtn = document.getElementById('frst_' + idx);
+            if (inp) {
+                inp.value = inp.getAttribute('data-original');
+                inp.classList.remove('modified');
+                if (rstBtn) rstBtn.classList.add('hidden');
+                updateStats();
+            }
+        }
+
+        function resetAllNames() {
+            var allInputs = document.querySelectorAll('.file-new-name-input');
+            for (var i = 0; i < allInputs.length; i++) {
+                var inp = allInputs[i];
+                inp.value = inp.getAttribute('data-original');
+                inp.classList.remove('modified');
+                var idx = inp.getAttribute('data-idx');
+                var rstBtn = document.getElementById('frst_' + idx);
+                if (rstBtn) rstBtn.classList.add('hidden');
+            }
+            updateStats();
+            showToast('Đã khôi phục tất cả về tên đề xuất.', 'info');
+        }
+
+        function getCustomNames() {
+            var custom = {};
+            var allInputs = document.querySelectorAll('.file-new-name-input');
+            for (var i = 0; i < allInputs.length; i++) {
+                var inp = allInputs[i];
+                var idx = parseInt(inp.getAttribute('data-idx'));
+                var original = inp.getAttribute('data-original');
+                var currentVal = inp.value.trim();
+                if (currentVal && currentVal !== original) {
+                    custom[idx] = currentVal;
+                }
+            }
+            return custom;
+        }
+
         function updateStats() {
             var allCbs = document.querySelectorAll('.file-row input[type="checkbox"]');
             var total = allCbs.length;
@@ -608,6 +723,17 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             }
             document.getElementById('statTotal').innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + total + ' file có vấn đề';
             document.getElementById('statSelected').innerHTML = '<i class="fas fa-check"></i> ' + selected + ' file được chọn';
+
+            // Count custom names
+            var customNames = getCustomNames();
+            var customCount = Object.keys(customNames).length;
+            var statCustom = document.getElementById('statCustom');
+            if (customCount > 0) {
+                statCustom.style.display = 'inline-flex';
+                statCustom.innerHTML = '<i class="fas fa-pen-to-square"></i> ' + customCount + ' tên tùy chỉnh';
+            } else {
+                statCustom.style.display = 'none';
+            }
         }
 
         function selectAll() {
@@ -643,7 +769,17 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 return;
             }
 
-            if (!confirm('Bạn có CHẮC CHẮN muốn đổi tên ' + selectedIndices.length + ' file đã chọn?\n\nHành động này KHÔNG THỂ HOÀN TÁC.\n\nBấm OK để tiếp tục.')) {
+            // Collect custom names
+            var customNames = getCustomNames();
+            var customCount = Object.keys(customNames).length;
+
+            var confirmMsg = 'Bạn có CHẮC CHẮN muốn đổi tên ' + selectedIndices.length + ' file đã chọn?';
+            if (customCount > 0) {
+                confirmMsg += '\n\nTrong đó có ' + customCount + ' file được đặt tên tùy chỉnh.';
+            }
+            confirmMsg += '\n\nHành động này KHÔNG THỂ HOÀN TÁC.\n\nBấm OK để tiếp tục.';
+
+            if (!confirm(confirmMsg)) {
                 return;
             }
 
@@ -655,7 +791,8 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     path: scanData.path,
-                    indices: selectedIndices
+                    indices: selectedIndices,
+                    custom_names: customNames
                 })
             })
             .then(r => r.json())
@@ -678,6 +815,9 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             html += '<h3><i class="fas fa-clipboard-check"></i> Kết quả thực thi</h3>';
             html += '<p><strong>Tổng số file được chọn:</strong> ' + (d.total || 0) + '</p>';
             html += '<p style="color:var(--green);"><strong>Đã đổi tên thành công:</strong> ' + (d.renamed || 0) + '</p>';
+            if (d.custom_used > 0) {
+                html += '<p style="color:var(--bronze);"><strong>Tên tùy chỉnh đã dùng:</strong> ' + d.custom_used + '</p>';
+            }
             if (d.errors > 0) {
                 html += '<p style="color:var(--red);"><strong>Lỗi:</strong> ' + d.errors + '</p>';
             }
@@ -805,10 +945,13 @@ def scan_folder():
 
 @app.route('/api/execute', methods=['POST'])
 def execute_rename():
-    """Thực thi đổi tên các file đã chọn."""
+    """Thực thi đổi tên các file đã chọn, hỗ trợ tên tùy chỉnh."""
     data = request.get_json()
     folder_path = data.get('path', '')
     indices = data.get('indices', [])
+    custom_names = data.get('custom_names', {})
+    # Convert custom_names keys from string to int (JSON keys are always strings)
+    custom_names = {int(k): v for k, v in custom_names.items()}
 
     if not folder_path or not os.path.isdir(folder_path):
         return jsonify({'error': 'Đường dẫn thư mục không hợp lệ.'})
@@ -844,13 +987,25 @@ def execute_rename():
     renamed = 0
     errors = 0
     skipped = 0
+    custom_used = 0
     details = []
 
-    for item in selected:
+    for idx_in_list, item in enumerate(selected):
         rel_path = item['rel_path']
         full_path = ws / rel_path
-        new_name = item['new_name']
         old_name = full_path.name
+
+        # Determine the actual new name: custom if provided, else auto-generated
+        original_index = indices[idx_in_list]  # the original index in all_results
+        if original_index in custom_names:
+            custom_name = custom_names[original_index].strip()
+            if custom_name:
+                new_name = custom_name
+                custom_used += 1
+            else:
+                new_name = item['new_name']
+        else:
+            new_name = item['new_name']
 
         if not full_path.exists():
             errors += 1
@@ -888,6 +1043,7 @@ def execute_rename():
         'renamed': renamed,
         'errors': errors,
         'skipped': skipped,
+        'custom_used': custom_used,
         'details': details
     })
 
