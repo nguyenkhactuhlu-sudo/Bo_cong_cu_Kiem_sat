@@ -73,11 +73,18 @@ def browse_folder_windows(title="Chọn thư mục"):
 
     CoUninitialize = ctypes.windll.ole32.CoUninitialize
 
+    GetForegroundWindow = ctypes.windll.user32.GetForegroundWindow
+    GetForegroundWindow.restype = wintypes.HWND
+    GetForegroundWindow.argtypes = []
+
     CoInitialize(None)
+
+    # Lấy handle cửa sổ đang active (trình duyệt) để dialog nổi lên trước
+    owner_hwnd = GetForegroundWindow()
 
     path_buffer = ctypes.create_unicode_buffer(260)
     bi = BROWSEINFO()
-    bi.hwndOwner = 0
+    bi.hwndOwner = owner_hwnd or 0
     bi.lpszTitle = title
     bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_EDITBOX
 
