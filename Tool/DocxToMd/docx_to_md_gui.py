@@ -29,6 +29,7 @@ from auto_install import check_and_install
 check_and_install({
     "flask": "flask",
     "docx": "python-docx",
+    "pythoncom": "pywin32",
 })
 
 import json
@@ -122,7 +123,8 @@ if not ENGINE_AVAILABLE:
         except ImportError:
             return None
         try:
-            doc = Document(file_path)
+            # Dùng str(Path) để chuẩn hóa đường dẫn Unicode
+            doc = Document(str(Path(file_path)))
         except Exception:
             return None
         text_lines = []
@@ -146,6 +148,13 @@ if not ENGINE_AVAILABLE:
         abs_path = os.path.abspath(file_path)
         if not os.path.exists(abs_path):
             return None, "File không tồn tại"
+        # Lấy short path để tránh lỗi Unicode với Word COM Automation
+        try:
+            _buf = ctypes.create_unicode_buffer(300)
+            ctypes.windll.kernel32.GetShortPathNameW(str(Path(abs_path)), _buf, 300)
+            short_path = _buf.value or abs_path
+        except Exception:
+            short_path = abs_path
         word = None
         doc = None
         temp_docx = None
@@ -154,7 +163,7 @@ if not ENGINE_AVAILABLE:
             word = win32com.client.Dispatch("Word.Application")
             word.Visible = False
             word.DisplayAlerts = False
-            doc = word.Documents.Open(abs_path, ReadOnly=True)
+            doc = word.Documents.Open(short_path, ReadOnly=True)
             temp_fd, temp_docx = tempfile.mkstemp(suffix=".docx", prefix="temp_doc_")
             os.close(temp_fd)
             doc.SaveAs2(temp_docx, FileFormat=16)

@@ -284,6 +284,24 @@
             100% { opacity: 0; transform: translateY(-10px); letter-spacing: 20px; }
         }
 
+        .landing-hint {
+            font-size: clamp(10px, 1.2vw, 14px);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.65);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 8px;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+            animation: hintCycle 8s ease-in-out infinite;
+        }
+
+        @keyframes hintCycle {
+            0% { opacity: 0; transform: translateY(8px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-8px); }
+        }
+
 
         /* ===== DASHBOARD / MÀN HÌNH CHÍNH (DESKTOP) ===== */
 
@@ -766,6 +784,10 @@
             VIỆN KIỂM SÁT NHÂN DÂN
         </div>
 
+        <div class="landing-hint">
+            BẤM VÀO LOGO ĐỂ BẮT ĐẦU
+        </div>
+
     </div>
 
     <!-- ===== DESKTOP - MENU CHÍNH ===== -->
@@ -901,8 +923,8 @@
             {
                 id: 'ocr-pdf-tool',
                 label: 'CÔNG CỤ',
-                title: 'CÔNG CỤ - tự động chuyển đổi file pdf thành định dạng chữ (markdown, docx, txt)',
-                subtitle: 'OCR tiếng Việt - Hoạt động OFFLINE - Xuất Markdown, DOCX, TXT',
+                title: 'Tự động nhận dạng chữ trong file pdf',
+                subtitle: 'OCR tiếng Việt - hoạt động offline - xuất file markdown, docx, txt',
                 url: 'Tool/OCR_PDF_Tool/index.html',
                 accent: 'accent-plum'
             },

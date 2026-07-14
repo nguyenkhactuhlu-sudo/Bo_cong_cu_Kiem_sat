@@ -49,7 +49,8 @@ def read_docx_text(file_path: str) -> Optional[str]:
         sys.exit(1)
 
     try:
-        doc = Document(file_path)
+        # Dùng str(Path) để chuẩn hóa đường dẫn Unicode
+        doc = Document(str(Path(file_path)))
     except Exception as e:
         logger.debug(f"  Lỗi mở .docx: {e}")
         return None
@@ -78,6 +79,30 @@ def read_docx_text(file_path: str) -> Optional[str]:
 
 
 # ============================================================
+# HELPER: LẤY SHORT PATH (8.3) ĐỂ TRÁNH LỖI UNICODE VỚI COM
+# ============================================================
+def _get_short_path(long_path: str) -> str:
+    """
+    Lấy short path (8.3 format) của file/thư mục để tránh lỗi
+    Unicode với Word COM Automation và các ứng dụng cũ.
+    Nếu không lấy được short path thì trả về long_path gốc.
+    """
+    try:
+        import ctypes
+        from ctypes import wintypes
+        buffer = ctypes.create_unicode_buffer(300)
+        GetShortPathNameW = ctypes.windll.kernel32.GetShortPathNameW
+        GetShortPathNameW.restype = wintypes.DWORD
+        GetShortPathNameW.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, wintypes.DWORD]
+        result = GetShortPathNameW(str(Path(long_path)), buffer, 300)
+        if result > 0:
+            return buffer.value
+    except Exception:
+        pass
+    return long_path
+
+
+# ============================================================
 # ĐỌC FILE .doc BẰNG WORD COM → TẠM .docx → python-docx
 # ============================================================
 def read_doc_via_win32com(file_path: str) -> Tuple[Optional[str], Optional[str]]:
@@ -95,6 +120,9 @@ def read_doc_via_win32com(file_path: str) -> Tuple[Optional[str], Optional[str]]
     if not os.path.exists(abs_path):
         return None, "File không tồn tại"
 
+    # Lấy short path để tránh lỗi Unicode với Word COM Automation
+    short_path = _get_short_path(abs_path)
+
     word = None
     doc = None
     temp_docx = None
@@ -105,8 +133,8 @@ def read_doc_via_win32com(file_path: str) -> Tuple[Optional[str], Optional[str]]
         word.Visible = False
         word.DisplayAlerts = False
 
-        # Mở file .doc
-        doc = word.Documents.Open(abs_path, ReadOnly=True)
+        # Mở file .doc — dùng short path cho COM
+        doc = word.Documents.Open(short_path, ReadOnly=True)
 
         # Lưu tạm thành .docx
         temp_fd, temp_docx = tempfile.mkstemp(suffix=".docx", prefix="temp_doc_")
