@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} v{{ version }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #eef5fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .fixed-header-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background-color: #4ba3e3;
+            background-image: linear-gradient(135deg, #4ba3e3, #1d71b8);
+            border-bottom: 4px solid #d4af37;
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        .header-content-wrapper {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        .header-text-container h1 {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+        }
+        .header-logo {
+            max-height: 70px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.15));
+        }
+        .header-text-container p {
+            color: #fff3cc;
+            font-size: 13px;
+            margin: 3px 0 0 0;
+            font-weight: 500;
+        }
+        .header-icon {
+            font-size: 2.8rem;
+            color: #fff;
+            filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.15));
+        }
+
+        .main-content-area {
+            margin-top: 140px;
+            padding: 0 20px 30px 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .main-card {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            color: #2c3e50;
+            border: 1px solid #d3e4f1;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            background-color: #fdfefe;
+            border: 1px solid #dbe6f0;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.01);
+        }
+
+        .dien-giai-box {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: 'Consolas', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            border-left: 4px solid #1d71b8;
+        }
+
+        .btn-primary-custom {
+            background-color: #1d71b8;
+            border: 2px solid #1d71b8;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .btn-primary-custom:hover {
+            background-color: #4ba3e3;
+            border-color: #4ba3e3;
+            color: #ffffff;
+        }
+
+        .btn-outline-custom {
+            border: 2px solid #1d71b8;
+            background-color: transparent;
+            color: #1d71b8;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-custom:hover {
+            background-color: #1d71b8;
+            color: #ffffff;
+        }
+
+        .drop-zone {
+            border: 2px dashed #bad5f0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #fafcfd;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #1d71b8;
+            background-color: #eaf3fa;
+            box-shadow: 0 0 15px rgba(29,113,184,0.1);
+        }
+
+        .file-info-bar {
+            background-color: #eaf3fa;
+            border-left: 4px solid #1d71b8;
+            padding: 12px 16px;
+            border-radius: 6px;
+        }
+
+        /* Batch file list styles */
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background-color: #f8fafc;
+            border: 1px solid #dbe6f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        .file-list-item:hover {
+            background-color: #eaf3fa;
+        }
+        .file-list-item .file-name {
+            font-weight: 600;
+            color: #16568c;
+            flex-grow: 1;
+            margin: 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .file-list-item .file-size {
+            font-size: 12px;
+            color: #6b7d8e;
+            margin-right: 12px;
+            white-space: nowrap;
+        }
+        .file-list-item .btn-remove {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .batch-result-item {
+            border: 1px solid #d3e4f1;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .batch-result-header {
+            background-color: #eaf3fa;
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .batch-result-header:hover {
+            background-color: #dbe6f0;
+        }
+        .batch-result-header .file-title {
+            font-weight: bold;
+            color: #16568c;
+        }
+        .batch-result-body {
+            display: none;
+            padding: 16px;
+            background-color: #fff;
+        }
+        .batch-result-body.open {
+            display: block;
+        }
+        .batch-status-badge {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .batch-status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .batch-status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .gold-badge {
+            background-color: #eaf3fa !important;
+            color: #16568c !important;
+            border: 1px solid #bad5f0 !important;
+            font-weight: bold !important;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 6px;
+            background-color: #dbe6f0;
+        }
+        .progress-bar {
+            background-color: #1d71b8;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .author-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px 0 35px 0;
+            border-top: 1px solid #bad5f0;
+            color: #5a738e;
+            font-size: 14px;
+        }
+
+        select.form-select:focus {
+            border-color: #1d71b8;
+            box-shadow: 0 0 0 0.2rem rgba(29,113,184,0.15);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Fixed Header -->
+<div class="fixed-header-banner">
+    <div class="header-content-wrapper">
+        <img src="{{ url_for('static', filename='logo_moi.png') }}" alt="Logo" class="header-logo">
+        <div class="header-text-container">
+            <h1>{{ title }}</h1>
+            <p>Nhận dạng văn bản tiếng Việt từ file PDF ảnh quét</p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content-area">
+
+    <!-- Step 1: File Select -->
+    <div class="main-card">
+        <h5 class="mb-3" style="color: #16568c; font-weight: bold;">
+            <i class="bi bi-1-circle-fill me-2" style="color: #1d71b8;"></i>Chọn file PDF (có thể chọn nhiều file)
+        </h5>
+
+        <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+            <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #1d71b8;"></i>
+            <p class="mt-3 mb-1 fw-bold text-secondary">Kéo & thả file PDF vào đây</p>
+            <p class="text-muted small mb-3">hoặc nhấn để chọn nhiều file cùng lúc</p>
+            <button type="button" class="btn-outline-custom">
+                <i class="bi bi-folder2-open me-2"></i>BROWSE...
+            </button>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf" class="d-none" multiple onchange="handleFileSelect(event)">
+
+        <!-- File list (batch) -->
+        <div id="fileListSection" class="mt-3 d-none">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="fw-bold text-secondary">
+                    <i class="bi bi-files me-1"></i> <span id="fileCount">0</span> file đã chọn
+                </span>
+                <button class="btn btn-sm btn-outline-danger" onclick="clearAllFiles()">
+                    <i class="bi bi-trash me-1"></i> Xóa tất cả
+                </button>
+            </div>
+            <div id="fileListContainer"></div>
+        </div>
+    </div>
+
+    <!-- Step 2: Options -->
+    <div class="main-card">
+        <h5 class="mb-3" style="color: #16568c; font-weight: bold;">
+            <i class="bi bi-2-circle-fill me-2" style="color: #1d71b8;"></i>Tùy chọn OCR
+        </h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small">
+                    <i class="bi bi-globe2 me-1"></i>Ngôn ngữ
+                </label>
+                <select id="language" class="form-select">
+                    {% for lang in languages %}
+                    <option value="{{ lang }}" {% if lang == default_lang %}selected{% endif %}>{{ lang }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small">
+                    <i class="bi bi-filetype-docx me-1"></i>Định dạng đầu ra
+                </label>
+                <select id="format" class="form-select">
+                    {% for fmt in formats %}
+                    <option value="{{ fmt }}" {% if fmt == default_fmt %}selected{% endif %}>{{ fmt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: CTA Buttons -->
+    <div class="text-center mb-4 d-flex flex-wrap justify-content-center gap-3">
+        <button id="startSingleBtn" onclick="startSingleOCR()" class="btn btn-lg px-4 py-3 fw-bold"
+                style="background-color: #1d71b8; color: #fff; border: 3px solid #16568c; border-radius: 10px;
+                       letter-spacing: 0.5px; font-size: 1rem; box-shadow: 0 4px 12px rgba(29,113,184,0.3);">
+            <i class="bi bi-play-circle-fill me-2"></i>OCR 1 FILE ĐƠN
+        </button>
+        <button id="startBatchBtn" onclick="startBatchOCR()" class="btn btn-lg px-4 py-3 fw-bold"
+                style="background-color: #d4af37; color: #1d71b8; border: 3px solid #b8960f; border-radius: 10px;
+                       letter-spacing: 0.5px; font-size: 1rem; box-shadow: 0 4px 12px rgba(212,175,55,0.3);">
+            <i class="bi bi-play-circle-fill me-2"></i>OCR HÀNG LOẠT
+        </button>
+    </div>
+
+    <!-- Progress Section -->
+    <div id="progressSection" class="main-card d-none">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <i id="progressIcon" class="bi bi-hourglass-split" style="font-size: 1.5rem; color: #1d71b8;"></i>
+            <div class="flex-grow-1">
+                <p id="statusText" class="fw-bold mb-0">Đang xử lý...</p>
+                <small id="batchProgress" class="text-muted"></small>
+            </div>
+        </div>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Batch Result Section -->
+    <div id="batchResultSection" class="main-card d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <h5 class="mb-0" style="color: #16568c; font-weight: bold;">
+                <i class="bi bi-check-circle-fill me-2" style="color: #198754;"></i>
+                <span id="batchResultTitle">Kết quả OCR hàng loạt</span>
+            </h5>
+            <div class="d-flex gap-2 flex-wrap">
+                <button id="downloadAllBtn" onclick="downloadAllZip()" class="btn btn-success btn-sm fw-bold d-none">
+                    <i class="bi bi-file-zip me-1"></i> Tải tất cả (ZIP)
+                </button>
+            </div>
+        </div>
+        <div id="batchResultContainer"></div>
+    </div>
+
+    <!-- Single File Result Section -->
+    <div id="singleResultSection" class="main-card d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <h5 class="mb-0" style="color: #16568c; font-weight: bold;">
+                <i class="bi bi-check-circle-fill me-2" style="color: #198754;"></i>Kết quả OCR
+            </h5>
+            <div class="d-flex gap-2 flex-wrap">
+                <a id="downloadLink" href="#" download class="btn btn-success btn-sm fw-bold">
+                    <i class="bi bi-download me-1"></i> Tải về
+                </a>
+                <button onclick="copySingleResult()" class="btn-outline-custom btn-sm">
+                    <i class="bi bi-clipboard me-1"></i> Copy
+                </button>
+            </div>
+        </div>
+        <div id="singleResultContent" class="dien-giai-box"></div>
+    </div>
+
+    <!-- Error Box -->
+    <div id="errorBox" class="alert alert-danger d-none fw-bold" role="alert"></div>
+
+    <!-- Footer -->
+    <div class="author-footer">
+        Phát triển bởi Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let selectedFiles = [];  // Array of File objects for batch mode
+
+    // ── File selection ──────────────────────────────────
+
+    function handleFileSelect(event) {
+        const files = Array.from(event.target.files);
+        addFiles(files);
+        event.target.value = '';  // Reset input to allow re-selecting same file
+    }
+
+    function addFiles(files) {
+        const pdfFiles = files.filter(f => f.type === 'application/pdf');
+        if (pdfFiles.length < files.length) {
+            showError(`Đã bỏ qua ${files.length - pdfFiles.length} file không phải PDF.`);
+        }
+        pdfFiles.forEach(f => {
+            // Avoid duplicates by name+size
+            const exists = selectedFiles.some(sf => sf.name === f.name && sf.size === f.size);
+            if (!exists) {
+                selectedFiles.push(f);
+            }
+        });
+        renderFileList();
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        renderFileList();
+    }
+
+    function clearAllFiles() {
+        selectedFiles = [];
+        renderFileList();
+        hideAllResults();
+    }
+
+    function renderFileList() {
+        const section = document.getElementById('fileListSection');
+        const container = document.getElementById('fileListContainer');
+        const countEl = document.getElementById('fileCount');
+
+        if (selectedFiles.length === 0) {
+            section.classList.add('d-none');
+            document.getElementById('dropZone').classList.remove('dragover');
+            document.getElementById('startBatchBtn').disabled = true;
+            document.getElementById('startSingleBtn').disabled = true;
+            return;
+        }
+
+        section.classList.remove('d-none');
+        document.getElementById('dropZone').classList.add('dragover');
+        countEl.textContent = selectedFiles.length;
+
+        document.getElementById('startBatchBtn').disabled = selectedFiles.length < 2;
+        document.getElementById('startSingleBtn').disabled = false;
+
+        container.innerHTML = selectedFiles.map((f, i) => `
+            <div class="file-list-item">
+                <i class="bi bi-file-pdf text-danger" style="font-size: 1.3rem;"></i>
+                <span class="file-name" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span>
+                <span class="file-size">${(f.size / 1024).toFixed(1)} KB</span>
+                <button class="btn btn-sm btn-outline-danger btn-remove" onclick="removeFile(${i})" title="Xóa">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ── Single file OCR (uses first selected file) ─────
+
+    async function startSingleOCR() {
+        if (selectedFiles.length === 0) {
+            showError('Vui lòng chọn ít nhất 1 file PDF!');
+            return;
+        }
+        const file = selectedFiles[0];
+
+        hideAllResults();
+        showProgress();
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('language', document.getElementById('language').value);
+        formData.append('format', document.getElementById('format').value);
+
+        try {
+            const progressInterval = startFakeProgress();
+            updateBatchProgress(`Đang xử lý: ${file.name}`);
+
+            const resp = await fetch('/api/ocr', { method: 'POST', body: formData });
+            clearInterval(progressInterval);
+
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.error || 'Lỗi không xác định');
+
+            finishProgress('Hoàn thành!');
+            showSingleResult(data, file.name);
+
+        } catch (err) {
+            showError(err.message);
+            document.getElementById('progressSection').classList.add('d-none');
+        } finally {
+            resetButtons();
+        }
+    }
+
+    function showSingleResult(data, filename) {
+        const section = document.getElementById('singleResultSection');
+        section.classList.remove('d-none');
+
+        let fullText = '';
+        data.pages_text.forEach((text, i) => {
+            fullText += `\n${'═'.repeat(50)}\n📄 TRANG ${i + 1}\n${'═'.repeat(50)}\n${text}\n`;
+        });
+        document.getElementById('singleResultContent').textContent = fullText.trim();
+
+        const dl = document.getElementById('downloadLink');
+        dl.href = `/api/download/${data.output_file}`;
+        dl.innerHTML = `<i class="bi bi-download me-1"></i> ${data.output_file}`;
+    }
+
+    function copySingleResult() {
+        const content = document.getElementById('singleResultContent').textContent;
+        navigator.clipboard.writeText(content).then(() => {
+            const btn = event.target.closest('button');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Đã copy!';
+            btn.classList.add('btn-success');
+            btn.classList.remove('btn-outline-custom');
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-outline-custom');
+            }, 2000);
+        });
+    }
+
+    // ── Batch OCR (all selected files) ─────────────────
+
+    async function startBatchOCR() {
+        if (selectedFiles.length < 2) {
+            showError('Cần ít nhất 2 file để chạy chế độ hàng loạt!');
+            return;
+        }
+
+        hideAllResults();
+        showProgress();
+
+        const formData = new FormData();
+        selectedFiles.forEach(f => formData.append('files', f));
+        formData.append('language', document.getElementById('language').value);
+        formData.append('format', document.getElementById('format').value);
+
+        try {
+            updateBatchProgress(`Đang xử lý ${selectedFiles.length} file...`);
+            updateProgressBar(0);
+
+            const resp = await fetch('/api/ocr/batch', { method: 'POST', body: formData });
+            const data = await resp.json();
+
+            if (!resp.ok) throw new Error(data.error || 'Lỗi không xác định');
+
+            finishProgress(`Đã xử lý ${data.processed}/${data.total_files} file thành công`);
+            showBatchResults(data);
+
+        } catch (err) {
+            showError(err.message);
+            document.getElementById('progressSection').classList.add('d-none');
+        } finally {
+            resetButtons();
+        }
+    }
+
+    function showBatchResults(data) {
+        const section = document.getElementById('batchResultSection');
+        const container = document.getElementById('batchResultContainer');
+        const title = document.getElementById('batchResultTitle');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+
+        section.classList.remove('d-none');
+        title.textContent = `Kết quả OCR hàng loạt: ${data.processed}/${data.total_files} file thành công`;
+
+        // Show ZIP download if at least 1 success
+        const outputFiles = data.results.map(r => r.output_file);
+        if (outputFiles.length > 0) {
+            downloadAllBtn.classList.remove('d-none');
+            downloadAllBtn.dataset.files = JSON.stringify(outputFiles);
+        } else {
+            downloadAllBtn.classList.add('d-none');
+        }
+
+        let html = '';
+
+        // Successful results
+        data.results.forEach((r, idx) => {
+            html += `
+            <div class="batch-result-item">
+                <div class="batch-result-header" onclick="toggleBatchResult(this)">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <i class="bi bi-file-pdf text-danger"></i>
+                        <span class="file-title">${escapeHtml(r.filename)}</span>
+                        <span class="batch-status-badge batch-status-success">
+                            <i class="bi bi-check-circle me-1"></i> ${r.total_pages} trang
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="/api/download/${encodeURIComponent(r.output_file)}" 
+                           download class="btn btn-sm btn-success" onclick="event.stopPropagation()">
+                            <i class="bi bi-download"></i> ${r.output_file}
+                        </a>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="batch-result-body" id="batchBody_${idx}">
+                    <pre style="white-space: pre-wrap; font-family: Consolas, monospace; font-size: 13px; color: #2c3e50;">${r.pages_text.map((t, i) => `\n${'═'.repeat(40)}\n📄 TRANG ${i + 1}\n${'═'.repeat(40)}\n${t}`).join('\n').trim()}</pre>
+                </div>
+            </div>`;
+        });
+
+        // Errors
+        data.error_list.forEach(r => {
+            html += `
+            <div class="batch-result-item">
+                <div class="batch-result-header" style="background-color: #fef0f0; cursor: default;">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-file-pdf text-danger"></i>
+                        <span class="file-title">${escapeHtml(r.filename)}</span>
+                        <span class="batch-status-badge batch-status-error">
+                            <i class="bi bi-exclamation-circle me-1"></i> Lỗi
+                        </span>
+                    </div>
+                </div>
+                <div class="batch-result-body open">
+                    <p class="text-danger mb-0"><strong>Lỗi:</strong> ${escapeHtml(r.error)}</p>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function toggleBatchResult(header) {
+        const body = header.nextElementSibling;
+        const icon = header.querySelector('.bi-chevron-down');
+        body.classList.toggle('open');
+        if (icon) {
+            icon.classList.toggle('bi-chevron-up');
+            icon.classList.toggle('bi-chevron-down');
+        }
+    }
+
+    async function downloadAllZip() {
+        const btn = document.getElementById('downloadAllBtn');
+        const files = JSON.parse(btn.dataset.files || '[]');
+        if (files.length === 0) return;
+
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang nén...';
+        btn.disabled = true;
+
+        try {
+            const resp = await fetch('/api/batch/download', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ files: files })
+            });
+            if (!resp.ok) throw new Error('Tải thất bại');
+
+            const blob = await resp.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'batch_ocr_results.zip';
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            showError('Lỗi khi tải ZIP: ' + err.message);
+        } finally {
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+        }
+    }
+
+    // ── Shared helpers ────────────────────────────────
+
+    function showProgress() {
+        document.getElementById('progressSection').classList.remove('d-none');
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('progressIcon').className = 'bi bi-hourglass-split';
+        document.getElementById('progressIcon').style.color = '#1d71b8';
+        document.getElementById('statusText').textContent = 'Đang xử lý...';
+        document.getElementById('batchProgress').textContent = '';
+    }
+
+    function finishProgress(msg) {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('statusText').textContent = msg;
+        document.getElementById('progressIcon').className = 'bi bi-check-circle-fill';
+        document.getElementById('progressIcon').style.color = '#198754';
+    }
+
+    function startFakeProgress() {
+        return setInterval(() => {
+            let bar = document.getElementById('progressBar');
+            let w = parseFloat(bar.style.width) || 0;
+            if (w < 90) {
+                w += Math.random() * 5;
+                bar.style.width = Math.min(w, 90) + '%';
+            }
+        }, 500);
+    }
+
+    function updateBatchProgress(msg) {
+        document.getElementById('batchProgress').textContent = msg;
+    }
+
+    function updateProgressBar(pct) {
+        document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function hideAllResults() {
+        document.getElementById('singleResultSection').classList.add('d-none');
+        document.getElementById('batchResultSection').classList.add('d-none');
+        document.getElementById('errorBox').classList.add('d-none');
+    }
+
+    function showError(msg) {
+        const box = document.getElementById('errorBox');
+        box.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>' + msg;
+        box.classList.remove('d-none');
+    }
+
+    function resetButtons() {
+        document.getElementById('startSingleBtn').disabled = selectedFiles.length === 0;
+        document.getElementById('startBatchBtn').disabled = selectedFiles.length < 2;
+        document.getElementById('startSingleBtn').innerHTML = '<i class="bi bi-play-circle-fill me-2"></i>OCR 1 FILE ĐƠN';
+        document.getElementById('startBatchBtn').innerHTML = '<i class="bi bi-play-circle-fill me-2"></i>OCR HÀNG LOẠT';
+    }
+
+    // ── Drag & drop (batch) ───────────────────────────
+
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', e => {
+        e.preventDefault();
+        if (!dropZone.contains(e.relatedTarget)) {
+            dropZone.classList.remove('dragover');
+        }
+    });
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        addFiles(files);
+    });
+
+    // ── Init ──────────────────────────────────────────
+    document.getElementById('startBatchBtn').disabled = true;
+    document.getElementById('startSingleBtn').disabled = true;
+</script>
+</body>
+</html>
