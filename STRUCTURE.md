@@ -52,6 +52,12 @@ Bo_cong_cu_Kiem_sat/
 │
 └── Tool/                         ← Các công cụ Python GUI (có thể build .exe)
     ├── auto_install.py           ← Module dùng chung: tự động kiểm tra & cài thư viện thiếu
+    ├── App_DS/                   ← Tính án phí (HTML standalone)
+    │   └── index.html            ← Công cụ tính án phí
+    │
+    ├── App_tinh_lai_suat/        ← Tính lãi suất (HTML standalone)
+    │   └── index.html            ← Công cụ tính lãi suất
+    │
     ├── DocxToMd/                 ← Word (.doc/.docx) → Markdown
     │   ├── convert_doc_to_md.py  ← Engine chuyển đổi (python-docx + win32com)
     │   ├── docx_to_md_gui.py     ← Flask GUI (port 5788)
@@ -96,16 +102,16 @@ Bo_cong_cu_Kiem_sat/
 | Thuộc tính | Giá trị |
 |---|---|
 | **ID** | `tinh-lai-suat` |
-| **Loại** | Web app external (iframe) |
-| **URL** | `https://app-tinh-lai-suat.onrender.com/` |
+| **Loại** | Static HTML (iframe) |
+| **URL** | `Tool/App_tinh_lai_suat/index.html` |
 | **Accent** | `accent-sky` |
 
 ### 3.2. Tính án phí
 | Thuộc tính | Giá trị |
 |---|---|
 | **ID** | `tinh-an-phi` |
-| **Loại** | Web app external (iframe) |
-| **URL** | `https://an-phi-kiem-sat.onrender.com` |
+| **Loại** | Static HTML (iframe) |
+| **URL** | `Tool/App_DS/index.html` |
 | **Accent** | `accent-bronze` |
 
 ### 3.3. Kiểm sát Bản án (bản dùng chung)

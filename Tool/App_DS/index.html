@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Tra cứu & Tính toán Án phí</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; }
+        .header { background-color: #0056b3; color: white; padding: 25px; text-align: center; border-bottom: 5px solid #d4af37; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { width: 120px; margin-bottom: 10px; }
+        fieldset { border: 2px solid #0056b3; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        legend { color: #0056b3; font-weight: bold; font-size: 1.2em; padding: 0 10px; }
+        button { background-color: #0056b3; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #004494; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background-color: #e9ecef; }
+        .category { background-color: #0056b3; color: white; text-align: center; font-weight: bold; }
+        .category td { background-color: #0056b3; color: white; text-align: center; font-weight: bold; }
+        .sub-category { background-color: #d4edda; font-weight: bold; }
+        .stt-col { width: 40px; text-align: center; }
+        .stt-sub { width: 30px; text-align: center; color: #666; }
+        footer { margin-top: 40px; padding: 20px; text-align: center; border-top: 2px solid #0056b3; color: #555; font-size: 14px; }
+        .receipt { background-color: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #0056b3; margin-top: 20px; }
+        .note { font-size: 12px; color: #666; font-style: italic; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="../static/logo_moi.png" alt="Logo Ngành" class="logo">
+        <h1>Phần mềm Tính Án phí & Lệ phí</h1>
+        <p>Công cụ hỗ trợ nghiệp vụ Kiểm sát - Bản quyền nội bộ</p>
+    </div>
+
+    <div class="container">
+        <fieldset>
+            <legend>Tính toán án phí (có giá ngạch)</legend>
+            <form onsubmit="tinhAnPhi(event)">
+                <select id="loai_phi" style="padding: 10px; width: 100%; margin-bottom: 15px;">
+                    <option value="ds_co_gia_ngach">Án phí dân sự sơ thẩm</option>
+                    <option value="kdtm_co_gia_ngach">Án phí KDTM sơ thẩm</option>
+                    <option value="lao_dong_co_gia_ngach">Án phí Lao động sơ thẩm</option>
+                </select>
+                <input type="number" id="gia_tri" placeholder="Nhập số tiền (VNĐ)..." required style="padding: 10px; width: 100%; margin-bottom: 15px; box-sizing: border-box;">
+                <button type="submit">Tính toán ngay</button>
+            </form>
+
+            <div id="receiptBlock" class="receipt" style="display: none;">
+                <h4 style="color: #0056b3;">Biên lai tính phí chi tiết</h4>
+                <p><strong>Giá trị tranh chấp:</strong> <span id="receipt_gia_tri"></span> VNĐ</p>
+                <p><strong>Công thức áp dụng:</strong> <span id="receipt_cong_thuc"></span></p>
+                <hr>
+                <h3 style="color: #d9534f;">Tổng án phí: <span id="receipt_ket_qua"></span> VNĐ</h3>
+                <p style="font-size: 0.8em; color: #666;">* Áp dụng theo Nghị quyết 326/2016/UBTVQH14</p>
+            </div>
+        </fieldset>
+
+        <h2>Bảng Tra cứu đầy đủ (Nghị quyết 326)</h2>
+        <p class="note">(Ban hành kèm theo Nghị quyết số 326/2016/UBTVQH14 ngày 30 tháng 12 năm 2016)</p>
+
+        <table>
+            <tr><th class="stt-col">Stt</th><th>Tên án phí</th><th>Mức thu</th></tr>
+
+            <tr class="category"><td colspan="3">A. DANH MỤC ÁN PHÍ</td></tr>
+
+            <tr class="category"><td colspan="3">I. ÁN PHÍ HÌNH SỰ</td></tr>
+            <tr><td>1</td><td>Án phí hình sự sơ thẩm</td><td>200.000 đồng</td></tr>
+            <tr><td>2</td><td>Án phí hình sự phúc thẩm</td><td>200.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">II. ÁN PHÍ DÂN SỰ</td></tr>
+
+            <tr><td>1</td><td><strong>Án phí dân sự sơ thẩm</strong></td><td></td></tr>
+
+            <tr><td>1.1</td><td>Đối với tranh chấp về dân sự, hôn nhân và gia đình, lao động không có giá ngạch</td><td>300.000 đồng</td></tr>
+            <tr><td>1.2</td><td>Đối với tranh chấp về kinh doanh, thương mại không có giá ngạch</td><td>3.000.000 đồng</td></tr>
+
+            <tr><td>1.3</td><td><strong>Đối với tranh chấp về dân sự, hôn nhân và gia đình có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 6.000.000 đồng trở xuống</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 6.000.000 đồng đến 400.000.000 đồng</td><td>5% giá trị tài sản có tranh chấp</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 800.000.000 đồng</td><td>20.000.000 đồng + 4% của phần giá trị tài sản có tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 800.000.000 đồng đến 2.000.000.000 đồng</td><td>36.000.000 đồng + 3% của phần giá trị tài sản có tranh chấp vượt 800.000.000 đồng</td></tr>
+            <tr><td>đ</td><td>Từ trên 2.000.000.000 đồng đến 4.000.000.000 đồng</td><td>72.000.000 đồng + 2% của phần giá trị tài sản có tranh chấp vượt 2.000.000.000 đồng</td></tr>
+            <tr><td>e</td><td>Từ trên 4.000.000.000 đồng</td><td>112.000.000 đồng + 0,1% của phần giá trị tài sản tranh chấp vượt 4.000.000.000 đồng</td></tr>
+
+            <tr><td>1.4</td><td><strong>Đối với tranh chấp về kinh doanh, thương mại có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 60.000.000 đồng trở xuống</td><td>3.000.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 60.000.000 đồng đến 400.000.000 đồng</td><td>5% của giá trị tranh chấp</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 800.000.000 đồng</td><td>20.000.000 đồng + 4% của phần giá trị tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 800.000.000 đồng đến 2.000.000.000 đồng</td><td>36.000.000 đồng + 3% của phần giá trị tranh chấp vượt quá 800.000.000 đồng</td></tr>
+            <tr><td>đ</td><td>Từ trên 2.000.000.000 đồng đến 4.000.000.000 đồng</td><td>72.000.000 đồng + 2% của phần giá trị tranh chấp vượt 2.000.000.000 đồng</td></tr>
+            <tr><td>e</td><td>Từ trên 4.000.000.000 đồng</td><td>112.000.000 đồng + 0,1% của phần giá trị tranh chấp vượt 4.000.000.000 đồng</td></tr>
+
+            <tr><td>1.5</td><td><strong>Đối với tranh chấp về lao động có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 6.000.000 đồng trở xuống</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 6.000.000 đồng đến 400.000.000 đồng</td><td>3% giá trị tranh chấp, nhưng không thấp hơn 300.000 đồng</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 2.000.000.000 đồng</td><td>12.000.000 đồng + 2% của phần giá trị có tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 2.000.000.000 đồng</td><td>44.000.000 đồng + 0,1% của phần giá trị có tranh chấp vượt 2.000.000.000 đồng</td></tr>
+
+            <tr><td>2</td><td><strong>Án phí dân sự phúc thẩm</strong></td><td></td></tr>
+            <tr><td>2.1</td><td>Đối với tranh chấp về dân sự, hôn nhân và gia đình, lao động</td><td>300.000 đồng</td></tr>
+            <tr><td>2.2</td><td>Đối với tranh chấp về kinh doanh, thương mại</td><td>2.000.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">III. ÁN PHÍ HÀNH CHÍNH</td></tr>
+            <tr><td>1</td><td>Án phí hành chính sơ thẩm</td><td>300.000 đồng</td></tr>
+            <tr><td>2</td><td>Án phí hành chính phúc thẩm</td><td>300.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">B. DANH MỤC LỆ PHÍ TÒA ÁN</td></tr>
+
+            <tr class="category"><td colspan="3">I. LỆ PHÍ GIẢI QUYẾT VIỆC DÂN SỰ</td></tr>
+            <tr><td>1</td><td>Lệ phí sơ thẩm giải quyết yêu cầu về dân sự, hôn nhân và gia đình, kinh doanh, thương mại, lao động</td><td>300.000 đồng</td></tr>
+            <tr><td>2</td><td>Lệ phí phúc thẩm giải quyết yêu cầu về dân sự, hôn nhân và gia đình, kinh doanh, thương mại, lao động</td><td>300.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">II. LỆ PHÍ TÒA ÁN KHÁC</td></tr>
+
+            <tr><td>1</td><td><strong>Lệ phí yêu cầu công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của trọng tài nước ngoài</strong></td><td></td></tr>
+            <tr><td>a</td><td>Lệ phí công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của Trọng tài nước ngoài</td><td>3.000.000 đồng</td></tr>
+            <tr><td>b</td><td>Lệ phí kháng cáo quyết định của Tòa án về việc công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của Trọng tài nước ngoài</td><td>300.000 đồng</td></tr>
+
+            <tr><td>2</td><td><strong>Lệ phí giải quyết yêu cầu liên quan đến việc Trọng tài thương mại Việt Nam giải quyết tranh chấp theo quy định của pháp luật về Trọng tài thương mại</strong></td><td></td></tr>
+            <tr><td>a</td><td>Lệ phí yêu cầu Tòa án chỉ định, thay đổi trọng tài viên</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Lệ phí yêu cầu Tòa án xem xét lại phán quyết của Hội đồng trọng tài về thỏa thuận trọng tài, về thẩm quyền giải quyết vụ tranh chấp của Hội đồng trọng tài; đăng ký phán quyết trọng tài vụ việc</td><td>500.000 đồng</td></tr>
+            <tr><td>c</td><td>Lệ phí yêu cầu Tòa án áp dụng, thay đổi, hủy bỏ biện pháp khẩn cấp tạm thời liên quan đến trọng tài; yêu cầu Tòa án thu thập chứng cứ, triệu tập người làm chứng</td><td>800.000 đồng</td></tr>
+            <tr><td>d</td><td>Lệ phí kháng cáo quyết định của Tòa án liên quan đến trọng tài</td><td>500.000 đồng</td></tr>
+
+            <tr><td>3</td><td>Lệ phí nộp đơn yêu cầu mở thủ tục phá sản</td><td>1.500.000 đồng</td></tr>
+            <tr><td>4</td><td>Lệ phí xét tính hợp pháp của cuộc đình công</td><td>1.500.000 đồng</td></tr>
+            <tr><td>5</td><td>Lệ phí bắt giữ tàu biển</td><td>8.000.000 đồng</td></tr>
+            <tr><td>6</td><td>Lệ phí bắt giữ tàu bay</td><td>8.000.000 đồng</td></tr>
+            <tr><td>7</td><td>Lệ phí thực hiện ủy thác tư pháp của Tòa án nước ngoài tại Việt Nam</td><td>1.000.000 đồng</td></tr>
+            <tr><td>8</td><td>Lệ phí ủy thác tư pháp ra nước ngoài</td><td>200.000 đồng</td></tr>
+            <tr><td>9</td><td>Lệ phí cấp bản sao giấy tờ, sao chụp tài liệu tại Tòa án</td><td>1.500 đồng/trang A4</td></tr>
+        </table>
+    </div>
+
+    <footer>
+        <p>Phát triển bởi: <strong>Nguyễn Khắc Tú</strong></p>
+        <p>Đơn vị: <strong>Viện Kiểm sát nhân dân khu vực 5 - Bắc Ninh</strong></p>
+        <p>&copy; 2026 - Công cụ nghiệp vụ Kiểm sát nội bộ</p>
+    </footer>
+
+    <script>
+        function tinhAnPhi(event) {
+            event.preventDefault();
+
+            const loai = document.getElementById('loai_phi').value;
+            const giaTri = parseFloat(document.getElementById('gia_tri').value);
+
+            if (!giaTri || giaTri <= 0) {
+                alert('Vui lòng nhập giá trị tranh chấp hợp lệ.');
+                return;
+            }
+
+            let ketQua = 0;
+            let congThuc = '';
+
+            if (loai === 'ds_co_gia_ngach') {
+                if (giaTri <= 6000000) {
+                    ketQua = 300000;
+                    congThuc = 'Mức cố định: 300.000 đồng (từ 6.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = giaTri * 0.05;
+                    congThuc = '5% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 800000000) {
+                    ketQua = 20000000 + (giaTri - 400000000) * 0.04;
+                    congThuc = '20.000.000 + 4% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 36000000 + (giaTri - 800000000) * 0.03;
+                    congThuc = '36.000.000 + 3% × ' + (giaTri - 800000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 4000000000) {
+                    ketQua = 72000000 + (giaTri - 2000000000) * 0.02;
+                    congThuc = '72.000.000 + 2% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 112000000 + (giaTri - 4000000000) * 0.001;
+                    congThuc = '112.000.000 + 0,1% × ' + (giaTri - 4000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            } else if (loai === 'kdtm_co_gia_ngach') {
+                if (giaTri <= 60000000) {
+                    ketQua = 3000000;
+                    congThuc = 'Mức cố định: 3.000.000 đồng (từ 60.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = giaTri * 0.05;
+                    congThuc = '5% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 800000000) {
+                    ketQua = 20000000 + (giaTri - 400000000) * 0.04;
+                    congThuc = '20.000.000 + 4% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 36000000 + (giaTri - 800000000) * 0.03;
+                    congThuc = '36.000.000 + 3% × ' + (giaTri - 800000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 4000000000) {
+                    ketQua = 72000000 + (giaTri - 2000000000) * 0.02;
+                    congThuc = '72.000.000 + 2% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 112000000 + (giaTri - 4000000000) * 0.001;
+                    congThuc = '112.000.000 + 0,1% × ' + (giaTri - 4000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            } else if (loai === 'lao_dong_co_gia_ngach') {
+                if (giaTri <= 6000000) {
+                    ketQua = 300000;
+                    congThuc = 'Mức cố định: 300.000 đồng (từ 6.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = Math.max(giaTri * 0.03, 300000);
+                    congThuc = '3% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng (không thấp hơn 300.000 đồng)';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 12000000 + (giaTri - 400000000) * 0.02;
+                    congThuc = '12.000.000 + 2% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 44000000 + (giaTri - 2000000000) * 0.001;
+                    congThuc = '44.000.000 + 0,1% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            }
+
+            document.getElementById('receipt_gia_tri').innerText = giaTri.toLocaleString('vi-VN');
+            document.getElementById('receipt_cong_thuc').innerText = congThuc;
+            document.getElementById('receipt_ket_qua').innerText = Math.round(ketQua).toLocaleString('vi-VN');
+            document.getElementById('receiptBlock').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
