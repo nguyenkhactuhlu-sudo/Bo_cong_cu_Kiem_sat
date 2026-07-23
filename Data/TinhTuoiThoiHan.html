@@ -903,10 +903,24 @@
                     </div>
                 </div>
 
-                <!-- Ghi chú pháp lý Điều 117 -->
-                <div class="legal-note legal-note-tamgiu">
-                    <i class="fa-solid fa-scale-balanced"></i>
-                    <div><strong>Căn cứ pháp lý:</strong> Theo Điều 117 BLTTHS, thời hạn tạm giữ tính từ thời điểm người bị bắt có mặt tại trụ sở Cơ quan điều tra, Viện kiểm sát hoặc cơ quan khác có thẩm quyền.</div>
+                <!-- Ghi chú pháp lý Điều 117, 118 BLTTHS -->
+                <div class="legal-note legal-note-tamgiu" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;">
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
+
+                        <p><strong>Điều 117. Tạm giữ</strong></p>
+                        <p>1. Tạm giữ có thể áp dụng đối với người bị giữ trong trường hợp khẩn cấp, người bị bắt trong trường hợp phạm tội quả tang, người phạm tội tự thú, đầu thú hoặc đối với người bị bắt theo quyết định truy nã.</p>
+                        <p>2. Những người có thẩm quyền ra lệnh giữ người quy định tại khoản 2 Điều 110 của Bộ luật này có quyền ra quyết định tạm giữ. Quyết định tạm giữ phải ghi rõ họ tên, địa chỉ của người bị tạm giữ, lý do tạm giữ, giờ, ngày bắt đầu và giờ, ngày hết thời hạn tạm giữ và các nội dung quy định tại khoản 2 Điều 132 của Bộ luật này. Quyết định tạm giữ phải giao cho người bị tạm giữ.</p>
+                        <p>3. Người thi hành quyết định tạm giữ phải thông báo, giải thích quyền và nghĩa vụ của người bị tạm giữ quy định tại Điều 59 của Bộ luật này.</p>
+                        <p>4. Trong thời hạn 12 giờ kể từ khi ra quyết định tạm giữ, người ra quyết định tạm giữ phải gửi quyết định tạm giữ kèm theo các tài liệu làm căn cứ tạm giữ cho Viện kiểm sát cùng cấp hoặc Viện kiểm sát có thẩm quyền. Nếu xét thấy việc tạm giữ không có căn cứ hoặc không cần thiết thì Viện kiểm sát ra quyết định hủy bỏ quyết định tạm giữ và người ra quyết định tạm giữ phải trả tự do ngay cho người bị tạm giữ.</p>
+
+                        <p style="margin-top: 12px;"><strong>Điều 118. Thời hạn tạm giữ</strong></p>
+                        <p>1. Thời hạn tạm giữ không quá 03 ngày kể từ khi Cơ quan điều tra, cơ quan được giao nhiệm vụ tiến hành một số hoạt động điều tra nhận người bị giữ, người bị bắt hoặc áp giải người bị giữ, người bị bắt về trụ sở của mình hoặc kể từ khi Cơ quan điều tra ra quyết định tạm giữ người phạm tội tự thú, đầu thú.</p>
+                        <p>2. Trường hợp cần thiết, người ra quyết định tạm giữ có thể gia hạn tạm giữ nhưng không quá 03 ngày. Trường hợp đặc biệt, người ra quyết định tạm giữ có thể gia hạn tạm giữ lần thứ hai nhưng không quá 03 ngày. Mọi trường hợp gia hạn tạm giữ đều phải được Viện kiểm sát cùng cấp hoặc Viện kiểm sát có thẩm quyền phê chuẩn. Trong thời hạn 12 giờ kể từ khi nhận hồ sơ đề nghị gia hạn tạm giữ, Viện kiểm sát phải ra quyết định phê chuẩn hoặc quyết định không phê chuẩn.</p>
+                        <p>3. Trong khi tạm giữ, nếu không đủ căn cứ khởi tố bị can thì Cơ quan điều tra, cơ quan được giao nhiệm vụ tiến hành một số hoạt động điều tra phải trả tự do ngay cho người bị tạm giữ; trường hợp đã gia hạn tạm giữ thì Viện kiểm sát phải trả tự do ngay cho người bị tạm giữ.</p>
+                        <p>4. Thời gian tạm giữ được trừ vào thời hạn tạm giam. Một ngày tạm giữ được tính bằng một ngày tạm giam.</p>
+                    </div>
                 </div>
             </fieldset>
         </div>
@@ -928,18 +942,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Giờ <span class="optional">(không bắt buộc)</span></label>
-                            <div class="form-row">
-                                <div>
-                                    <input type="number" id="start-hour" min="0" max="23" placeholder="Giờ (0-23)" value="0">
-                                </div>
-                                <div>
-                                    <input type="number" id="start-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <label>Ngày - Tháng - Năm</label>
                             <div class="form-row-3">
                                 <div>
@@ -954,12 +956,6 @@
                             </div>
                         </div>
 
-                        <!-- Fill current date/time button -->
-                        <div style="margin-top: 8px; text-align: right;">
-                            <button onclick="fillCurrentTime()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
-                                <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
-                            </button>
-                        </div>
                     </div>
 
                     <!-- CỘT PHẢI: TUỔI / THỜI HẠN -->
@@ -980,7 +976,7 @@
 
                         <div class="form-group">
                             <label>Thời hạn (điền các giá trị mong muốn, có thể để trống)</label>
-                            <div class="form-row-5">
+                            <div class="form-row-3">
                                 <div>
                                     <label style="font-size:11px;color:#999;font-weight:600;">Năm</label>
                                     <input type="number" id="dur-year" min="0" placeholder="0" value="0">
@@ -993,29 +989,20 @@
                                     <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
                                     <input type="number" id="dur-day" min="0" placeholder="0" value="0">
                                 </div>
-                                <div>
-                                    <label style="font-size:11px;color:#999;font-weight:600;">Giờ</label>
-                                    <input type="number" id="dur-hour" min="0" placeholder="0" value="0">
-                                </div>
-                                <div>
-                                    <label style="font-size:11px;color:#999;font-weight:600;">Phút</label>
-                                    <input type="number" id="dur-minute" min="0" placeholder="0" value="0">
-                                </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>Ví dụ nhanh</label>
                             <div style="display:flex;flex-wrap:wrap;gap:6px;">
-                                <button class="quick-example" onclick="quickExample(18,0,0,0,0)">18 tuổi</button>
-                                <button class="quick-example" onclick="quickExample(0,0,20,0,0)">20 ngày</button>
-                                <button class="quick-example" onclick="quickExample(0,1,0,0,0)">1 tháng</button>
-                                <button class="quick-example" onclick="quickExample(0,3,0,0,0)">3 tháng</button>
-                                <button class="quick-example" onclick="quickExample(0,6,0,0,0)">6 tháng</button>
-                                <button class="quick-example" onclick="quickExample(1,0,0,0,0)">1 năm</button>
-                                <button class="quick-example" onclick="quickExample(2,0,0,0,0)">2 năm</button>
-                                <button class="quick-example" onclick="quickExample(1,2,15,0,0)">1n2th15ng</button>
-                                <button class="quick-example" onclick="quickExample(0,0,0,12,30)">12g30p</button>
+                                <button class="quick-example" onclick="quickExample(18,0,0)">18 tuổi</button>
+                                <button class="quick-example" onclick="quickExample(0,0,20)">20 ngày</button>
+                                <button class="quick-example" onclick="quickExample(0,1,0)">1 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,3,0)">3 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,6,0)">6 tháng</button>
+                                <button class="quick-example" onclick="quickExample(1,0,0)">1 năm</button>
+                                <button class="quick-example" onclick="quickExample(2,0,0)">2 năm</button>
+                                <button class="quick-example" onclick="quickExample(1,2,15)">1n2th15ng</button>
                             </div>
                         </div>
 
@@ -1069,10 +1056,19 @@
                     </div>
                 </div>
 
-                <!-- Ghi chú pháp lý Điều 135 -->
-                <div class="legal-note legal-note-thoihan">
-                    <i class="fa-solid fa-scale-balanced"></i>
-                    <div><strong>Căn cứ pháp lý:</strong> Theo Điều 135 BLTTHS, thời hạn tính từ ngày tiếp theo của ngày xác định sự kiện (không tính ngày xảy ra sự kiện).</div>
+                <!-- Ghi chú pháp lý Điều 134, 135 BLTTHS -->
+                <div class="legal-note legal-note-thoihan" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;">
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
+
+                        <p><strong>Điều 134. Tính thời hạn</strong></p>
+                        <p>1. Thời hạn mà Bộ luật này quy định được tính theo giờ, ngày, tháng, năm. Đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau.</p>
+                        <p>Khi tính thời hạn theo ngày thì thời hạn sẽ hết vào lúc 24 giờ ngày cuối cùng của thời hạn.</p>
+                        <p>Khi tính thời hạn theo tháng thì thời hạn hết vào ngày trùng của tháng sau; nếu tháng đó không có ngày trùng thì thời hạn hết vào ngày cuối cùng của tháng đó; nếu thời hạn hết vào ngày nghỉ thì ngày làm việc đầu tiên tiếp theo được tính là ngày cuối cùng của thời hạn.</p>
+                        <p>Khi tính thời hạn tạm giữ, tạm giam thì thời hạn hết vào ngày kết thúc thời hạn được ghi trong lệnh, quyết định. Nếu thời hạn được tính bằng tháng thì 01 tháng được tính là 30 ngày.</p>
+                        <p>2. Trường hợp có đơn hoặc giấy tờ gửi qua dịch vụ bưu chính thì thời hạn được tính theo dấu bưu chính nơi gửi. Nếu có đơn hoặc giấy tờ gửi qua cơ sở giam giữ thì thời hạn được tính từ ngày Trưởng Nhà tạm giữ, Trưởng Buồng tạm giữ thuộc Đồn biên phòng, Giám thị Trại tạm giam, Giám thị Trại giam nhận đơn hoặc giấy tờ đó.</p>
+                    </div>
                 </div>
             </fieldset>
         </div>
@@ -1082,7 +1078,7 @@
             <div class="info-grid">
                 <div class="info-item">
                     <i class="fa-solid fa-lightbulb"></i>
-                    <p><strong>Cách sử dụng:</strong> Nhập thời gian bắt đầu (ngày/tháng/năm, giờ/phút không bắt buộc), chọn "Cộng thêm" hoặc "Trừ đi", nhập giá trị và đơn vị thời hạn. Kết quả sẽ hiển thị ngày/tháng/năm tương ứng.</p>
+                    <p><strong>Cách sử dụng:</strong> Nhập thời gian bắt đầu (ngày/tháng/năm), chọn "Cộng thêm" hoặc "Trừ đi", nhập giá trị và đơn vị thời hạn. Kết quả sẽ hiển thị ngày/tháng/năm tương ứng.</p>
                 </div>
                 <div class="info-item">
                     <i class="fa-solid fa-calendar-alt"></i>
@@ -1110,6 +1106,10 @@
             { day: 30, month: 4, name: 'Ngày Giải phóng miền Nam (30/4)', icon: 'fa-flag' },
             { day: 1, month: 5, name: 'Quốc tế Lao động (1/5)', icon: 'fa-briefcase' },
             { day: 2, month: 9, name: 'Quốc khánh (2/9)', icon: 'fa-star' },
+            // Giỗ Tổ Hùng Vương (10/3 ÂL) - ước tính ngày dương (thường rơi vào tháng 4)
+            // Các năm tham khảo: 2025 (07/04), 2026 (26/04), 2027 (16/04), 2028 (04/04)
+            // Tết Nguyên đán - ước tính (thường cuối tháng 1 - đầu tháng 2)
+            // Các năm tham khảo: 2025 (29/01), 2026 (17/02), 2027 (06/02), 2028 (26/01)
         ];
 
         // Các ngày lễ âm lịch cần lưu ý (thông báo chung)
@@ -1125,8 +1125,6 @@
         (function init() {
             // Đặt giá trị mặc định cho thời gian gốc là hôm nay
             var now = new Date();
-            document.getElementById('start-hour').value = now.getHours();
-            document.getElementById('start-minute').value = now.getMinutes();
             document.getElementById('start-day').value = now.getDate();
             document.getElementById('start-month').value = now.getMonth() + 1;
             document.getElementById('start-year').value = now.getFullYear();
@@ -1154,19 +1152,15 @@
 
         function fillCurrentTime() {
             var now = new Date();
-            document.getElementById('start-hour').value = now.getHours();
-            document.getElementById('start-minute').value = now.getMinutes();
             document.getElementById('start-day').value = now.getDate();
             document.getElementById('start-month').value = now.getMonth() + 1;
             document.getElementById('start-year').value = now.getFullYear();
         }
 
-        function quickExample(y, m, d, h, min) {
+        function quickExample(y, m, d) {
             document.getElementById('dur-year').value = y;
             document.getElementById('dur-month').value = m;
             document.getElementById('dur-day').value = d;
-            document.getElementById('dur-hour').value = h;
-            document.getElementById('dur-minute').value = min;
             calculate();
         }
 
@@ -1208,23 +1202,16 @@
 
         function calculate() {
             // Đọc dữ liệu đầu vào
-            var startHour = parseInt(document.getElementById('start-hour').value) || 0;
-            var startMinute = parseInt(document.getElementById('start-minute').value) || 0;
             var startDay = parseInt(document.getElementById('start-day').value) || 1;
             var startMonth = parseInt(document.getElementById('start-month').value) || 1;
             var startYear = parseInt(document.getElementById('start-year').value) || 2026;
 
-            // Đọc thời hạn từ 5 trường
+            // Đọc thời hạn từ 3 trường
             var durYear = parseInt(document.getElementById('dur-year').value) || 0;
             var durMonth = parseInt(document.getElementById('dur-month').value) || 0;
             var durDay = parseInt(document.getElementById('dur-day').value) || 0;
-            var durHour = parseInt(document.getElementById('dur-hour').value) || 0;
-            var durMinute = parseInt(document.getElementById('dur-minute').value) || 0;
 
-            var totalNonZero = (durYear > 0 ? 1 : 0) + (durMonth > 0 ? 1 : 0) + (durDay > 0 ? 1 : 0) + (durHour > 0 ? 1 : 0) + (durMinute > 0 ? 1 : 0);
-
-            var hasTime = (document.getElementById('start-hour').value !== '' && document.getElementById('start-hour').value !== '0') ||
-                          (document.getElementById('start-minute').value !== '' && document.getElementById('start-minute').value !== '0');
+            var totalNonZero = (durYear > 0 ? 1 : 0) + (durMonth > 0 ? 1 : 0) + (durDay > 0 ? 1 : 0);
 
             // Kiểm tra dữ liệu hợp lệ
             if (totalNonZero === 0) {
@@ -1234,11 +1221,6 @@
 
             if (!isValidDate(startYear, startMonth, startDay)) {
                 alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
-                return;
-            }
-
-            if (startHour < 0 || startHour > 23 || startMinute < 0 || startMinute > 59) {
-                alert('Giờ hoặc phút không hợp lệ!');
                 return;
             }
 
@@ -1259,17 +1241,15 @@
                 adjustedStartYear = adjustedDate.getFullYear();
             }
 
-            // Tính toán tuần tự: năm -> tháng -> ngày -> giờ -> phút
+            // Tính toán tuần tự: năm -> tháng -> ngày
             // Dùng ngày đã điều chỉnh (ngày tiếp theo)
-            var result = { year: adjustedStartYear, month: adjustedStartMonth, day: adjustedStartDay, hour: startHour, minute: startMinute };
+            var result = { year: adjustedStartYear, month: adjustedStartMonth, day: adjustedStartDay };
             result = calculateDate(result, durYear, 'year', currentMode);
             result = calculateDate(result, durMonth, 'month', currentMode);
             result = calculateDate(result, durDay, 'day', currentMode);
-            result = calculateDate(result, durHour, 'hour', currentMode);
-            result = calculateDate(result, durMinute, 'minute', currentMode);
 
             // Hiển thị kết quả
-            displayResult(result, startYear, startMonth, startDay, startHour, startMinute, durYear, durMonth, durDay, durHour, durMinute, hasTime);
+            displayResult(result, startYear, startMonth, startDay, durYear, durMonth, durDay);
         }
 
         function calculateDate(current, value, unit, mode) {
@@ -1298,33 +1278,11 @@
                     break;
 
                 case 'day':
-                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
+                    dateObj = new Date(current.year, current.month - 1, current.day);
                     dateObj.setDate(dateObj.getDate() + sign * value);
                     current.year = dateObj.getFullYear();
                     current.month = dateObj.getMonth() + 1;
                     current.day = dateObj.getDate();
-                    current.hour = dateObj.getHours();
-                    current.minute = dateObj.getMinutes();
-                    break;
-
-                case 'hour':
-                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
-                    dateObj.setHours(dateObj.getHours() + sign * value);
-                    current.year = dateObj.getFullYear();
-                    current.month = dateObj.getMonth() + 1;
-                    current.day = dateObj.getDate();
-                    current.hour = dateObj.getHours();
-                    current.minute = dateObj.getMinutes();
-                    break;
-
-                case 'minute':
-                    dateObj = new Date(current.year, current.month - 1, current.day, current.hour, current.minute);
-                    dateObj.setMinutes(dateObj.getMinutes() + sign * value);
-                    current.year = dateObj.getFullYear();
-                    current.month = dateObj.getMonth() + 1;
-                    current.day = dateObj.getDate();
-                    current.hour = dateObj.getHours();
-                    current.minute = dateObj.getMinutes();
                     break;
             }
 
@@ -1335,7 +1293,7 @@
         // HIỂN THỊ KẾT QUẢ
         // ============================================================
 
-        function displayResult(result, startYear, startMonth, startDay, startHour, startMinute, durYear, durMonth, durDay, durHour, durMinute, hasTime) {
+        function displayResult(result, startYear, startMonth, startDay, durYear, durMonth, durDay) {
             var section = document.getElementById('result-section');
             section.classList.add('visible');
 
@@ -1347,23 +1305,12 @@
             if (durYear > 0) durationParts.push(durYear + ' năm');
             if (durMonth > 0) durationParts.push(durMonth + ' tháng');
             if (durDay > 0) durationParts.push(durDay + ' ngày');
-            if (durHour > 0) durationParts.push(durHour + ' giờ');
-            if (durMinute > 0) durationParts.push(durMinute + ' phút');
             var durationStr = durationParts.length > 0 ? durationParts.join(', ') : '0';
 
             var modeLabel = (currentMode === 'add') ? 'cộng thêm' : 'trừ đi';
 
             var startDateStr = pad(startDay) + '/' + pad(startMonth) + '/' + startYear;
-            if (hasTime) {
-                startDateStr += ' ' + pad(startHour) + ':' + pad(startMinute);
-            }
-
             var endDateStr = pad(result.day) + '/' + pad(result.month) + '/' + result.year;
-            var hasResultTime = (document.getElementById('start-hour').value !== '' && document.getElementById('start-hour').value !== '0') ||
-                               (document.getElementById('start-minute').value !== '' && document.getElementById('start-minute').value !== '0');
-            if (hasResultTime) {
-                endDateStr += ' ' + pad(result.hour) + ':' + pad(result.minute);
-            }
 
             var summaryHtml = '<p>';
             summaryHtml += 'Từ mốc <span class="big-date">' + startDateStr + '</span>';
@@ -1377,35 +1324,23 @@
             // --- Result display items ---
             var displayHtml = '';
 
-            // Nếu có giờ/phút
-            if (hasResultTime) {
-                displayHtml += '<div class="result-item">';
-                displayHtml += '<div class="label">Giờ</div>';
-                displayHtml += '<div class="value time-value">' + pad(result.hour) + '</div>';
-                displayHtml += '</div>';
-                displayHtml += '<div class="result-item">';
-                displayHtml += '<div class="label">Phút</div>';
-                displayHtml += '<div class="value time-value">' + pad(result.minute) + '</div>';
-                displayHtml += '</div>';
-            }
-
             displayHtml += '<div class="result-item">';
             displayHtml += '<div class="label">Ngày</div>';
-            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + pad(result.day) + '</div>';
+            displayHtml += '<div class="value highlight">' + pad(result.day) + '</div>';
             displayHtml += '</div>';
 
             displayHtml += '<div class="result-item">';
             displayHtml += '<div class="label">Tháng</div>';
-            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + pad(result.month) + '</div>';
+            displayHtml += '<div class="value highlight">' + pad(result.month) + '</div>';
             displayHtml += '</div>';
 
             displayHtml += '<div class="result-item">';
             displayHtml += '<div class="label">Năm</div>';
-            displayHtml += '<div class="value' + (hasResultTime ? '' : ' highlight') + '">' + result.year + '</div>';
+            displayHtml += '<div class="value highlight">' + result.year + '</div>';
             displayHtml += '</div>';
 
             // Thêm thứ trong tuần
-            var dateObj = new Date(result.year, result.month - 1, result.day, result.hour, result.minute);
+            var dateObj = new Date(result.year, result.month - 1, result.day);
             var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
             displayHtml += '<div class="result-item">';
             displayHtml += '<div class="label">Thứ</div>';
@@ -1414,11 +1349,31 @@
 
             document.getElementById('result-display').innerHTML = displayHtml;
 
+            // --- Kiểm tra ngày nghỉ (Điều 134 BLTTHS) ---
+            var resultDate = new Date(result.year, result.month - 1, result.day);
+            if (isHolidayOrWeekend(resultDate)) {
+                var workingDay = getNextWorkingDay(resultDate);
+                var workingDayStr = pad(workingDay.getDate()) + '/' + pad(workingDay.getMonth() + 1) + '/' + workingDay.getFullYear();
+                var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+
+                // Thêm banner cảnh báo vào result-summary
+                var summaryDiv = document.getElementById('result-summary');
+                var holidayBanner = '<div class="holiday-warning" style="margin-top:14px;">';
+                holidayBanner += '<div class="warning-title"><i class="fa-solid fa-gavel"></i> Căn cứ Điều 134 BLTTHS</div>';
+                holidayBanner += '<p style="font-size:13px;color:#991b1b;font-weight:600;line-height:1.6;">';
+                holidayBanner += 'Thời hạn hết vào ngày <strong>' + endDateStr + ' (' + dayNames[resultDate.getDay()] + ')</strong> là ngày nghỉ, ';
+                holidayBanner += 'nên được dời sang ngày làm việc đầu tiên tiếp theo: ';
+                holidayBanner += '<strong style="color:var(--green-dark);font-size:15px;">' + workingDayStr + ' (' + dayNames[workingDay.getDay()] + ')</strong>';
+                holidayBanner += '</p>';
+                holidayBanner += '</div>';
+                summaryDiv.innerHTML += holidayBanner;
+            }
+
             // --- Holiday section ---
-            showHolidayNotes(result, startYear, startMonth, startDay, hasResultTime);
+            showHolidayNotes(result, startYear, startMonth, startDay);
         }
 
-        function showHolidayNotes(result, startYear, startMonth, startDay, hasTime) {
+        function showHolidayNotes(result, startYear, startMonth, startDay) {
             var holidaySection = document.getElementById('holiday-section');
             var html = '';
 
@@ -1488,6 +1443,34 @@
             }
 
             holidaySection.innerHTML = html;
+        }
+
+        // ============================================================
+        // HÀM KIỂM TRA NGÀY NGHỈ & DỜI NGÀY LÀM VIỆC (Điều 134 BLTTHS)
+        // ============================================================
+
+        function isHolidayOrWeekend(date) {
+            // Kiểm tra thứ 7 (6) hoặc Chủ nhật (0)
+            var dayOfWeek = date.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) return true;
+
+            // Kiểm tra ngày lễ trong FIXED_HOLIDAYS
+            var d = date.getDate();
+            var m = date.getMonth() + 1;
+            for (var i = 0; i < FIXED_HOLIDAYS.length; i++) {
+                var h = FIXED_HOLIDAYS[i];
+                if (h.day === d && h.month === m) return true;
+            }
+            return false;
+        }
+
+        function getNextWorkingDay(date) {
+            var nextDate = new Date(date);
+            nextDate.setDate(nextDate.getDate() + 1);
+            while (isHolidayOrWeekend(nextDate)) {
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+            return nextDate;
         }
 
         // ============================================================
@@ -1566,10 +1549,10 @@
             var remainingMinutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
 
             // Hiển thị kết quả
-            displayTamGiuResult(startDate, endDate, hoursToAdd, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs);
+            displayTamGiuResult(startDate, endDate, hoursToAdd, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs, elapsedMs);
         }
 
-        function displayTamGiuResult(startDate, endDate, totalHours, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs) {
+        function displayTamGiuResult(startDate, endDate, totalHours, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs, elapsedMs) {
             var section = document.getElementById('tg-result-section');
             section.classList.add('visible');
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
