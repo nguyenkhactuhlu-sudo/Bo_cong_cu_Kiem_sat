@@ -139,13 +139,16 @@ Bo_cong_cu_Kiem_sat/
 | **URL** | `https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee` |
 | **Accent** | `accent-sky` |
 
-### 3.6. Tính tuổi – Tính thời hạn
+### 3.6. Tính tuổi – Tính thời hạn – Đếm tạm giữ
 | Thuộc tính | Giá trị |
-|---|---|
+|---|---|---|
 | **ID** | `tinh-tuoi-thoi-han` |
 | **Loại** | Static HTML (iframe) |
 | **URL** | `Data/TinhTuoiThoiHan.html` |
 | **Accent** | `accent-sky` |
+| **Chức năng** | Tính tuổi, tính thời hạn tố tụng (Điều 135 BLTTHS), đếm thời gian tạm giữ (Điều 117 BLTTHS) |
+| **Sửa lỗi** | Đã sửa lỗi lệch ngày: thời hạn tính từ ngày tiếp theo của ngày xác định sự kiện |
+| **Tính năng mới** | Thêm phần đếm thời gian tạm giữ với cảnh báo màu (đỏ < 6h, vàng < 24h) |
 
 ### 3.7. Hướng dẫn tạo sơ đồ tư duy tự động
 | Thuộc tính | Giá trị |

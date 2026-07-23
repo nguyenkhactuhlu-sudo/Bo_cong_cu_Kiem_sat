@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tính tuổi - Tính thời hạn</title>
+    <title>Tính tuổi - Tính thời hạn - Đếm tạm giữ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -18,6 +18,12 @@
             --plum: #7b2d42;
             --plum-dark: #5a1f30;
             --plum-light: #a84560;
+            --green-dark: #1a7a4c;
+            --green-light: #a8e6c1;
+            --red-warning: #dc2626;
+            --red-light: #fca5a5;
+            --yellow-warning: #d97706;
+            --yellow-light: #fde68a;
         }
 
         * {
@@ -90,12 +96,102 @@
             padding: 30px 20px;
         }
 
-        /* FORM SECTION */
+        /* FIELDSET STYLES */
+        .fieldset-section {
+            margin-bottom: 36px;
+            border-radius: 16px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .fieldset-section fieldset {
+            border: 2px solid;
+            border-radius: 16px;
+            padding: 24px 24px 28px;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            backdrop-filter: blur(8px);
+        }
+
+        .fieldset-section fieldset legend {
+            font-size: 18px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fieldset-section fieldset legend i {
+            font-size: 16px;
+        }
+
+        /* Fieldset 1 - Xanh (Tạm giữ) */
+        .fieldset-tamgiu {
+            border-color: var(--sky) !important;
+        }
+        .fieldset-tamgiu legend {
+            background: linear-gradient(135deg, var(--sky-dark), #2a7ab5);
+            border: 1px solid var(--sky-light);
+        }
+
+        /* Fieldset 2 - Nâu/Plum (Tuổi & Thời hạn) */
+        .fieldset-thoihan {
+            border-color: var(--plum-light) !important;
+        }
+        .fieldset-thoihan legend {
+            background: linear-gradient(135deg, var(--plum-dark), var(--plum-light));
+            border: 1px solid var(--plum-light);
+        }
+
+        /* LEGAL NOTE */
+        .legal-note {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .legal-note i {
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .legal-note-tamgiu {
+            background: rgba(30, 90, 138, 0.07);
+            border: 1px solid rgba(30, 90, 138, 0.2);
+            color: var(--sky-dark);
+        }
+
+        .legal-note-tamgiu i {
+            color: var(--sky-dark);
+        }
+
+        .legal-note-thoihan {
+            background: rgba(123, 45, 66, 0.07);
+            border: 1px solid rgba(123, 45, 66, 0.2);
+            color: var(--plum-dark);
+        }
+
+        .legal-note-thoihan i {
+            color: var(--plum-dark);
+        }
+
+        /* FORM SECTION (2 columns) */
         .form-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 0;
         }
 
         @media (max-width: 900px) {
@@ -105,34 +201,29 @@
         }
 
         .form-card {
-            background: rgba(255,255,255,0.92);
-            border: 1px solid rgba(30, 90, 138, 0.15);
-            border-radius: 16px;
-            padding: 28px 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            backdrop-filter: blur(8px);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .form-card:hover {
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            backdrop-filter: none;
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
             color: var(--sky-dark);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 10px;
             border-bottom: 2px solid var(--sky-light);
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .card-title i {
             color: var(--bronze);
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .form-group {
@@ -254,6 +345,15 @@
 
         .btn-calculate i {
             margin-right: 8px;
+        }
+
+        /* Tạm giữ button */
+        .btn-tamgiu {
+            background: linear-gradient(135deg, var(--sky-dark), #2a7ab5);
+            box-shadow: 0 4px 16px rgba(30, 90, 138, 0.3);
+        }
+        .btn-tamgiu:hover {
+            box-shadow: 0 8px 24px rgba(30, 90, 138, 0.4);
         }
 
         /* RESULT SECTION */
@@ -408,6 +508,91 @@
             font-size: 11px;
         }
 
+        /* TẠM GIỮ RESULT */
+        .tamgiu-result {
+            margin-top: 20px;
+        }
+
+        .tamgiu-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .tamgiu-result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 14px;
+            text-align: center;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .tamgiu-result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .tamgiu-result-item .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--sky-dark);
+        }
+
+        .tamgiu-result-item .value.warning-red {
+            color: var(--red-warning);
+        }
+
+        .tamgiu-result-item .value.warning-yellow {
+            color: var(--yellow-warning);
+        }
+
+        .tamgiu-result-item .value.normal {
+            color: var(--green-dark);
+        }
+
+        /* TẠM GIỮ WARNING BANNER */
+        .tamgiu-warning {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tamgiu-warning i {
+            font-size: 20px;
+        }
+
+        .tamgiu-warning.danger {
+            background: rgba(220, 38, 38, 0.1);
+            border: 2px solid var(--red-warning);
+            color: var(--red-warning);
+        }
+
+        .tamgiu-warning.caution {
+            background: rgba(217, 119, 6, 0.1);
+            border: 2px solid var(--yellow-warning);
+            color: var(--yellow-warning);
+        }
+
+        .tamgiu-warning.safe {
+            background: rgba(26, 122, 76, 0.08);
+            border: 2px solid var(--green-dark);
+            color: var(--green-dark);
+        }
+
         /* INFO SECTION */
         .info-section {
             margin-top: 30px;
@@ -454,14 +639,17 @@
             .main-content {
                 padding: 20px 14px;
             }
-            .form-card {
-                padding: 20px 16px;
+            .fieldset-section fieldset {
+                padding: 16px 14px;
             }
             .result-display {
                 grid-template-columns: repeat(2, 1fr);
             }
             .result-item .value {
                 font-size: 22px;
+            }
+            .tamgiu-result-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -552,6 +740,54 @@
         .holiday-note-positive p i {
             color: var(--bronze);
         }
+
+        /* Tùy chọn giờ tạm giữ */
+        .tamgiu-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .tamgiu-option-btn {
+            padding: 8px 18px;
+            border: 2px solid rgba(30, 90, 138, 0.2);
+            border-radius: 10px;
+            background: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sky-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tamgiu-option-btn:hover {
+            border-color: var(--sky);
+            background: rgba(93, 169, 217, 0.06);
+        }
+
+        .tamgiu-option-btn.active {
+            border-color: var(--sky-dark);
+            background: rgba(30, 90, 138, 0.1);
+            box-shadow: 0 0 0 2px rgba(30, 90, 138, 0.15);
+        }
+
+        .tamgiu-custom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 500px) {
+            .tamgiu-custom-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -562,7 +798,7 @@
             <i class="fa-solid fa-calendar-check"></i>
         </div>
         <div>
-            <div class="header-title">TÍNH TUỔI - <span>TÍNH THỜI HẠN</span></div>
+            <div class="header-title">TÍNH TUỔI - <span>TÍNH THỜI HẠN - TẠM GIỮ</span></div>
             <div class="header-sub"><i class="fa-regular fa-clock"></i> Công cụ tính toán thời gian tố tụng</div>
         </div>
     </header>
@@ -570,158 +806,275 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
 
-        <!-- FORM SECTION -->
-        <div class="form-section">
+        <!-- ============================================================ -->
+        <!-- PHẦN 1: ĐẾM THỜI GIAN TẠM GIỮ (Điều 117 BLTTHS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-tamgiu">
+                <legend><i class="fa-solid fa-clock"></i> ĐẾM THỜI GIAN TẠM GIỮ</legend>
 
-            <!-- CỘT TRÁI: THỜI GIAN GỐC -->
-            <div class="form-card">
-                <div class="card-title">
-                    <i class="fa-solid fa-calendar-day"></i>
-                    Thời gian gốc
-                    <span class="info-badge"><i class="fa-regular fa-star"></i> Mốc bắt đầu</span>
+                <div class="form-section">
+                    <!-- CỘT TRÁI: Thời điểm bắt đầu tạm giữ -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-play-circle"></i>
+                            Thời điểm bắt đầu tạm giữ
+                        </div>
+
+                        <div class="form-group">
+                            <label>Giờ - Phút</label>
+                            <div class="form-row">
+                                <div>
+                                    <input type="number" id="tg-hour" min="0" max="23" placeholder="Giờ (0-23)" value="8">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div>
+                                    <input type="number" id="tg-day" min="1" max="31" placeholder="Ngày" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-month" min="1" max="12" placeholder="Tháng" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-year" min="1" max="9999" placeholder="Năm" value="2026">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 8px; text-align: right;">
+                            <button onclick="fillCurrentTimeTG()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
+                                <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: Thời hạn tạm giữ -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-hourglass-start"></i>
+                            Thời hạn tạm giữ
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chọn thời hạn</label>
+                            <div class="tamgiu-options" id="tg-options">
+                                <button class="tamgiu-option-btn active" data-hours="24" onclick="selectTGHours(24)">24h</button>
+                                <button class="tamgiu-option-btn" data-hours="48" onclick="selectTGHours(48)">48h</button>
+                                <button class="tamgiu-option-btn" data-hours="72" onclick="selectTGHours(72)">72h</button>
+                                <button class="tamgiu-option-btn" data-hours="0" onclick="selectTGHours(0)">Tùy chọn</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="tg-custom-group" style="display:none;">
+                            <label>Nhập số giờ tùy chọn</label>
+                            <div class="tamgiu-custom-row">
+                                <div>
+                                    <input type="number" id="tg-custom-hours" min="1" max="999" placeholder="Số giờ" value="12">
+                                </div>
+                                <div style="display:flex;align-items:center;font-size:13px;font-weight:600;color:#666;">
+                                    <i class="fa-regular fa-clock" style="margin-right:6px;"></i> giờ
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-calculate btn-tamgiu" onclick="calculateTamGiu()">
+                            <i class="fa-solid fa-calculator"></i> TÍNH THỜI HẠN TẠM GIỮ
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Giờ <span class="optional">(không bắt buộc)</span></label>
-                    <div class="form-row">
-                        <div>
-                            <input type="number" id="start-hour" min="0" max="23" placeholder="Giờ (0-23)" value="0">
+                <!-- Kết quả tạm giữ -->
+                <div class="result-section" id="tg-result-section">
+                    <div class="result-card" style="margin-top:20px;">
+                        <div class="result-header">
+                            <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THỜI HẠN TẠM GIỮ</h2>
                         </div>
-                        <div>
-                            <input type="number" id="start-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
+
+                        <div id="tg-result-content">
+                            <!-- Dynamically filled -->
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Ngày - Tháng - Năm</label>
-                    <div class="form-row-3">
-                        <div>
-                            <input type="number" id="start-day" min="1" max="31" placeholder="Ngày" value="1">
-                        </div>
-                        <div>
-                            <input type="number" id="start-month" min="1" max="12" placeholder="Tháng" value="1">
-                        </div>
-                        <div>
-                            <input type="number" id="start-year" min="1" max="9999" placeholder="Năm" value="2026">
-                        </div>
-                    </div>
+                <!-- Ghi chú pháp lý Điều 117 -->
+                <div class="legal-note legal-note-tamgiu">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div><strong>Căn cứ pháp lý:</strong> Theo Điều 117 BLTTHS, thời hạn tạm giữ tính từ thời điểm người bị bắt có mặt tại trụ sở Cơ quan điều tra, Viện kiểm sát hoặc cơ quan khác có thẩm quyền.</div>
                 </div>
-
-                <!-- Fill current date/time button -->
-                <div style="margin-top: 8px; text-align: right;">
-                    <button onclick="fillCurrentTime()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
-                        <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
-                    </button>
-                </div>
-            </div>
-
-            <!-- CỘT PHẢI: TUỔI / THỜI HẠN -->
-            <div class="form-card">
-                <div class="card-title">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                    Tuổi / Thời hạn tố tụng
-                </div>
-
-                <div class="calc-tabs" id="calc-tabs">
-                    <button class="calc-tab active" data-mode="add" onclick="setMode('add')">
-                        <i class="fa-solid fa-plus"></i> Cộng thêm
-                    </button>
-                    <button class="calc-tab" data-mode="subtract" onclick="setMode('subtract')">
-                        <i class="fa-solid fa-minus"></i> Trừ đi
-                    </button>
-                </div>
-
-                <div class="form-group">
-                    <label>Thời hạn (điền các giá trị mong muốn, có thể để trống)</label>
-                    <div class="form-row-5">
-                        <div>
-                            <label style="font-size:11px;color:#999;font-weight:600;">Năm</label>
-                            <input type="number" id="dur-year" min="0" placeholder="0" value="0">
-                        </div>
-                        <div>
-                            <label style="font-size:11px;color:#999;font-weight:600;">Tháng</label>
-                            <input type="number" id="dur-month" min="0" placeholder="0" value="0">
-                        </div>
-                        <div>
-                            <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
-                            <input type="number" id="dur-day" min="0" placeholder="0" value="0">
-                        </div>
-                        <div>
-                            <label style="font-size:11px;color:#999;font-weight:600;">Giờ</label>
-                            <input type="number" id="dur-hour" min="0" placeholder="0" value="0">
-                        </div>
-                        <div>
-                            <label style="font-size:11px;color:#999;font-weight:600;">Phút</label>
-                            <input type="number" id="dur-minute" min="0" placeholder="0" value="0">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Ví dụ nhanh</label>
-                    <div style="display:flex;flex-wrap:wrap;gap:6px;">
-                        <button class="quick-example" onclick="quickExample(18,0,0,0,0)">18 tuổi</button>
-                        <button class="quick-example" onclick="quickExample(0,0,20,0,0)">20 ngày</button>
-                        <button class="quick-example" onclick="quickExample(0,1,0,0,0)">1 tháng</button>
-                        <button class="quick-example" onclick="quickExample(0,3,0,0,0)">3 tháng</button>
-                        <button class="quick-example" onclick="quickExample(0,6,0,0,0)">6 tháng</button>
-                        <button class="quick-example" onclick="quickExample(1,0,0,0,0)">1 năm</button>
-                        <button class="quick-example" onclick="quickExample(2,0,0,0,0)">2 năm</button>
-                        <button class="quick-example" onclick="quickExample(1,2,15,0,0)">1n2th15ng</button>
-                        <button class="quick-example" onclick="quickExample(0,0,0,12,30)">12g30p</button>
-                    </div>
-                </div>
-
-                <style>
-                    .quick-example {
-                        padding: 6px 14px;
-                        border: 1.5px solid rgba(201, 149, 46, 0.25);
-                        border-radius: 20px;
-                        background: rgba(201, 149, 46, 0.06);
-                        font-family: inherit;
-                        font-size: 12px;
-                        font-weight: 700;
-                        color: var(--plum-dark);
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    }
-                    .quick-example:hover {
-                        background: rgba(201, 149, 46, 0.15);
-                        border-color: var(--bronze);
-                        transform: translateY(-1px);
-                    }
-                    .quick-example:active {
-                        transform: translateY(0);
-                    }
-                </style>
-
-                <button class="btn-calculate" onclick="calculate()">
-                    <i class="fa-solid fa-calculator"></i> TÍNH TOÁN
-                </button>
-            </div>
+            </fieldset>
         </div>
 
+        <!-- ============================================================ -->
+        <!-- PHẦN 2: TÍNH TUỔI & TÍNH THỜI HẠN (Điều 135 BLTTHS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-thoihan">
+                <legend><i class="fa-solid fa-calendar-alt"></i> TÍNH TUỔI & TÍNH THỜI HẠN</legend>
 
-        <!-- RESULT SECTION -->
-        <div class="result-section" id="result-section">
-            <div class="result-card" id="result-card">
-                <div class="result-header">
-                    <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ TÍNH TOÁN</h2>
+                <div class="form-section">
+                    <!-- CỘT TRÁI: THỜI GIAN GỐC -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            Thời gian gốc
+                            <span class="info-badge"><i class="fa-regular fa-star"></i> Mốc bắt đầu</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Giờ <span class="optional">(không bắt buộc)</span></label>
+                            <div class="form-row">
+                                <div>
+                                    <input type="number" id="start-hour" min="0" max="23" placeholder="Giờ (0-23)" value="0">
+                                </div>
+                                <div>
+                                    <input type="number" id="start-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div>
+                                    <input type="number" id="start-day" min="1" max="31" placeholder="Ngày" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="start-month" min="1" max="12" placeholder="Tháng" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="start-year" min="1" max="9999" placeholder="Năm" value="2026">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fill current date/time button -->
+                        <div style="margin-top: 8px; text-align: right;">
+                            <button onclick="fillCurrentTime()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
+                                <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: TUỔI / THỜI HẠN -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            Tuổi / Thời hạn tố tụng
+                        </div>
+
+                        <div class="calc-tabs" id="calc-tabs">
+                            <button class="calc-tab active" data-mode="add" onclick="setMode('add')">
+                                <i class="fa-solid fa-plus"></i> Cộng thêm
+                            </button>
+                            <button class="calc-tab" data-mode="subtract" onclick="setMode('subtract')">
+                                <i class="fa-solid fa-minus"></i> Trừ đi
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thời hạn (điền các giá trị mong muốn, có thể để trống)</label>
+                            <div class="form-row-5">
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Năm</label>
+                                    <input type="number" id="dur-year" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Tháng</label>
+                                    <input type="number" id="dur-month" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
+                                    <input type="number" id="dur-day" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Giờ</label>
+                                    <input type="number" id="dur-hour" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Phút</label>
+                                    <input type="number" id="dur-minute" min="0" placeholder="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ví dụ nhanh</label>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                                <button class="quick-example" onclick="quickExample(18,0,0,0,0)">18 tuổi</button>
+                                <button class="quick-example" onclick="quickExample(0,0,20,0,0)">20 ngày</button>
+                                <button class="quick-example" onclick="quickExample(0,1,0,0,0)">1 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,3,0,0,0)">3 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,6,0,0,0)">6 tháng</button>
+                                <button class="quick-example" onclick="quickExample(1,0,0,0,0)">1 năm</button>
+                                <button class="quick-example" onclick="quickExample(2,0,0,0,0)">2 năm</button>
+                                <button class="quick-example" onclick="quickExample(1,2,15,0,0)">1n2th15ng</button>
+                                <button class="quick-example" onclick="quickExample(0,0,0,12,30)">12g30p</button>
+                            </div>
+                        </div>
+
+                        <style>
+                            .quick-example {
+                                padding: 6px 14px;
+                                border: 1.5px solid rgba(201, 149, 46, 0.25);
+                                border-radius: 20px;
+                                background: rgba(201, 149, 46, 0.06);
+                                font-family: inherit;
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: var(--plum-dark);
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            }
+                            .quick-example:hover {
+                                background: rgba(201, 149, 46, 0.15);
+                                border-color: var(--bronze);
+                                transform: translateY(-1px);
+                            }
+                            .quick-example:active {
+                                transform: translateY(0);
+                            }
+                        </style>
+
+                        <button class="btn-calculate" onclick="calculate()">
+                            <i class="fa-solid fa-calculator"></i> TÍNH TOÁN
+                        </button>
+                    </div>
                 </div>
 
-                <div class="result-summary" id="result-summary">
-                    <!-- Dynamically filled -->
+                <!-- Kết quả -->
+                <div class="result-section" id="result-section">
+                    <div class="result-card" id="result-card">
+                        <div class="result-header">
+                            <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ TÍNH TOÁN</h2>
+                        </div>
+
+                        <div class="result-summary" id="result-summary">
+                            <!-- Dynamically filled -->
+                        </div>
+
+                        <div class="result-display" id="result-display">
+                            <!-- Dynamically filled -->
+                        </div>
+
+                        <div id="holiday-section">
+                            <!-- Dynamically filled -->
+                        </div>
+                    </div>
                 </div>
 
-                <div class="result-display" id="result-display">
-                    <!-- Dynamically filled -->
+                <!-- Ghi chú pháp lý Điều 135 -->
+                <div class="legal-note legal-note-thoihan">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div><strong>Căn cứ pháp lý:</strong> Theo Điều 135 BLTTHS, thời hạn tính từ ngày tiếp theo của ngày xác định sự kiện (không tính ngày xảy ra sự kiện).</div>
                 </div>
-
-                <div id="holiday-section">
-                    <!-- Dynamically filled -->
-                </div>
-            </div>
+            </fieldset>
         </div>
 
         <!-- INFO SECTION -->
@@ -749,6 +1102,7 @@
         // BIẾN TOÀN CỤC
         // ============================================================
         var currentMode = 'add';
+        var selectedTGHours = 24;
 
         // Danh sách ngày lễ cố định (dương lịch)
         var FIXED_HOLIDAYS = [
@@ -776,10 +1130,17 @@
             document.getElementById('start-day').value = now.getDate();
             document.getElementById('start-month').value = now.getMonth() + 1;
             document.getElementById('start-year').value = now.getFullYear();
+
+            // Đặt giá trị mặc định cho tạm giữ
+            document.getElementById('tg-hour').value = now.getHours();
+            document.getElementById('tg-minute').value = now.getMinutes();
+            document.getElementById('tg-day').value = now.getDate();
+            document.getElementById('tg-month').value = now.getMonth() + 1;
+            document.getElementById('tg-year').value = now.getFullYear();
         })();
 
         // ============================================================
-        // CHỨC NĂNG
+        // CHỨC NĂNG TÍNH TUỔI & THỜI HẠN
         // ============================================================
 
         function setMode(mode) {
@@ -842,7 +1203,7 @@
         }
 
         // ============================================================
-        // TÍNH TOÁN CHÍNH
+        // TÍNH TOÁN CHÍNH (ĐÃ SỬA LỖI LỆCH NGÀY - Điều 135 BLTTHS)
         // ============================================================
 
         function calculate() {
@@ -881,8 +1242,26 @@
                 return;
             }
 
+            // === SỬA LỖI LỆCH NGÀY THEO ĐIỀU 135 BLTTHS ===
+            // Thời hạn tính từ ngày tiếp theo của ngày xác định sự kiện
+            // Nếu có ngày (durDay > 0) hoặc tháng (durMonth > 0) thì cộng thêm 1 ngày
+            // để bắt đầu từ ngày tiếp theo
+            var adjustedStartDay = startDay;
+            var adjustedStartMonth = startMonth;
+            var adjustedStartYear = startYear;
+
+            if (durDay > 0 || durMonth > 0 || durYear > 0) {
+                // Tạo đối tượng Date và cộng thêm 1 ngày
+                var adjustedDate = new Date(startYear, startMonth - 1, startDay);
+                adjustedDate.setDate(adjustedDate.getDate() + 1);
+                adjustedStartDay = adjustedDate.getDate();
+                adjustedStartMonth = adjustedDate.getMonth() + 1;
+                adjustedStartYear = adjustedDate.getFullYear();
+            }
+
             // Tính toán tuần tự: năm -> tháng -> ngày -> giờ -> phút
-            var result = { year: startYear, month: startMonth, day: startDay, hour: startHour, minute: startMinute };
+            // Dùng ngày đã điều chỉnh (ngày tiếp theo)
+            var result = { year: adjustedStartYear, month: adjustedStartMonth, day: adjustedStartDay, hour: startHour, minute: startMinute };
             result = calculateDate(result, durYear, 'year', currentMode);
             result = calculateDate(result, durMonth, 'month', currentMode);
             result = calculateDate(result, durDay, 'day', currentMode);
@@ -1109,6 +1488,184 @@
             }
 
             holidaySection.innerHTML = html;
+        }
+
+        // ============================================================
+        // CHỨC NĂNG TẠM GIỮ (Điều 117 BLTTHS)
+        // ============================================================
+
+        function fillCurrentTimeTG() {
+            var now = new Date();
+            document.getElementById('tg-hour').value = now.getHours();
+            document.getElementById('tg-minute').value = now.getMinutes();
+            document.getElementById('tg-day').value = now.getDate();
+            document.getElementById('tg-month').value = now.getMonth() + 1;
+            document.getElementById('tg-year').value = now.getFullYear();
+        }
+
+        function selectTGHours(hours) {
+            selectedTGHours = hours;
+            // Update active button
+            var btns = document.querySelectorAll('.tamgiu-option-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('active');
+            }
+            event.target.classList.add('active');
+
+            // Show/hide custom input
+            var customGroup = document.getElementById('tg-custom-group');
+            if (hours === 0) {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+
+        function calculateTamGiu() {
+            // Đọc dữ liệu đầu vào
+            var tgHour = parseInt(document.getElementById('tg-hour').value) || 0;
+            var tgMinute = parseInt(document.getElementById('tg-minute').value) || 0;
+            var tgDay = parseInt(document.getElementById('tg-day').value) || 1;
+            var tgMonth = parseInt(document.getElementById('tg-month').value) || 1;
+            var tgYear = parseInt(document.getElementById('tg-year').value) || 2026;
+
+            // Lấy số giờ tạm giữ
+            var hoursToAdd = selectedTGHours;
+            if (hoursToAdd === 0) {
+                hoursToAdd = parseInt(document.getElementById('tg-custom-hours').value) || 0;
+            }
+
+            if (hoursToAdd <= 0) {
+                alert('Vui lòng chọn hoặc nhập số giờ tạm giữ hợp lệ.');
+                return;
+            }
+
+            if (tgHour < 0 || tgHour > 23 || tgMinute < 0 || tgMinute > 59) {
+                alert('Giờ hoặc phút không hợp lệ!');
+                return;
+            }
+
+            if (!isValidDate(tgYear, tgMonth, tgDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            // Tính thời điểm hết hạn tạm giữ
+            var startDate = new Date(tgYear, tgMonth - 1, tgDay, tgHour, tgMinute);
+            var endDate = new Date(startDate.getTime() + hoursToAdd * 60 * 60 * 1000);
+
+            // Tính thời gian hiện tại
+            var now = new Date();
+            var elapsedMs = now.getTime() - startDate.getTime();
+            var remainingMs = endDate.getTime() - now.getTime();
+
+            var elapsedHours = Math.floor(elapsedMs / (60 * 60 * 1000));
+            var elapsedMinutes = Math.floor((elapsedMs % (60 * 60 * 1000)) / (60 * 1000));
+
+            var remainingHours = Math.floor(remainingMs / (60 * 60 * 1000));
+            var remainingMinutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+
+            // Hiển thị kết quả
+            displayTamGiuResult(startDate, endDate, hoursToAdd, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs);
+        }
+
+        function displayTamGiuResult(startDate, endDate, totalHours, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs) {
+            var section = document.getElementById('tg-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            var content = document.getElementById('tg-result-content');
+
+            // Warning banner
+            var warningHtml = '';
+            var totalRemainingHours = remainingHours + remainingMinutes / 60;
+
+            if (totalRemainingHours < 6 && remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning danger">';
+                warningHtml += '<i class="fa-solid fa-circle-exclamation"></i>';
+                warningHtml += '<span>CẢNH BÁO: Thời gian tạm giữ sắp hết! Còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else if (totalRemainingHours < 24 && remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning caution">';
+                warningHtml += '<i class="fa-solid fa-triangle-exclamation"></i>';
+                warningHtml += '<span>Lưu ý: Thời gian tạm giữ còn dưới 24 giờ. Còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else if (remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning safe">';
+                warningHtml += '<i class="fa-solid fa-check-circle"></i>';
+                warningHtml += '<span>Thời gian tạm giữ còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else {
+                warningHtml += '<div class="tamgiu-warning danger">';
+                warningHtml += '<i class="fa-solid fa-bell"></i>';
+                warningHtml += '<span>ĐÃ HẾT HẠN TẠM GIỮ! Thời hạn tạm giữ đã kết thúc.</span>';
+                warningHtml += '</div>';
+            }
+
+            // Result grid
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+
+            var gridHtml = '<div class="tamgiu-result-grid">';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Bắt đầu</div>';
+            gridHtml += '<div class="value time-value">' + pad(startDate.getHours()) + ':' + pad(startDate.getMinutes()) + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</div>';
+            gridHtml += '<div style="font-size:11px;color:#999;margin-top:2px;">' + dayNames[startDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Hết hạn</div>';
+            gridHtml += '<div class="value time-value">' + pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</div>';
+            gridHtml += '<div style="font-size:11px;color:#999;margin-top:2px;">' + dayNames[endDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Thời hạn</div>';
+            gridHtml += '<div class="value">' + totalHours + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">giờ</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Đã qua</div>';
+            var elapsedClass = 'normal';
+            if (elapsedHours >= totalHours) elapsedClass = 'warning-red';
+            else if (elapsedHours >= totalHours * 0.75) elapsedClass = 'warning-yellow';
+            gridHtml += '<div class="value ' + elapsedClass + '">' + elapsedHours + 'h' + elapsedMinutes + 'p</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + Math.round(elapsedMs / (totalHours * 60 * 60 * 1000) * 100) + '%</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Còn lại</div>';
+            var remainingClass = 'normal';
+            if (remainingMs > 0) {
+                if (totalRemainingHours < 6) remainingClass = 'warning-red';
+                else if (totalRemainingHours < 24) remainingClass = 'warning-yellow';
+            } else {
+                remainingClass = 'warning-red';
+            }
+            gridHtml += '<div class="value ' + remainingClass + '">' + (remainingMs > 0 ? remainingHours + 'h' + remainingMinutes + 'p' : 'HẾT') + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + (remainingMs > 0 ? Math.round(remainingMs / (totalHours * 60 * 60 * 1000) * 100) + '%' : '0%') + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '</div>'; // close tamgiu-result-grid
+
+            // Summary
+            var summaryHtml = '<div class="result-summary">';
+            summaryHtml += '<p>';
+            summaryHtml += 'Tạm giữ từ <span class="big-date">' + pad(startDate.getHours()) + ':' + pad(startDate.getMinutes()) + ' ' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</span>';
+            summaryHtml += ' <span class="arrow-icon">→</span> ';
+            summaryHtml += 'Hết hạn lúc <span class="big-date" style="color:var(--bronze);">' + pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + ' ' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</span>';
+            summaryHtml += '</p>';
+            summaryHtml += '<p style="margin-top:8px;font-size:14px;color:#666;">';
+            summaryHtml += 'Thời hạn tạm giữ: <strong>' + totalHours + ' giờ</strong>';
+            summaryHtml += ' &middot; Đã qua: <strong>' + elapsedHours + ' giờ ' + elapsedMinutes + ' phút</strong>';
+            summaryHtml += ' &middot; Còn lại: <strong>' + (remainingMs > 0 ? remainingHours + ' giờ ' + remainingMinutes + ' phút' : 'ĐÃ HẾT') + '</strong>';
+            summaryHtml += '</p>';
+            summaryHtml += '</div>';
+
+            content.innerHTML = warningHtml + summaryHtml + gridHtml;
         }
     </script>
 
