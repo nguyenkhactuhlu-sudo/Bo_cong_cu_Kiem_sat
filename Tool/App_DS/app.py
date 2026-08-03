@@ -11,6 +11,7 @@ def tinh():
     try:
         gia_tri = float(request.form.get('gia_tri', 0))
         loai_phi = request.form.get('loai_phi')
+        giam_50 = request.form.get('giam_50')  # 'on' nếu checkbox được tích, None nếu không
         
         cong_thuc = ""
         ket_qua = 0
@@ -51,9 +52,24 @@ def tinh():
                 ket_qua = 112000000 + (gia_tri - 4000000000) * 0.001
                 cong_thuc = f"112tr + ({gia_tri:,.0f} - 4 tỷ) x 0.1%"
         
+        # Lưu án phí gốc trước khi giảm
+        ket_qua_goc = ket_qua
+        giam_50_ap_dung = False
+        so_giam = 0
+
+        # 3. Áp dụng giảm 50% nếu checkbox được tích (Điều 27 NQ 326/2016)
+        if giam_50 == 'on':
+            so_giam = ket_qua * 0.5
+            ket_qua = ket_qua * 0.5
+            giam_50_ap_dung = True
+            cong_thuc += " → Giảm 50% (Điều 27 NQ 326/2016)"
+        
         return render_template('index.html', 
                                gia_tri_nhap=gia_tri, 
-                               ket_qua="{:,.0f}".format(ket_qua), 
+                               ket_qua="{:,.0f}".format(ket_qua),
+                               ket_qua_goc="{:,.0f}".format(ket_qua_goc),
+                               so_giam="{:,.0f}".format(so_giam),
+                               giam_50_ap_dung=giam_50_ap_dung,
                                cong_thuc=cong_thuc)
     
     except (ValueError, TypeError):
