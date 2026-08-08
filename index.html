@@ -394,6 +394,7 @@
             rename: '<svg viewBox="0 0 24 24" style="width:36px;height:36px;" fill="none" stroke="#f97316" stroke-width="2"><path class="anim-soft-pulse" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
             convert: '<div style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;"><span style="color:#0284c7;">DOCX</span><svg class="anim-arrow-bounce" viewBox="0 0 24 24" style="width:16px;height:16px;" fill="none" stroke="#14b8a6" stroke-width="2.5"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg><span style="color:#059669;">MD</span></div>',
             scan: '<svg viewBox="0 0 24 24" style="width:36px;height:36px;" fill="none" stroke="#8b5cf6" stroke-width="2"><circle class="anim-icon-bounce" cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6"/><path d="M11 8v6"/></svg>',
+            caseFolder: '<svg viewBox="0 0 56 56" style="width:48px;height:48px;" fill="none"><path d="M8 17a5 5 0 015-5h11l5 6h14a5 5 0 015 5v20a5 5 0 01-5 5H13a5 5 0 01-5-5V17z" fill="#ecfeff" stroke="#0891b2" stroke-width="2.5"/><path d="M20 28h16M20 35h12" stroke="#0e7490" stroke-width="2.5" stroke-linecap="round"/><circle class="anim-node-pulse" cx="42" cy="15" r="6" fill="#f59e0b"/><path d="M39.5 15l1.8 1.8 3.4-3.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
             radarPulse: '<svg viewBox="0 0 56 56" style="width:48px;height:48px;"><circle class="anim-radar-pulse" cx="28" cy="28" r="2" fill="rgba(20,184,166,0.3)"/><circle cx="28" cy="28" r="5" fill="#14b8a6"/></svg>'
         };
 
@@ -408,7 +409,8 @@
             { id:'an-danh-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tự động che thông tin - không kết nối mạng', desc:'Tự động ẩn toàn bộ thông tin cá nhân trong văn bản trước khi công bố hoặc giao cho AI xử lý.', illust:ILLUST.censor, url:'Tool/AnDanh/index.html', accent:'', footer:'Phát triển bởi Trần Huy — Viện KSND KV11, Đắk Lắk' },
             { id:'file-renamer-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tự động đổi tên file - không kết nối mạng', desc:'Tự động sửa tên file để AI dễ tiếp cận hoặc cho phép đổi tên file hàng loạt (ví dụ: Đánh số bút lục, tài liệu).', illust:ILLUST.rename, url:'Tool/FileRenamer/index.html', accent:'', footer:'' },
             { id:'docx-to-md-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Chuyển file doc, docx sang Markdown - không kết nối mạng', desc:'Dùng python tự động chuyển đổi file doc, docx sang dạng Markdown trước khi chuyển cho AI xử lý.', illust:ILLUST.convert, url:'Tool/DocxToMd/index.html', accent:'', footer:'' },
-            { id:'ocr-pdf-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Nhận dạng chữ trong fille PDF, file ảnh - không kết nối mạng', desc:'Tự động trích xuất chữ từ file pdf, file ảnh mà không cần kết nối mạng, cho phép chọn đầu ra (word, md, txt).', illust:ILLUST.scan, url:'Tool/OCR_PDF_Tool/index.html', accent:'', footer:'' }
+            { id:'ocr-pdf-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Nhận dạng chữ trong fille PDF, file ảnh - không kết nối mạng', desc:'Tự động trích xuất chữ từ file pdf, file ảnh mà không cần kết nối mạng, cho phép chọn đầu ra (word, md, txt).', illust:ILLUST.scan, url:'Tool/OCR_PDF_Tool/index.html', accent:'', footer:'' },
+            { id:'thu-ly-an-ds', span:'span-12', badge:'PHẦN MỀM NGHIỆP VỤ', badgeClass:'badge-emerald', title:'Quản lý Thông báo thụ lý vụ án', desc:'Tự động đọc PDF scan, nhận diện thông tin vụ án và đương sự; hỗ trợ quản lý hồ sơ, ghi sổ Excel và soạn thảo các văn bản kiểm sát theo mẫu.', illust:ILLUST.caseFolder, url:'Tool/ThuLyAnDS/index.html', accent:'', footer:'<span>Dành cho cán bộ, Kiểm sát viên</span><span style="margin-left:auto;font-weight:700;color:#047857;">Tải bản Portable cho Windows</span>' }
         ];
 
         var isDashboardVisible=false, isInToolView=false, currentToolId=null, activeToolTitle='';
@@ -451,11 +453,6 @@
                 if(t.footer) html+='<div class="bento-card-footer">'+t.footer+'</div>';
                 html+='</div>';
             }
-            html+='<div class="bento-card span-12 disabled"><div style="display:flex;align-items:flex-start;justify-content:space-between;"><div>';
-            html+='<span class="bento-card-badge badge-slate">ĐANG PHÁT TRIỂN, SẮP PHÁT HÀNH</span>';
-            html+='<h3 class="bento-card-title" style="color:#94a3b8;">Công cụ tự động soạn thảo Quyết định phân công KSV - từ Thông báo thụ lý, Quyết định thi hành án (scan)</h3>';
-            html+='<p class="bento-card-desc" style="color:#94a3b8;">Tự động đọc và trích xuất thông tin từ Thông báo thụ lý, QĐ thi hành án hình sự/ dân sự và soạn thảo QĐ phân công KSV, trích thông tin để nhập sổ quản lý của khâu công tác.</p></div>';
-            html+='<div class="bento-illust">'+ILLUST.radarPulse+'</div></div></div>';
             toolsGrid.innerHTML=html;
         }
 

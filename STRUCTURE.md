@@ -83,7 +83,7 @@ Bo_cong_cu_Kiem_sat/
     │   ├── AnDanhTool.zip        ← File phân phối
     │   └── HuongDanSuDung.txt
     │
-    └── FileRenamer/              ← Đổi tên file hàng loạt
+    ├── FileRenamer/              ← Đổi tên file hàng loạt
         ├── file_renamer.py       ← Engine chuẩn hóa tên file
         ├── file_renamer_gui.py   ← Flask GUI (port 5789)
         ├── FileRenamerGUI.spec   ← PyInstaller spec (GUI)
@@ -91,7 +91,10 @@ Bo_cong_cu_Kiem_sat/
         ├── FileRenamer.exe       ← CLI standalone
         ├── FileRenamer.zip       ← File phân phối
         ├── index.html            ← Trang giới thiệu + nút tải .zip
-        └── HuongDanSuDung.txt
+    │   └── HuongDanSuDung.txt
+    │
+    └── ThuLyAnDS/                ← Giới thiệu phần mềm Quản lý TBTL vụ án
+        └── index.html            ← Tính năng, hướng dẫn và nút mở Google Drive tải Portable ZIP
 ```
 
 ---
@@ -249,13 +252,11 @@ exe = EXE(pyz, a.scripts, ..., name='TenToolGUI', console=True, ...)
 
 ## 5. DASHBOARD CHÍNH (`index.html`)
 
-- **TOOLS array** (dòng ~821-908) định nghĩa tất cả công cụ
-- Mỗi tool có: `id`, `label`, `title`, `subtitle`, `url`, `accent`, `newTab` (optional)
-- `accent-sky` = xanh, `accent-bronze` = vàng, `accent-plum` = đỏ tím
+- **TOOLS array** trong `index.html` định nghĩa tất cả công cụ
+- Mỗi tool có: `id`, `span`, `badge`, `badgeClass`, `title`, `desc`, `illust`, `url`, `accent`, `footer` và `newTab` (tùy chọn)
 - `newTab: true` → mở tab mới. Mặc định → mở trong iframe workspace
-- Card `disabled` cuối danh sách dành cho công cụ sắp ra mắt
 - URL tool local: `Tool/<TenTool>/index.html`
-- Khi user bấm vào card tool, iframe workspace sẽ mở `index.html` của tool đó, trang này có nút "TẢI XUỐNG" để tải file `.zip` chứa `.exe`
+- Khi người dùng bấm card, iframe workspace mở trang giới thiệu tương ứng. Các tool nhỏ tải ZIP cục bộ; ThuLyAnDS mở thư mục Google Drive ở tab mới để không lưu gói Portable dung lượng lớn trong dự án.
 
 ---
 
