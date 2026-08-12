@@ -2,7 +2,7 @@ RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT - HƯỚNG DẪN NHANH
 
 1. Giải nén RaSoatChinhTa.zip.
 2. Mở RaSoatChinhTa.exe. Trình duyệt sẽ tự mở giao diện trên máy.
-3. Chọn hoặc kéo thả một tệp Word .docx.
+3. Chọn hoặc kéo thả một tệp Word .doc hoặc .docx.
 4. Xem ba nhóm kết quả: lỗi chắc chắn, nghi vấn và trình bày.
 5. Tích hoặc bỏ tích “Chấp nhận sửa” ở từng mục.
 6. Chọn một đầu ra:
@@ -12,6 +12,7 @@ RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT - HƯỚNG DẪN NHANH
 
 LƯU Ý
 - Tệp gốc không bị ghi đè.
+- Tệp .doc cần Microsoft Word để chuyển tự động sang .docx tạm; kết quả luôn xuất dưới dạng .docx.
 - Phần mềm chạy tại 127.0.0.1 trên chính máy tính, không gửi tệp ra Internet.
 - Không tự động sửa họ tên, địa chỉ, số hiệu văn bản hoặc nội dung nghiệp vụ chưa chắc chắn.
 - Đóng cửa sổ ứng dụng để dừng máy chủ nội bộ.

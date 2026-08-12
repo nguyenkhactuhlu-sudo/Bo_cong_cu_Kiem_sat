@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import atexit
+import shutil
 import sys
 import tempfile
 import uuid
@@ -19,11 +21,13 @@ if str(APP_DIR) not in sys.path:
 from docx_processor import DocxReview
 from engine import VietnameseSpellChecker
 from offline_server import run_desktop_app
+from word_converter import DocConversionError, convert_doc_to_docx
 
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 WORK_DIR = Path(tempfile.mkdtemp(prefix="ra_chinh_ta_"))
+atexit.register(shutil.rmtree, WORK_DIR, ignore_errors=True)
 CHECKER = VietnameseSpellChecker()
 JOBS = {}
 
@@ -47,12 +51,13 @@ input[type=file]{display:none}.btn{border:0;border-radius:9px;background:var(--b
 mark.error{background:#ffc9c5}mark.warning{background:#ffe8a3}mark.style{background:#a9edf0}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.filters button{padding:7px 10px;border:1px solid var(--line);background:white;border-radius:20px;cursor:pointer}.filters button.active{background:var(--navy);color:white}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.bulk-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:10px 0}.bulk-actions .btn{padding:8px 11px;font-size:12px}.accepted-count{margin-left:auto;color:#526d82;font-size:12px;font-weight:700}.note{font-size:13px;color:#627d98;margin-top:10px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.preview,.issues{height:420px}.accepted-count{width:100%;margin-left:0}}
 </style></head><body>
-<header class="top"><h1>RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT</h1><p>Kiểm tra DOCX ngay trên máy · Không AI · Không gửi dữ liệu lên mạng</p></header>
+<header class="top"><h1>RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT</h1><p>Kiểm tra DOC/DOCX ngay trên máy · Không AI · Không gửi dữ liệu lên mạng</p></header>
 <main class="wrap">
 <section class="card" id="uploadCard"><div class="drop" id="drop">
-  <h2>Thả tệp Word vào đây</h2><p>Hỗ trợ .docx, tối đa 50 MB</p>
-  <label class="btn" for="file">CHỌN TỆP WORD</label><input id="file" type="file" accept=".docx">
+  <h2>Thả tệp Word vào đây</h2><p>Hỗ trợ .doc và .docx, tối đa 50 MB</p>
+  <label class="btn" for="file">CHỌN TỆP WORD</label><input id="file" type="file" accept=".doc,.docx">
   <div class="privacy"><strong>✓ Xử lý ngoại tuyến:</strong> tệp chỉ đi qua máy chủ nội bộ 127.0.0.1 trên chính máy tính này.</div>
+  <div class="privacy"><strong>ℹ Tệp .doc:</strong> cần Microsoft Word để tự động chuyển sang .docx tạm; kết quả luôn xuất ở định dạng .docx.</div>
 </div><div class="status hidden" id="status"></div></section>
 
 <section id="result" class="hidden">
@@ -74,8 +79,8 @@ const drop=$('#drop'), file=$('#file'), status=$('#status');
 ['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));
 ['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));
 drop.addEventListener('drop',e=>upload(e.dataTransfer.files[0])); file.addEventListener('change',()=>upload(file.files[0]));
-async function upload(f){if(!f)return;if(!f.name.toLowerCase().endsWith('.docx')){alert('Chỉ hỗ trợ tệp .docx');return}status.classList.remove('hidden');status.textContent='Đang đọc và rà soát '+f.name+'…';
- const fd=new FormData();fd.append('file',f);try{const r=await fetch('/api/analyze',{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw Error(j.error||'Không thể xử lý tệp');job=j.job;data=j;acceptedSet=new Set(j.issues.filter(i=>i.severity==='error').map(i=>i.id));render();status.textContent='Đã rà xong '+f.name;}catch(e){status.textContent='Lỗi: '+e.message}}
+async function upload(f){if(!f)return;const name=f.name.toLowerCase();if(!(name.endsWith('.docx')||name.endsWith('.doc'))){alert('Chỉ hỗ trợ tệp Word .doc hoặc .docx');return}status.classList.remove('hidden');status.textContent=(name.endsWith('.doc')?'Đang chuyển đổi và rà soát ':'Đang đọc và rà soát ')+f.name+'…';
+ const fd=new FormData();fd.append('file',f);try{const r=await fetch('/api/analyze',{method:'POST',body:fd});const j=await r.json();if(!r.ok)throw Error(j.error||'Không thể xử lý tệp');job=j.job;data=j;acceptedSet=new Set(j.issues.filter(i=>i.severity==='error').map(i=>i.id));render();status.textContent=(j.converted?'Đã chuyển .doc sang .docx tạm và rà xong ':'Đã rà xong ')+f.name;}catch(e){status.textContent='Lỗi: '+e.message}}
 function render(){ $('#result').classList.remove('hidden');$('#wordCount').textContent=data.word_count;$('#errorCount').textContent=data.counts.error;$('#warningCount').textContent=data.counts.warning;$('#styleCount').textContent=data.counts.style;renderPreview();renderIssues();$('#result').scrollIntoView({behavior:'smooth'}) }
 function renderPreview(){let html='';for(const p of data.paragraphs){let pos=0;const list=p.issues.filter(i=>filter==='all'||i.severity===filter).sort((a,b)=>a.start-b.start);for(const i of list){html+=esc(p.text.slice(pos,i.start));html+='<mark class="'+i.severity+'" title="'+esc(i.message)+'">'+esc(p.text.slice(i.start,i.end))+'</mark>';pos=i.end}html+=esc(p.text.slice(pos))+'\n\n'}$('#preview').innerHTML=html}
  function visibleIssues(){return data.issues.filter(i=>filter==='all'||i.severity===filter)}
@@ -105,19 +110,35 @@ def analyze():
     uploaded = request.files.get("file")
     if not uploaded or not uploaded.filename:
         return jsonify(error="Chưa chọn tệp."), 400
-    if not uploaded.filename.lower().endswith(".docx"):
-        return jsonify(error="Chỉ hỗ trợ tệp Word .docx."), 400
+    suffix = Path(uploaded.filename).suffix.casefold()
+    if suffix not in {".doc", ".docx"}:
+        return jsonify(error="Chỉ hỗ trợ tệp Word .doc hoặc .docx."), 400
     job_id = uuid.uuid4().hex
-    original_name = secure_filename(uploaded.filename) or "van_ban.docx"
-    path = WORK_DIR / f"{job_id}_{original_name}"
-    uploaded.save(path)
+    original_name = secure_filename(uploaded.filename) or f"van_ban{suffix}"
+    source_path = WORK_DIR / f"{job_id}_{original_name}"
+    source_path.unlink(missing_ok=True)
+    uploaded.save(source_path)
+    review_path = source_path
+    converted = suffix == ".doc"
     try:
-        review = DocxReview(path, CHECKER)
+        if converted:
+            review_path = WORK_DIR / f"{job_id}_{Path(original_name).stem}_converted.docx"
+            convert_doc_to_docx(source_path, review_path)
+        review = DocxReview(review_path, CHECKER)
         issues, word_count = review.analyze()
+    except DocConversionError as exc:
+        source_path.unlink(missing_ok=True)
+        review_path.unlink(missing_ok=True)
+        return jsonify(error=str(exc)), 400
     except Exception as exc:
-        path.unlink(missing_ok=True)
+        source_path.unlink(missing_ok=True)
+        if review_path != source_path:
+            review_path.unlink(missing_ok=True)
         return jsonify(error=f"Không đọc được tệp Word: {exc}"), 400
-    JOBS[job_id] = {"path": path, "name": Path(original_name).stem, "review": review}
+    JOBS[job_id] = {
+        "path": review_path, "source_path": source_path,
+        "name": Path(original_name).stem, "review": review,
+    }
     paragraphs = []
     for ref in review.refs.values():
         local = [item.to_dict() for item in issues if item.paragraph_id == ref.key]
@@ -128,7 +149,7 @@ def analyze():
         "warning": sum(i.severity == "warning" for i in issues),
         "style": sum(i.severity == "style" for i in issues),
     }
-    return jsonify(job=job_id, word_count=word_count, counts=counts,
+    return jsonify(job=job_id, word_count=word_count, counts=counts, converted=converted,
                    issues=[item.to_dict() for item in issues], paragraphs=paragraphs)
 
 

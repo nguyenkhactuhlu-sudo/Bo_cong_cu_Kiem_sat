@@ -5,7 +5,10 @@ a = Analysis(
     pathex=[SPECPATH],
     binaries=[],
     datas=[('data', 'data')],
-    hiddenimports=['engine', 'docx_processor', 'offline_server'],
+    hiddenimports=[
+        'engine', 'docx_processor', 'offline_server', 'word_converter',
+        'pythoncom', 'pywintypes', 'win32com', 'win32com.client',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

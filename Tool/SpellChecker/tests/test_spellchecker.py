@@ -4,6 +4,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
@@ -139,6 +140,27 @@ class DocxTests(unittest.TestCase):
             with zipfile.ZipFile(io.BytesIO(exported.data)) as archive:
                 self.assertEqual(len(archive.namelist()), 2)
             exported.close()
+
+    def test_http_doc_is_converted_before_review(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "legacy.doc"
+            source.write_bytes(b"legacy Word placeholder")
+
+            def fake_convert(_source, destination):
+                self.make_doc(Path(destination))
+                return Path(destination)
+
+            client = app.test_client()
+            with patch("app.convert_doc_to_docx", side_effect=fake_convert) as converter:
+                with source.open("rb") as stream:
+                    response = client.post(
+                        "/api/analyze",
+                        data={"file": (stream, "legacy.doc")},
+                        content_type="multipart/form-data",
+                    )
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(response.get_json()["converted"])
+            converter.assert_called_once()
 
 
 if __name__ == "__main__":

@@ -84,10 +84,11 @@ Bo_cong_cu_Kiem_sat/
         ├── index.html            ← Trang giới thiệu + nút tải .zip
     │   └── HuongDanSuDung.txt
     │
-    ├── SpellChecker/             ← Rà soát chính tả DOCX hoàn toàn offline
+    ├── SpellChecker/             ← Rà soát chính tả DOC/DOCX hoàn toàn offline
     │   ├── app.py                ← Flask GUI local (port 5790)
     │   ├── engine.py             ← Engine từ điển + luật tiếng Việt/nghiệp vụ
     │   ├── docx_processor.py     ← Tô vàng và sửa trên bản sao DOCX, không tạo comment
+    │   ├── word_converter.py     ← Word COM chuyển DOC sang DOCX tạm, không sửa tệp gốc
     │   ├── data/vi.dic           ← Từ điển tiếng Việt MIT
     │   ├── SpellChecker.spec     ← Build một file RaSoatChinhTa.exe
     │   ├── index.html            ← Trang giới thiệu và tải bản portable
@@ -203,10 +204,11 @@ Bo_cong_cu_Kiem_sat/
 | **ID** | `spell-checker-tool` |
 | **Loại** | Python Flask GUI → một file `.exe` portable |
 | **URL** | `Tool/SpellChecker/index.html` |
-| **Files** | `app.py`, `engine.py`, `docx_processor.py`, `data/vi.dic` |
+| **Files** | `app.py`, `engine.py`, `docx_processor.py`, `word_converter.py`, `data/vi.dic` |
 | **Port** | 5790; tự chọn cổng trống nếu cổng này đang bận |
 | **Engine** | Từ điển âm tiết tiếng Việt MIT + luật cụm từ nghiệp vụ/dấu câu; chấp nhận Unicode tổ hợp |
 | **Riêng tư** | Chỉ chạy tại `127.0.0.1`, không AI, không API, không kết nối mạng |
+| **Định dạng** | `.docx` xử lý trực tiếp; `.doc` tự chuyển qua Microsoft Word COM và yêu cầu máy đã cài Word |
 | **Đầu ra** | Bản DOCX chỉ tô vàng vị trí cần kiểm tra, không comment; bản DOCX áp dụng lỗi đã chấp nhận |
 | **File phân phối** | `RaSoatChinhTa.zip` chứa duy nhất `RaSoatChinhTa.exe` |
 
