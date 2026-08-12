@@ -1,7 +1,7 @@
 HƯỚNG DẪN SỬ DỤNG CÔNG CỤ ẨN DANH VĂN BẢN
 ================================================
 
-Tác giả: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
+Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
 Phiên bản: 1.1
 
 I. GIỚI THIỆU
@@ -54,5 +54,5 @@ IV. YÊU CẦU HỆ THỐNG
 V. LIÊN HỆ
 ================================================
 
-Tác giả: Trần Huy
+Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
 Đơn vị: Viện KSND khu vực 11 - Đắk Lắk

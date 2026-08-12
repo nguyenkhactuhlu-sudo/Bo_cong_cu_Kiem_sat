@@ -21,6 +21,9 @@ dist/*.zip
 # API Keys (chứa thông tin nhạy cảm)
 Tool/PdfToMd/API keys.txt
 
+# Công cụ đã rút khỏi hệ thống nhưng giữ cục bộ để có thể dùng lại sau này
+Tool/_local_archive/
+
 # Runtime/user files created by the portable OCR tool
 Tool/OCR_PDF_Tool/OCR_PDF_Tool/uploads/*
 Tool/OCR_PDF_Tool/OCR_PDF_Tool/outputs/*

@@ -25,8 +25,8 @@
 - **Deploy:** GitHub Pages (static) + file `.exe` / `.zip` tải về cho tool offline
 - **Port mapping:** Mỗi tool Flask chạy trên port riêng để tránh xung đột:
   - FileRenamer: **5789**
-  - DocxToMd: **5788**
   - PdfToMd: **tự động** (5100+)
+  - SpellChecker: **5790** (tự chuyển nếu bận)
 
 ---
 
@@ -58,15 +58,6 @@ Bo_cong_cu_Kiem_sat/
     ├── App_tinh_lai_suat/        ← Tính lãi suất (HTML standalone)
     │   └── index.html            ← Công cụ tính lãi suất
     │
-    ├── DocxToMd/                 ← Word (.doc/.docx) → Markdown
-    │   ├── convert_doc_to_md.py  ← Engine chuyển đổi (python-docx + win32com)
-    │   ├── docx_to_md_gui.py     ← Flask GUI (port 5788)
-    │   ├── DocxToMdGUI.spec      ← PyInstaller spec
-    │   ├── DocxToMdGUI.exe       ← GUI standalone
-    │   ├── Docxtomd.zip          ← File phân phối (tải về từ index.html)
-    │   ├── index.html            ← Trang giới thiệu + nút tải .zip
-    │   └── HuongDanSuDung.txt
-    │
     ├── PdfToMd/                  ← PDF / Ảnh → Markdown
     │   ├── pdf_to_md.py          ← Engine OCR (Gemini API + pypdf)
     │   ├── pdf_to_md_gui.py      ← Flask GUI (port tự động 5100+)
@@ -92,6 +83,15 @@ Bo_cong_cu_Kiem_sat/
         ├── FileRenamer.zip       ← File phân phối
         ├── index.html            ← Trang giới thiệu + nút tải .zip
     │   └── HuongDanSuDung.txt
+    │
+    ├── SpellChecker/             ← Rà soát chính tả DOCX hoàn toàn offline
+    │   ├── app.py                ← Flask GUI local (port 5790)
+    │   ├── engine.py             ← Engine từ điển + luật tiếng Việt/nghiệp vụ
+    │   ├── docx_processor.py     ← Tô vàng và sửa trên bản sao DOCX, không tạo comment
+    │   ├── data/vi.dic           ← Từ điển tiếng Việt MIT
+    │   ├── SpellChecker.spec     ← Build một file RaSoatChinhTa.exe
+    │   ├── index.html            ← Trang giới thiệu và tải bản portable
+    │   └── tests/                ← Unit test + benchmark engine
     │
     └── ThuLyAnDS/                ← Giới thiệu phần mềm Quản lý TBTL vụ án
         └── index.html            ← Tính năng, hướng dẫn và nút mở Google Drive tải Portable ZIP
@@ -168,7 +168,7 @@ Bo_cong_cu_Kiem_sat/
 | **Loại** | HTML app (iframe) |
 | **URL** | `Tool/AnDanh/index.html` |
 | **Accent** | `accent-plum` |
-| **Ghi chú** | Phát triển bởi Trần Huy – Viện KSND KV11 Đắk Lắk |
+| **Ghi chú** | Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk |
 
 ### 3.9. File Renamer – Đổi tên file hàng loạt
 | Thuộc tính | Giá trị |
@@ -183,21 +183,7 @@ Bo_cong_cu_Kiem_sat/
 | **Đặc điểm** | 1 file `.py` chứa cả backend lẫn HTML template inline; quét đệ quy; xem trước trước khi đổi tên; **click vào tên mới (màu xanh) để tự đặt tên file tùy chỉnh**, hỗ trợ khôi phục tên đề xuất |
 | **File phân phối** | `FileRenamer.zip` (chứa `FileRenamerGUI.exe`) |
 
-### 3.10. DocxToMd – Word (.doc/.docx) sang Markdown
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `docx-to-md-tool` |
-| **Loại** | Python Flask GUI → `.exe` standalone |
-| **URL** | `Tool/DocxToMd/index.html` |
-| **Accent** | `accent-bronze` |
-| **Files** | `Tool/DocxToMd/docx_to_md_gui.py`, `Tool/DocxToMd/convert_doc_to_md.py` |
-| **Port** | 5788 |
-| **Engine** | python-docx (`.docx`) + win32com (`.doc` qua MS Word) |
-| **Yêu cầu** | Windows + Microsoft Word (cho file `.doc`) |
-| **Đặc điểm** | Quét đệ quy thư mục, tạo file `.md` cùng tên bên cạnh file gốc, giữ nguyên file gốc |
-| **File phân phối** | `Docxtomd.zip` (chứa `DocxToMdGUI.exe`) |
-
-### 3.11. PdfToMd – PDF/Ảnh sang Markdown
+### 3.10. PdfToMd – PDF/Ảnh sang Markdown
 | Thuộc tính | Giá trị |
 |---|---|
 | **ID** | `pdf-to-md-tool` |
@@ -210,6 +196,19 @@ Bo_cong_cu_Kiem_sat/
 | **Yêu cầu** | Gemini API Key (người dùng tự lấy tại Google AI Studio) |
 | **Đặc điểm** | Hỗ trợ `.pdf`, `.jpg`, `.png`, `.tiff`, `.bmp`, `.gif`, `.webp`; anti-hallucination (fuzzy check); async concurrent với asyncio |
 | **File phân phối** | `PdfToMd.zip` (~50MB, chứa `PdfToMdGUI.exe`) |
+
+### 3.11. Rà soát chính tả văn bản Word (offline)
+| Thuộc tính | Giá trị |
+|---|---|
+| **ID** | `spell-checker-tool` |
+| **Loại** | Python Flask GUI → một file `.exe` portable |
+| **URL** | `Tool/SpellChecker/index.html` |
+| **Files** | `app.py`, `engine.py`, `docx_processor.py`, `data/vi.dic` |
+| **Port** | 5790; tự chọn cổng trống nếu cổng này đang bận |
+| **Engine** | Từ điển âm tiết tiếng Việt MIT + luật cụm từ nghiệp vụ/dấu câu; chấp nhận Unicode tổ hợp |
+| **Riêng tư** | Chỉ chạy tại `127.0.0.1`, không AI, không API, không kết nối mạng |
+| **Đầu ra** | Bản DOCX chỉ tô vàng vị trí cần kiểm tra, không comment; bản DOCX áp dụng lỗi đã chấp nhận |
+| **File phân phối** | `RaSoatChinhTa.zip` chứa duy nhất `RaSoatChinhTa.exe` |
 
 ---
 
@@ -280,8 +279,8 @@ exe = EXE(pyz, a.scripts, ..., name='TenToolGUI', console=True, ...)
 | Tool | Port | Cơ chế |
 |---|---|---|
 | FileRenamer GUI | **5789** | Cố định |
-| DocxToMd GUI | **5788** | Cố định |
 | PdfToMd GUI | **5100+ tự động** | `find_free_port()` |
+| SpellChecker GUI | **5790** | Giữ cổng bằng `make_server()`, tự chuyển nếu bận |
 
 > **Quan trọng:** Không để 2 tool dùng chung 1 port. PdfToMd dùng `socket.bind()` để tìm port trống, an toàn nhất.
 

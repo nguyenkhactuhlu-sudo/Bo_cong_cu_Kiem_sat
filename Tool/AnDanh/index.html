@@ -248,13 +248,12 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
 </head>
-<body>
+<body class="ks-tool-page">
     <!-- HEADER -->
     <div class="header">
-        <div class="header-icon">
-            <i class="fas fa-eye-slash"></i>
-        </div>
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
         <div>
             <div class="header-title">Công cụ tự động <span>che thông tin</span> trong văn bản</div>
             <div class="header-sub"><i class="fas fa-shield-alt"></i> Bảo vệ thông tin cá nhân - Tự động hóa</div>
@@ -296,8 +295,7 @@
         <div class="info-card">
             <h2><i class="fas fa-code-branch"></i> Thông tin phát triển</h2>
             <div class="dev-info">
-                <p><i class="fas fa-user"></i> Phát triển bởi: <strong>Trần Huy</strong></p>
-                <p><i class="fas fa-building"></i> Đơn vị: <strong>Viện KSND khu vực 11 - Đắk Lắk</strong></p>
+                <p><i class="fas fa-user-group"></i> Phối hợp phát triển với: <strong>Trần Huy - Viện KSND khu vực 11 - Đắk Lắk</strong></p>
                 <p><i class="fas fa-tools"></i> Phiên bản: <strong>1.0</strong></p>
             </div>
 
@@ -326,7 +324,9 @@
             if (confirmed) {
                 // Tạo một link tải xuống file zip (tránh bị chặn tải .exe)
                 var link = document.createElement('a');
-                link.href = 'AnDanhTool.zip';
+                // Tham số phiên bản buộc trình duyệt lấy đúng gói phát hành mới,
+                // không dùng lại AnDanhTool.zip cũ trong bộ nhớ đệm.
+                link.href = 'AnDanhTool.zip?v=20260813-1';
                 link.download = 'AnDanhTool.zip';
                 document.body.appendChild(link);
                 link.click();
@@ -342,5 +342,7 @@
             }
         }
     </script>
+    <footer class="ks-page-footer">Bộ công cụ nghiệp vụ — Ngành Kiểm sát nhân dân</footer>
+    <footer class="ks-page-footer">Bộ công cụ nghiệp vụ — Ngành Kiểm sát nhân dân</footer>
 </body>
 </html>
