@@ -115,5 +115,5 @@ Trước: "Báo cáo tổng kết công tác năm 2024 - Viện kiểm sát nhâ
 Sau:   "BC tong ket cong tac nam 2024 - VKS nhan dan.docx"
 
 ====================================================================
-  Mọi thắc mắc vui lòng liên hệ nhà phát triển
+  Phối hợp cùng phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
 ====================================================================
