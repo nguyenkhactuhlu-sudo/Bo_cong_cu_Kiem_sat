@@ -23,8 +23,8 @@ Công cụ gồm 2 phiên bản:
 CÁCH KHỞI CHẠY
 ---------------
 1. Nhấp đúp vào file FileRenamerGUI.exe
-2. Trình duyệt sẽ tự động mở giao diện web tại địa chỉ http://127.0.0.1:5788
-3. Nếu trình duyệt không tự mở, hãy mở trình duyệt và nhập: http://127.0.0.1:5788
+2. Trình duyệt sẽ tự động mở giao diện web tại địa chỉ http://127.0.0.1:5789
+3. Nếu cổng 5789 đang bận, công cụ tự chọn cổng trống và hiển thị địa chỉ trong cửa sổ chạy.
 
 CÁC BƯỚC SỬ DỤNG
 ------------------

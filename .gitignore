@@ -20,3 +20,11 @@ dist/*.zip
 
 # API Keys (chứa thông tin nhạy cảm)
 Tool/PdfToMd/API keys.txt
+
+# Runtime/user files created by the portable OCR tool
+Tool/OCR_PDF_Tool/OCR_PDF_Tool/uploads/*
+Tool/OCR_PDF_Tool/OCR_PDF_Tool/outputs/*
+Tool/OCR_PDF_Tool/OCR_PDF_Tool/temp_images/*
+Tool/OCR_PDF_Tool/source/uploads/*
+Tool/OCR_PDF_Tool/source/outputs/*
+Tool/OCR_PDF_Tool/source/temp_images/*

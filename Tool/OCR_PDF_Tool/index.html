@@ -490,7 +490,8 @@
 
             if (confirmed) {
                 var link = document.createElement('a');
-                link.href = 'OCR_PDF_Tool.zip';
+                // GitHub Pages chỉ trả về LFS pointer; miền media trả file ZIP thật.
+                link.href = 'https://media.githubusercontent.com/media/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/main/Tool/OCR_PDF_Tool/OCR_PDF_Tool.zip';
                 link.download = 'OCR_PDF_Tool.zip';
                 document.body.appendChild(link);
                 link.click();

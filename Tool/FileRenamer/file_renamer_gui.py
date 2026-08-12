@@ -14,6 +14,8 @@ import sys
 # ============================================================
 _TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
 _PARENT_DIR = os.path.dirname(_TOOL_DIR)  # Tool/
+if _TOOL_DIR not in sys.path:
+    sys.path.insert(0, _TOOL_DIR)
 if _PARENT_DIR not in sys.path:
     sys.path.insert(0, _PARENT_DIR)
 from auto_install import check_and_install
@@ -23,13 +25,12 @@ check_and_install({
 })
 
 import json
-import threading
-import webbrowser
 import ctypes
 from ctypes import wintypes
 from pathlib import Path
 
 from flask import Flask, request, jsonify
+from offline_server import run_desktop_app
 
 # --------------- Import FileRenamer từ file_renamer.py ---------------
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1060,25 +1061,17 @@ def execute_rename():
 # ============================================================
 
 def main():
-    host = '127.0.0.1'
-    port = 5789
-
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
     print('=' * 60)
     print('  FILE RENAMER - GUI')
     print('=' * 60)
-    print(f'  Server dang chay tai: http://{host}:{port}')
     print('  Nhan Ctrl+C de thoat.')
     print('=' * 60)
-
-    # Mở trình duyệt sau 1.5 giây
-    def open_browser():
-        webbrowser.open(f'http://{host}:{port}')
-
-    threading.Timer(1.5, open_browser).start()
-
-    app.run(host=host, port=port, debug=False, threaded=True)
+    run_desktop_app(
+        app, 'file-renamer', preferred_port=5789,
+        open_browser=os.environ.get('OFFLINE_TOOL_NO_BROWSER') != '1',
+    )
 
 
 if __name__ == '__main__':

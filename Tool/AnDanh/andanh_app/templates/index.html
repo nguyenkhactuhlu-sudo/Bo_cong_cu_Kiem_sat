@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ tự động ẩn thông tin trong văn bản</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: url('/static/Nen.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Lớp phủ mờ làm nền tối đi để chữ dễ đọc */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 960px;
+            width: 90%;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 35px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-text h1 {
+            font-size: 26px;
+            color: #1a3a5c;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .header-text .subtitle {
+            font-size: 15px;
+            color: #5a7a9a;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .description {
+            background: linear-gradient(135deg, #e8f0fe, #f0f4ff);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border-left: 5px solid #2c7be5;
+            margin-bottom: 22px;
+            font-size: 15px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .upload-area {
+            background: #f8faff;
+            border: 2px dashed #b8cfe8;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #2c7be5;
+            background: #f0f6ff;
+        }
+
+        .upload-area label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a3a5c;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .upload-area input[type="file"] {
+            padding: 10px;
+            background: white;
+            border: 1px solid #d0d8e8;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-area input[type="file"]::file-selector-button {
+            background: #2c7be5;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 12px;
+            transition: background 0.2s;
+        }
+
+        .upload-area input[type="file"]::file-selector-button:hover {
+            background: #1a5cb5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c7be5, #1a5cb5);
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 123, 229, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 123, 229, 0.45);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.35);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.45);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            margin: 16px 0;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-info {
+            background: #e8f0fe;
+            border-left: 5px solid #2c7be5;
+            color: #1a3a5c;
+        }
+
+        .status-error {
+            background: #fde8e8;
+            border-left: 5px solid #e74c3c;
+            color: #922;
+        }
+
+        .status-success {
+            background: #e8f8e8;
+            border-left: 5px solid #27ae60;
+            color: #1a6a3a;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-section h3 {
+            font-size: 20px;
+            color: #1a3a5c;
+            margin-bottom: 6px;
+        }
+
+        .result-section .hint {
+            font-size: 13px;
+            color: #7a8a9a;
+            margin-bottom: 14px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e6ee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead th {
+            background: linear-gradient(135deg, #f0f4fa, #e4eaf2);
+            color: #1a3a5c;
+            font-weight: 600;
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 2px solid #d0d8e8;
+        }
+
+        tbody td {
+            padding: 10px;
+            border-bottom: 1px solid #e8ecf2;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #f5f8ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #2c7be5;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d8e8;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #2c7be5;
+            box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .type-badge-sdt { background: #e3f2fd; color: #1565c0; }
+        .type-badge-cccd { background: #fce4ec; color: #c62828; }
+        .type-badge-cmnd { background: #fff3e0; color: #e65100; }
+        .type-badge-diachi { background: #e8f5e9; color: #2e7d32; }
+        .type-badge-ten { background: #f3e5f5; color: #6a1b9a; }
+        .type-badge-khac { background: #eceff1; color: #546e7a; }
+
+        .custom-entry {
+            margin-top: 16px;
+            padding: 16px;
+            border: 1px dashed #9bb8dc;
+            border-radius: 10px;
+            background: #f7faff;
+        }
+
+        .custom-entry h4 {
+            color: #1a3a5c;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .custom-entry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 18px 0 12px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .footer strong {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+                width: 95%;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            .header-text h1 {
+                font-size: 20px;
+            }
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .custom-entry-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="/static/logo_moi.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+        <div class="header-text">
+            <h1>🔒 Công cụ tự động ẩn thông tin trong văn bản</h1>
+            <div class="subtitle">Phát hiện và ẩn danh thông tin cá nhân trong file Word (.docx)</div>
+        </div>
+    </div>
+
+    <div class="description">
+        📌 <strong>Tự động phát hiện:</strong> Tên người, số điện thoại, CCCD/CMND, địa chỉ và các thông tin nhạy cảm khác trong văn bản. Bạn có thể chọn lọc và chỉnh sửa trước khi xuất file.
+    </div>
+
+    <div class="upload-area">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="fileInput">📄 Chọn file .docx cần ẩn danh</label>
+            <input type="file" name="file" id="fileInput" accept=".docx" required>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="scanBtn">
+                    🔍 Quét và ẩn danh
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="status" class="status hidden"></div>
+
+    <div id="result" class="result-section hidden">
+        <h3>📋 Danh sách thông tin phát hiện</h3>
+        <div class="hint">💡 Bỏ tích những dòng không cần ẩn, sửa tên ẩn danh nếu muốn.</div>
+        <div class="table-wrapper">
+            <table id="entityTable">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">Chọn</th>
+                        <th style="width:15%;">Loại</th>
+                        <th style="width:35%;">Giá trị gốc</th>
+                        <th style="width:45%;">Tên ẩn danh (sửa được)</th>
+                    </tr>
+                </thead>
+                <tbody id="entityBody"></tbody>
+            </table>
+        </div>
+        <div class="custom-entry">
+            <h4>➕ Thêm thông tin cần ẩn</h4>
+            <div class="hint">Nhập đúng cụm từ đang có trong tài liệu và nội dung muốn thay thế.</div>
+            <div class="custom-entry-grid">
+                <input type="text" id="customOriginal" maxlength="500"
+                       placeholder="Ví dụ: Công ty TNHH Minh An">
+                <input type="text" id="customReplacement" maxlength="500"
+                       placeholder="Thay bằng (mặc định: [Ẩn])">
+                <button type="button" id="addCustomBtn" class="btn btn-primary">Thêm</button>
+            </div>
+        </div>
+        <br>
+        <div style="text-align: center;">
+            <button id="exportBtn" class="btn btn-success">📥 Xuất file đã ẩn danh</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    Phát triển bởi: <strong>Trần Huy - Viện KSND KV11 - Đắk Lắk</strong>
+
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+        const scanBtn = document.getElementById('scanBtn');
+
+        statusDiv.className = 'status status-info';
+        statusDiv.innerHTML = '<span class="spinner"></span> ⏳ Đang quét file...';
+        statusDiv.classList.remove('hidden');
+        resultDiv.classList.add('hidden');
+        scanBtn.disabled = true;
+
+        try {
+            const res = await fetch('/upload', { method: 'POST', body: formData });
+            const text = await res.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (jsonErr) {
+                statusDiv.className = 'status status-error';
+                statusDiv.innerHTML = '❌ Lỗi máy chủ. Vui lòng kiểm tra lại file hoặc liên hệ quản trị viên.';
+                console.error('Server returned non-JSON response:', text.substring(0, 500));
+                scanBtn.disabled = false;
+                return;
+            }
+            if (!res.ok) {
+                statusDiv.className = 'status status-error';
+                statusDiv.innerHTML = '❌ Lỗi: ' + (data.error || 'Máy chủ trả về lỗi ' + res.status);
+                scanBtn.disabled = false;
+                return;
+            }
+            statusDiv.className = 'status status-success';
+            statusDiv.innerHTML = '✅ Đã quét xong! Tìm thấy <strong>' + data.entities.length + '</strong> mục thông tin.';
+            renderEntities(data.entities);
+            resultDiv.classList.remove('hidden');
+        } catch (err) {
+            statusDiv.className = 'status status-error';
+            statusDiv.innerHTML = '❌ Lỗi kết nối: ' + err.message;
+        } finally {
+            scanBtn.disabled = false;
+        }
+    });
+
+    function getTypeBadgeClass(type) {
+        const map = {
+            'SĐT': 'type-badge-sdt',
+            'CCCD': 'type-badge-cccd',
+            'CMND': 'type-badge-cmnd',
+            'Địa chỉ': 'type-badge-diachi',
+            'Tên': 'type-badge-ten'
+        };
+        return map[type] || 'type-badge-khac';
+    }
+
+    function renderEntities(entities) {
+        const tbody = document.getElementById('entityBody');
+        tbody.innerHTML = '';
+        entities.forEach((ent, idx) => {
+            appendEntityRow(ent, false, idx);
+        });
+    }
+
+    function appendEntityRow(ent, isCustom = false, idx = Date.now()) {
+        const tbody = document.getElementById('entityBody');
+        const tr = document.createElement('tr');
+        tr.dataset.custom = isCustom ? 'true' : 'false';
+
+        const td1 = document.createElement('td');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = true;
+        cb.dataset.idx = idx;
+        td1.appendChild(cb);
+        tr.appendChild(td1);
+
+        const td2 = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = 'type-badge ' + getTypeBadgeClass(ent.type);
+        badge.textContent = ent.type || 'Khác';
+        td2.appendChild(badge);
+        tr.appendChild(td2);
+
+        const td3 = document.createElement('td');
+        if (isCustom) {
+            const originalInput = document.createElement('input');
+            originalInput.type = 'text';
+            originalInput.className = 'original-value';
+            originalInput.maxLength = 500;
+            originalInput.value = ent.value || '';
+            td3.appendChild(originalInput);
+        } else {
+            td3.textContent = ent.value || '';
+        }
+        tr.appendChild(td3);
+
+        const td4 = document.createElement('td');
+        const replacementInput = document.createElement('input');
+        replacementInput.type = 'text';
+        replacementInput.value = ent.suggestion || '[Ẩn]';
+        replacementInput.maxLength = 500;
+        replacementInput.dataset.idx = idx;
+        td4.appendChild(replacementInput);
+        tr.appendChild(td4);
+
+        tbody.appendChild(tr);
+    }
+
+    document.getElementById('addCustomBtn').addEventListener('click', function() {
+        const original = document.getElementById('customOriginal');
+        const replacement = document.getElementById('customReplacement');
+        const value = original.value.trim();
+        if (!value) {
+            alert('⚠️ Vui lòng nhập thông tin gốc cần ẩn.');
+            original.focus();
+            return;
+        }
+        appendEntityRow({
+            type: 'Tự thêm',
+            value: value,
+            suggestion: replacement.value.trim() || '[Ẩn]'
+        }, true);
+        original.value = '';
+        replacement.value = '';
+        original.focus();
+    });
+
+    document.getElementById('customReplacement').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            document.getElementById('addCustomBtn').click();
+        }
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', async function() {
+        const rows = document.querySelectorAll('#entityBody tr');
+        const replacements = [];
+        rows.forEach(row => {
+            const cb = row.querySelector('input[type="checkbox"]');
+            const originalInput = row.querySelector('.original-value');
+            const textInputs = row.querySelectorAll('input[type="text"]');
+            const replacementInput = textInputs[textInputs.length - 1];
+            const oldVal = originalInput
+                ? originalInput.value.trim()
+                : row.cells[2].textContent.trim();
+            if (cb && cb.checked && oldVal) {
+                const newVal = replacementInput.value.trim() || '[Ẩn]';
+                replacements.push({ old: oldVal, new: newVal });
+            }
+        });
+
+        if (replacements.length === 0) {
+            alert('⚠️ Bạn chưa chọn mục nào để ẩn danh!');
+            return;
+        }
+
+        const statusDiv = document.getElementById('status');
+        const exportBtn = document.getElementById('exportBtn');
+        statusDiv.className = 'status status-info';
+        statusDiv.innerHTML = '<span class="spinner"></span> ⏳ Đang xuất file...';
+        statusDiv.classList.remove('hidden');
+        exportBtn.disabled = true;
+
+        try {
+            const res = await fetch('/export', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ replacements })
+            });
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText || 'Lỗi không xác định');
+            }
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'anonymized.docx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            statusDiv.className = 'status status-success';
+            statusDiv.innerHTML = '✅ Xuất file thành công! File đã được tải về.';
+        } catch (err) {
+            statusDiv.className = 'status status-error';
+            statusDiv.innerHTML = '❌ Lỗi xuất file: ' + err.message;
+        } finally {
+            exportBtn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
