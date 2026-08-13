@@ -50,9 +50,53 @@
         #landing-page {
             font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at center, #ffffff 0%, #c5d9ec 40%, #8db4d4 100%);
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100svh;
+            height: 100dvh;
+            overflow: hidden;
+            padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+                     max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
         }
         body.landing-locked {
             overflow: hidden;
+        }
+        .landing-stage {
+            width: min(100%, 760px);
+            max-height: 100%;
+        }
+        .landing-logo-trigger {
+            width: clamp(180px, min(64vw, 58svh), 480px);
+            height: clamp(180px, min(64vw, 58svh), 480px);
+            flex: 0 0 auto;
+        }
+        .landing-logo-trigger .ping-ring:nth-child(1) { width: 166.667%; height: 166.667%; }
+        .landing-logo-trigger .ping-ring:nth-child(2) { width: 133.333%; height: 133.333%; }
+        .landing-logo-trigger .ping-ring:nth-child(3) { width: 108.333%; height: 108.333%; }
+        .landing-logo {
+            width: 70.833%;
+            height: 70.833%;
+            padding: clamp(16px, 6.25%, 30px);
+        }
+        .landing-emblem {
+            width: 71.429%;
+            height: 71.429%;
+        }
+        .landing-copy {
+            width: min(100%, 680px);
+            padding-inline: 8px;
+        }
+        .landing-copy h2 {
+            font-size: clamp(10px, 2.4vw, 13px);
+            letter-spacing: clamp(0.16em, 1vw, 0.35em);
+        }
+        .landing-copy h1 {
+            font-size: clamp(21px, 5.5vw, 34px);
+            line-height: 1.2;
+        }
+        .landing-enter-hint {
+            font-size: clamp(9px, 2.4vw, 12px);
+            letter-spacing: clamp(0.08em, 0.8vw, 0.1em);
         }
 
         /* Lưới công nghệ mờ siêu mảnh */
@@ -297,13 +341,32 @@
             .bento-grid { grid-template-columns: 1fr; }
             .span-4, .span-5, .span-7, .span-12 { grid-column: span 1; }
             #dashboard-page { padding: 12px 12px calc(var(--taskbar-height) + 20px); }
+            .landing-copy { margin-top: clamp(-4px, -0.8vh, 2px); }
+        }
+        @media (max-height: 520px) and (orientation: landscape) {
+            .landing-stage {
+                flex-direction: row;
+                gap: clamp(12px, 4vw, 36px);
+                width: min(100%, 820px);
+            }
+            .landing-logo-trigger {
+                width: clamp(180px, 52svh, 270px);
+                height: clamp(180px, 52svh, 270px);
+            }
+            .landing-copy {
+                width: min(48vw, 390px);
+                margin-top: 0;
+                text-align: left;
+            }
+            .landing-copy h1 { font-size: clamp(19px, 3.6vw, 30px); }
+            .landing-enter-hint { line-height: 1.5; }
         }
     </style>
 </head>
 <body>
 
     <!-- ===== LANDING PAGE - NEURAL MODE ===== -->
-    <div id="landing-page" class="relative w-screen h-screen flex items-center justify-center select-none">
+    <div id="landing-page" class="relative flex items-center justify-center select-none">
 
         <!-- LỚP NỀN CÔNG NGHỆ -->
         <div class="absolute inset-0 z-0 overflow-hidden">
@@ -311,22 +374,22 @@
         </div>
 
         <!-- TRUNG TÂM (ping rings chung tâm logo + logo + text) -->
-        <div class="relative z-10 flex flex-col items-center justify-center">
+        <div class="landing-stage relative z-10 flex flex-col items-center justify-center">
             
             <!-- LOGO TRONG KHUNG KÍNH MỜ + METALLIC SWEEP -->
-            <div class="relative w-[480px] h-[480px] flex items-center justify-center cursor-pointer group z-10" onclick="showTools()">
+            <div class="landing-logo-trigger relative flex items-center justify-center cursor-pointer group z-10" onclick="showTools()">
                 
                 <!-- VÒNG SÓNG LAN TỎA (CONCENTRIC PING) - absolute trong logo container, chung tâm -->
-                <div class="ping-ring w-[800px] h-[800px]"></div>
-                <div class="ping-ring w-[640px] h-[640px]"></div>
-                <div class="ping-ring w-[520px] h-[520px]"></div>
+                <div class="ping-ring"></div>
+                <div class="ping-ring"></div>
+                <div class="ping-ring"></div>
 
                 <!-- Bệ kính mờ logo -->
-                <div class="glass-core w-[340px] h-[340px] rounded-full flex items-center justify-center p-[30px] overflow-hidden">
+                <div class="landing-logo glass-core rounded-full flex items-center justify-center overflow-hidden">
                     
                     <!-- Logo chính -->
-                    <img class="w-[220px] h-[220px] object-contain relative z-20 transition-transform duration-500 ease-out group-hover:scale-[1.05]" 
-                         src=".\static\logo_moi.png" 
+                    <img class="landing-emblem object-contain relative z-20 transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+                         src=".\static\logo_moi.png"
                          alt="Phù hiệu VKSND">
 
                     <!-- Metallic Sweep - quét sáng khi hover -->
@@ -335,12 +398,12 @@
             </div>
 
             <!-- THÔNG TIN VĂN BẢN -->
-            <div class="text-center mt-2 space-y-2">
-                <h2 class="text-[13px] font-bold text-slate-400 tracking-[0.35em] uppercase">Viện Kiểm Sát Nhân Dân</h2>
-                <h1 class="text-[29px] md:text-[34px] font-extrabold tracking-wide text-slate-800">
+            <div class="landing-copy text-center mt-2 space-y-2">
+                <h2 class="font-bold text-slate-400 uppercase">Viện Kiểm Sát Nhân Dân</h2>
+                <h1 class="font-extrabold tracking-wide text-slate-800">
                     BỘ CÔNG CỤ <span class="bg-gradient-to-r from-proc-blue to-proc-neon bg-clip-text text-transparent">NGHIỆP VỤ</span>
                 </h1>
-                <p class="text-[12px] font-bold text-proc-neon tracking-widest uppercase animate-pulse pt-1" onclick="showTools()" style="cursor:pointer;">
+                <p class="landing-enter-hint font-bold text-proc-neon uppercase animate-pulse pt-1" onclick="showTools()" style="cursor:pointer;">
                     — BẤM VÀO LOGO ĐỂ TRUY CẬP —
                 </p>
             </div>
