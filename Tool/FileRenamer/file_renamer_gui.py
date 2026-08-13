@@ -25,8 +25,8 @@ check_and_install({
 })
 
 import json
-import ctypes
-from ctypes import wintypes
+import base64
+import subprocess
 from pathlib import Path
 
 from flask import Flask, request, jsonify, send_from_directory
@@ -40,62 +40,38 @@ if SCRIPT_DIR not in sys.path:
 from file_renamer import FileRenamer
 
 # ============================================================
-# NATIVE WINDOWS FOLDER BROWSER (thay thế tkinter)
+# NATIVE WINDOWS FOLDER BROWSER (luồng STA riêng)
 # ============================================================
 def browse_folder_windows(title="Chọn thư mục"):
-    """Mở hộp thoại chọn thư mục native Windows, không phụ thuộc tkinter."""
-    BIF_RETURNONLYFSDIRS = 0x0001
-    BIF_NEWDIALOGSTYLE = 0x0040
-    BIF_EDITBOX = 0x0010
-
-    class BROWSEINFO(ctypes.Structure):
-        _fields_ = [
-            ("hwndOwner", wintypes.HWND),
-            ("pidlRoot", ctypes.c_void_p),
-            ("pszDisplayName", ctypes.c_wchar_p),
-            ("lpszTitle", ctypes.c_wchar_p),
-            ("ulFlags", wintypes.UINT),
-            ("lpfn", ctypes.c_void_p),
-            ("lParam", ctypes.c_void_p),
-            ("iImage", ctypes.c_int),
-        ]
-
-    SHBrowseForFolderW = ctypes.windll.shell32.SHBrowseForFolderW
-    SHBrowseForFolderW.restype = ctypes.c_void_p
-    SHBrowseForFolderW.argtypes = [ctypes.POINTER(BROWSEINFO)]
-
-    SHGetPathFromIDListW = ctypes.windll.shell32.SHGetPathFromIDListW
-    SHGetPathFromIDListW.restype = wintypes.BOOL
-    SHGetPathFromIDListW.argtypes = [ctypes.c_void_p, ctypes.c_wchar_p]
-
-    CoInitialize = ctypes.windll.ole32.CoInitialize
-    CoInitialize.restype = wintypes.HRESULT
-    CoInitialize.argtypes = [ctypes.c_void_p]
-
-    CoUninitialize = ctypes.windll.ole32.CoUninitialize
-
-    GetForegroundWindow = ctypes.windll.user32.GetForegroundWindow
-    GetForegroundWindow.restype = wintypes.HWND
-    GetForegroundWindow.argtypes = []
-
-    CoInitialize(None)
-
-    # Lấy handle cửa sổ đang active (trình duyệt) để dialog nổi lên trước
-    owner_hwnd = GetForegroundWindow()
-
-    path_buffer = ctypes.create_unicode_buffer(260)
-    bi = BROWSEINFO()
-    bi.hwndOwner = owner_hwnd or 0
-    bi.lpszTitle = title
-    bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_EDITBOX
-
-    pidl = SHBrowseForFolderW(ctypes.byref(bi))
-    result = ""
-    if pidl and SHGetPathFromIDListW(pidl, path_buffer):
-        result = path_buffer.value
-
-    CoUninitialize()
-    return result
+    """Gọi FolderBrowserDialog trên tiến trình STA để không treo luồng Flask."""
+    safe_title = str(title).replace("'", "''")
+    script = rf"""
+$OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
+$dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+$dialog.Description = '{safe_title}'
+$dialog.ShowNewFolderButton = $false
+if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {{
+    [Console]::Out.Write($dialog.SelectedPath)
+}}
+"""
+    encoded = base64.b64encode(script.encode("utf-16le")).decode("ascii")
+    flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    startupinfo = None
+    if hasattr(subprocess, "STARTUPINFO"):
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = 0
+    completed = subprocess.run(
+        ["powershell.exe", "-NoLogo", "-NoProfile", "-NonInteractive", "-STA", "-EncodedCommand", encoded],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        creationflags=flags, startupinfo=startupinfo, timeout=600, check=False,
+    )
+    if completed.returncode != 0:
+        detail = completed.stderr.strip().lstrip("\ufeff")
+        raise RuntimeError(detail or "Windows không thể mở hộp thoại chọn thư mục.")
+    return completed.stdout.strip().lstrip("\ufeff")
 
 app = Flask(__name__, static_folder=None)
 renamer = FileRenamer()
@@ -501,9 +477,10 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                     d = await response.json();
                 }
                 if (d && d.ok === false) throw new Error(d.message || 'Không thể chọn thư mục');
+                if (d && d.error) throw new Error(d.error);
                 if (d && d.path) document.getElementById('folderPath').value = d.path;
             } catch (e) {
-                alert('Không thể mở hộp thoại chọn thư mục. Hãy nhập đường dẫn thủ công.');
+                alert('Không thể mở hộp thoại chọn thư mục: ' + (e.message || e) + '\nBạn vẫn có thể nhập đường dẫn thủ công.');
             }
         }
 

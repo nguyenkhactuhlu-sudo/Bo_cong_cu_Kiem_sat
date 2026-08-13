@@ -49,7 +49,14 @@
         /* ===== LANDING PAGE - GLASS CORE + CONCENTRIC WAVES ===== */
         #landing-page {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at center, #ffffff 0%, #c5d9ec 40%, #8db4d4 100%);
+            background-color: #eef7f9;
+            background-image:
+                radial-gradient(circle at center, rgba(255,255,255,.96) 0%, rgba(197,217,236,.9) 40%, rgba(141,180,212,.56) 100%),
+                linear-gradient(to bottom, rgba(238,247,249,.92) 0%, rgba(238,247,249,.7) 48%, rgba(238,247,249,.2) 100%),
+                url('static/lotus.png');
+            background-position: center center, center bottom, center bottom;
+            background-size: auto, 100% 100%, 100% auto;
+            background-repeat: no-repeat;
             width: 100%;
             min-height: 100vh;
             min-height: 100svh;
@@ -60,6 +67,9 @@
         }
         body.landing-locked {
             overflow: hidden;
+        }
+        @media (max-width: 640px) {
+            #landing-page { background-size: auto, 100% 100%, auto 42vh; }
         }
         .landing-stage {
             width: min(100%, 760px);
@@ -495,7 +505,7 @@
                     </div>
                     <div class="tool-section-actions">
                         <span class="tool-section-count" id="offline-tools-count"></span>
-                        <a class="offline-download" href="https://github.com/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/releases/latest/download/BoCongCuKiemSat_Offline_Setup.exe" download>
+                        <a class="offline-download" href="https://github.com/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/releases/latest/download/BoCongCuKiemSat_Offline_Setup.exe" download title="Tải bộ cài Offline mới nhất">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             Tải bộ công cụ Offline
                         </a>

@@ -337,7 +337,7 @@
                 <i class="fas fa-download"></i>
                 <span>
                     TẢI XUỐNG CÔNG CỤ
-                    <span class="sub-text">Tải FileRenamer.zip — Giải nén, chạy FileRenamerGUI.exe</span>
+                    <span class="sub-text">Tải FileRenamer.zip — Giải nén, chạy FileRenamerPortable.exe</span>
                 </span>
             </button>
         </div>
@@ -346,8 +346,8 @@
         <div class="info-card">
             <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
             <ul>
-                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>FileRenamerGUI.exe</strong> về máy và nhấp đúp để chạy</span></li>
-                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Trình duyệt tự mở giao diện web, chọn thư mục cha chứa file cần đổi tên</span></li>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>FileRenamer.zip</strong> và giải nén toàn bộ vào một thư mục</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Mở thư mục <strong>FileRenamerPortable</strong>, chạy <strong>FileRenamerPortable.exe</strong> rồi chọn thư mục cha chứa file cần đổi tên</span></li>
                 <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Bấm "Quét ngay" để xem danh sách file có vấn đề (tên cũ → tên đề xuất)</span></li>
                 <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Tích chọn file muốn đổi tên (mặc định chọn tất cả)</span></li>
                 <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Bấm "Thực thi đổi tên" để áp dụng đổi tên cho các file đã chọn</span></li>
@@ -356,9 +356,9 @@
             <div class="note-box">
                 <i class="fas fa-lightbulb"></i>
                 <p>
-                    <strong>Lưu ý:</strong> Sau khi tải <strong>FileRenamerGUI.exe</strong> về máy, hãy nhấp đúp để chạy. 
-                    Công cụ sẽ tự động mở trình duyệt với giao diện sử dụng trực quan. 
-                    Nếu cần dùng dòng lệnh, hãy tải <strong>FileRenamer.exe</strong> và tham khảo hướng dẫn trong tệp HuongDanSuDung.txt đi kèm.
+                    <strong>Lưu ý:</strong> Không chạy tệp trực tiếp khi còn nằm trong ZIP. Hãy giải nén đầy đủ rồi mở
+                    <strong>FileRenamerPortable.exe</strong>. Công cụ sẽ tự động mở giao diện trong trình duyệt cục bộ;
+                    dữ liệu vẫn chỉ được xử lý trên máy tính.
                 </p>
             </div>
         </div>
@@ -381,13 +381,13 @@
                 'Hướng dẫn sử dụng:\n' +
                 '1. Nhấn OK để tải tệp FileRenamer.zip\n' +
                 '2. Giải nén file .zip vào một thư mục\n' +
-                '3. Nhấp đúp vào FileRenamerGUI.exe để chạy\n' +
+                '3. Mở thư mục FileRenamerPortable và chạy FileRenamerPortable.exe\n' +
                 '4. Trình duyệt sẽ tự động mở giao diện sử dụng'
             );
 
             if (confirmed) {
                 var link = document.createElement('a');
-                link.href = 'FileRenamer.zip';
+                link.href = 'https://raw.githubusercontent.com/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/main/Tool/FileRenamer/FileRenamer.zip?v=20260814-1';
                 link.download = 'FileRenamer.zip';
                 document.body.appendChild(link);
                 link.click();
@@ -396,7 +396,7 @@
                 setTimeout(function() {
                     alert(
                         '✅ Tệp FileRenamer.zip đã được tải xuống.\n\n' +
-                        '👉 Giải nén và chạy FileRenamerGUI.exe để sử dụng.'
+                        '👉 Giải nén, mở thư mục FileRenamerPortable và chạy FileRenamerPortable.exe.'
                     );
                 }, 500);
             }

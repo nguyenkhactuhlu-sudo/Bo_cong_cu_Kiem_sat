@@ -106,7 +106,12 @@ def index():
 
 @app.get("/static/<path:filename>")
 def shared_static(filename):
-    return send_from_directory(Path(__file__).resolve().parents[2] / "static", filename)
+    static_root = (
+        Path(sys._MEIPASS) / "static"
+        if getattr(sys, "frozen", False)
+        else Path(__file__).resolve().parents[2] / "static"
+    )
+    return send_from_directory(static_root, filename)
 
 
 @app.post("/api/analyze")

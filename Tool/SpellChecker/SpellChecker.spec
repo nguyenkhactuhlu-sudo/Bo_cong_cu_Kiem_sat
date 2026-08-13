@@ -4,7 +4,10 @@ a = Analysis(
     ['app.py'],
     pathex=[SPECPATH],
     binaries=[],
-    datas=[('data', 'data')],
+    datas=[
+        ('data', 'data'),
+        ('../../static/logo_moi.png', 'static'),
+    ],
     hiddenimports=[
         'engine', 'docx_processor', 'offline_server', 'word_converter',
         'pythoncom', 'pywintypes', 'win32com', 'win32com.client',

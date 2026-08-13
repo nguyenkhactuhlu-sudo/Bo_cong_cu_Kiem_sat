@@ -1,0 +1,15 @@
+HƯỚNG DẪN SỬ DỤNG CÔNG CỤ OCR PDF
+===================================
+
+1. Giải nén toàn bộ tệp OCR_PDF_Tool.zip vào một thư mục.
+2. Mở thư mục OCR_PDF_Tool vừa giải nén.
+3. Nhấp đúp OCR_PDF_Tool.exe để khởi động.
+4. Giao diện sẽ tự mở trong trình duyệt tại địa chỉ cục bộ 127.0.0.1.
+5. Chọn hoặc kéo thả tệp PDF, chọn ngôn ngữ và định dạng kết quả, rồi bấm OCR.
+
+LƯU Ý
+-----
+- Công cụ hoạt động hoàn toàn ngoại tuyến và chỉ xử lý dữ liệu trên máy tính.
+- Không cần cài Python hoặc Tesseract; các thành phần cần thiết đã có trong gói.
+- Không chạy OCR_PDF_Tool.exe trực tiếp khi tệp vẫn còn nằm trong ZIP.
+- Có thể đóng cửa sổ trình duyệt và khởi động lại OCR_PDF_Tool.exe khi cần dùng lại.

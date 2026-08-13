@@ -428,7 +428,7 @@
             <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
             <ul>
                 <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải file <strong>OCR_PDF_Tool.zip</strong> về máy và giải nén vào một thư mục</span></li>
-                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Nhấp đúp vào <strong>OCR_PDF_Tool.exe</strong> (hoặc chạy file <strong>Chay_OCR.bat</strong>)</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Mở thư mục <strong>OCR_PDF_Tool</strong> rồi nhấp đúp vào <strong>OCR_PDF_Tool.exe</strong></span></li>
                 <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Trình duyệt tự mở giao diện web. Kéo thả file PDF vào vùng upload (có thể chọn nhiều file cùng lúc)</span></li>
                 <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Chọn ngôn ngữ (tiếng Việt / tiếng Anh) và định dạng đầu ra mong muốn (Markdown / DOCX / TXT)</span></li>
                 <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Nhấn <strong>"OCR 1 FILE ĐƠN"</strong> (xử lý từng file) hoặc <strong>"OCR HÀNG LOẠT"</strong> (xử lý nhiều file)</span></li>
@@ -479,7 +479,7 @@
                 'Hướng dẫn sử dụng:\n' +
                 '1. Nhấn OK để tải tệp OCR_PDF_Tool.zip\n' +
                 '2. Giải nén file .zip vào một thư mục\n' +
-                '3. Nhấp đúp vào OCR_PDF_Tool.exe hoặc chạy Chay_OCR.bat\n' +
+                '3. Mở thư mục OCR_PDF_Tool và nhấp đúp vào OCR_PDF_Tool.exe\n' +
                 '4. Trình duyệt tự mở giao diện web (localhost)\n' +
                 '5. Kéo thả file PDF → Chọn ngôn ngữ & định dạng → Nhấn OCR\n\n' +
                 'Do file .exe dễ bị chặn, chúng tôi đóng gói trong .zip để đảm bảo tải về thành công.'
@@ -488,7 +488,7 @@
             if (confirmed) {
                 var link = document.createElement('a');
                 // GitHub Pages chỉ trả về LFS pointer; miền media trả file ZIP thật.
-                link.href = 'https://media.githubusercontent.com/media/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/main/Tool/OCR_PDF_Tool/OCR_PDF_Tool.zip';
+                link.href = 'https://media.githubusercontent.com/media/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/main/Tool/OCR_PDF_Tool/OCR_PDF_Tool.zip?v=20260814-1';
                 link.download = 'OCR_PDF_Tool.zip';
                 document.body.appendChild(link);
                 link.click();
