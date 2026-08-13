@@ -145,6 +145,17 @@
             display: none; opacity: 0; transition: opacity 0.5s ease;
             padding: 20px 24px calc(var(--taskbar-height) + 30px);
             max-width: 1280px; margin: 0 auto; min-height: 100vh;
+            position: relative; isolation: isolate;
+        }
+        #dashboard-page::before {
+            content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-color: #eef7f9;
+            background-image:
+                linear-gradient(to bottom, rgba(238,247,249,1) 0%, rgba(238,247,249,.96) 48%, rgba(238,247,249,.38) 100%),
+                url('static/lotus.png');
+            background-position: center bottom;
+            background-size: 100% auto;
+            background-repeat: no-repeat;
         }
         #dashboard-page.visible-layout { display: flex; flex-direction: column; }
 
@@ -178,6 +189,47 @@
             display: grid; grid-template-columns: repeat(12, 1fr);
             gap: 16px; flex: 1;
         }
+        .tool-sections { display: flex; flex-direction: column; gap: 24px; }
+        .tool-section {
+            border: 1px solid rgba(203,213,225,0.55); border-radius: 28px;
+            padding: 18px; position: relative; overflow: hidden;
+        }
+        .tool-section-offline {
+            background: linear-gradient(145deg, rgba(236,253,245,0.82), rgba(240,253,250,0.48) 42%, rgba(255,255,255,0.9));
+            border-color: rgba(16,185,129,0.2);
+        }
+        .tool-section-online {
+            background: linear-gradient(145deg, rgba(245,243,255,0.82), rgba(239,246,255,0.48) 42%, rgba(255,255,255,0.9));
+            border-color: rgba(139,92,246,0.18);
+        }
+        .tool-section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; margin: 0 2px 16px;
+        }
+        .tool-section-heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .tool-section-icon {
+            width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
+            display: grid; place-items: center; font-size: 21px;
+        }
+        .tool-section-offline .tool-section-icon { background: #d1fae5; color: #047857; }
+        .tool-section-online .tool-section-icon { background: #ede9fe; color: #6d28d9; }
+        .tool-section-title { font-size: 16px; font-weight: 800; color: var(--slate-800); margin: 0 0 3px; }
+        .tool-section-desc { font-size: 11px; line-height: 1.45; color: var(--slate-400); margin: 0; }
+        .tool-section-count {
+            border-radius: 999px; padding: 5px 10px; flex-shrink: 0;
+            font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+        }
+        .tool-section-offline .tool-section-count { background: #d1fae5; color: #047857; }
+        .tool-section-online .tool-section-count { background: #ede9fe; color: #6d28d9; }
+        .tool-section-actions { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+        .offline-download {
+            display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px;
+            border-radius: 13px; background: #047857; color: #fff; text-decoration: none;
+            font-size: 11px; font-weight: 800; box-shadow: 0 6px 14px rgba(4,120,87,.18);
+            transition: transform .2s, box-shadow .2s, background .2s;
+        }
+        .offline-download:hover { transform: translateY(-2px); background: #065f46; box-shadow: 0 10px 20px rgba(4,120,87,.24); }
+        .offline-download svg { width: 15px; height: 15px; }
         .span-4 { grid-column: span 4; }
         .span-5 { grid-column: span 5; }
         .span-7 { grid-column: span 7; }
@@ -267,10 +319,17 @@
             text-align: center; padding: 30px 20px 40px;
             border-top: 1px solid var(--slate-200); margin-top: 28px;
         }
-        .site-footer .footer-author { font-size: 13px; font-weight: 600; color: var(--slate-600); margin: 0; }
+        .site-footer .footer-author {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 13px; font-weight: 600; color: var(--slate-600); margin: 0;
+            white-space: nowrap;
+        }
         .site-footer .footer-author span { color: var(--teal-600); font-weight: 700; }
-        .site-footer .footer-unit { font-size: 12px; color: var(--slate-500); margin: 4px 0; }
-        .site-footer .footer-copy { font-size: 10px; color: var(--slate-400); letter-spacing: 1.5px; text-transform: uppercase; margin: 2px 0 0; }
+        .site-footer .footer-logo { display: block; flex: 0 0 auto; width: auto; height: 30px; object-fit: contain; }
+        @media (max-width: 640px) {
+            .site-footer .footer-author { font-size: 11px; gap: 6px; }
+            .site-footer .footer-logo { height: 26px; }
+        }
 
         /* ===== OS WORKSPACE ===== */
         #os-workspace {
@@ -341,6 +400,12 @@
             .bento-grid { grid-template-columns: 1fr; }
             .span-4, .span-5, .span-7, .span-12 { grid-column: span 1; }
             #dashboard-page { padding: 12px 12px calc(var(--taskbar-height) + 20px); }
+            #dashboard-page::before { background-size: auto 38vh; }
+            .tool-section { padding: 14px; border-radius: 22px; }
+            .tool-section-header { align-items: flex-start; }
+            .tool-section-count { display: none; }
+            .tool-section-actions { width: 100%; }
+            .offline-download { width: 100%; justify-content: center; }
             .landing-copy { margin-top: clamp(-4px, -0.8vh, 2px); }
         }
         @media (max-height: 520px) and (orientation: landscape) {
@@ -418,11 +483,42 @@
                 <div class="header-underline"></div>
             </div>
         </div>
-        <div class="bento-grid" id="tools-grid"></div>
+        <div class="tool-sections">
+            <section class="tool-section tool-section-offline" aria-labelledby="offline-tools-title">
+                <div class="tool-section-header">
+                    <div class="tool-section-heading">
+                        <div class="tool-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.6-2.8 8.3-7 10-4.2-1.7-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div>
+                            <h2 class="tool-section-title" id="offline-tools-title">Làm việc ngoại tuyến</h2>
+                            <p class="tool-section-desc">Xử lý trên máy · Không cần kết nối Internet</p>
+                        </div>
+                    </div>
+                    <div class="tool-section-actions">
+                        <span class="tool-section-count" id="offline-tools-count"></span>
+                        <a class="offline-download" href="https://github.com/nguyenkhactuhlu-sudo/Bo_cong_cu_Kiem_sat/releases/latest/download/BoCongCuKiemSat_Offline_Setup.exe" download>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Tải bộ công cụ Offline
+                        </a>
+                    </div>
+                </div>
+                <div class="bento-grid" id="offline-tools-grid"></div>
+            </section>
+            <section class="tool-section tool-section-online" aria-labelledby="online-tools-title">
+                <div class="tool-section-header">
+                    <div class="tool-section-heading">
+                        <div class="tool-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18h10a4 4 0 00.7-7.9A6 6 0 006.2 8.4 4.8 4.8 0 007 18z" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div>
+                            <h2 class="tool-section-title" id="online-tools-title">Công cụ trực tuyến &amp; AI</h2>
+                            <p class="tool-section-desc">Cần kết nối Internet · Có thể sử dụng dịch vụ bên ngoài</p>
+                        </div>
+                    </div>
+                    <span class="tool-section-count" id="online-tools-count"></span>
+                </div>
+                <div class="bento-grid" id="online-tools-grid"></div>
+            </section>
+        </div>
         <footer class="site-footer">
-            <p class="footer-author">Phát triển bởi: <span>Viện KSND khu vực 5 - Bắc Ninh</span></p>
-            <p class="footer-unit"></p>
-            <p class="footer-copy">&copy; 2026 — Hệ thống nghiệp vụ ngành Kiểm sát nhân dân</p>
+            <p class="footer-author"><span class="footer-label">Phát triển bởi:</span><span>Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</span><img class="footer-logo" src="./static/logo_moi.png" alt="Logo ngành Kiểm sát"></p>
         </footer>
     </div>
 
@@ -463,18 +559,18 @@
         };
 
         var TOOLS = [
-            { id:'tinh-lai-suat', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tính lãi suất', desc:'Tự động tính tiền lãi trong hạn, lãi quá hạn, lãi chậm trả trong giao dịch dân sự.', illust:ILLUST.chartWave, url:'Tool/App_tinh_lai_suat/index.html', accent:'', footer:'' },
-            { id:'tinh-an-phi', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tính án phí', desc:'Tra cứu và tự động tính nhanh số tiền án phí hình sự và dân sự.', illust:ILLUST.bars, url:'Tool/App_DS/index.html', accent:'', footer:'' },
-            { id:'kiem-sat-ban-an-chung', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Kiểm sát Bản án hình sự, dân sự', desc:'Đối chiếu phát hiện lỗi chính tả, mâu thuẫn, vi phạm, thiếu sót trong Bản án hình sự, dân sự (bản miễn phí - dùng chung cho các đơn vị).', illust:ILLUST.laser, url:'https://udify.app/chat/FoGbxKbFMFZSylhe', accent:'', footer:'' },
-            { id:'kiem-sat-ban-an-nang-cao', span:'span-7', badge:'ĐỘC QUYỀN VIP', badgeClass:'badge-amber', title:'Kiểm sát Bản án hình sự, dân sự', desc:'Bản nâng cấp tối ưu đặc biệt.', illust:ILLUST.shield, url:'https://udify.app/chat/Ho3TdpoYQ9OjTbIq', accent:'accent-vip', footer:'<span>Phiên bản chuyên biệt</span><span style="margin-left:auto;">Dành riêng Viện KSND KV5 Bắc Ninh</span>' },
-            { id:'notebook-lm', span:'span-5', badge:'TRỢ LÝ ẢO AI', badgeClass:'badge-purple', title:'Hình sự & Tố tụng hình sự', desc:'Tra cứu Điều luật, hỗ trợ lập luận tố tụng dựa trên kho tri thức hiện hành.', illust:ILLUST.aiNodes, url:'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee', accent:'', newTab:true, footer:'<span>Nền tảng tri thức</span><span style="margin-left:auto;font-weight:700;color:#7e22ce;">notebookLM</span>' },
-            { id:'tinh-tuoi-thoi-han', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tính tuổi — Tính thời hạn', desc:'Tự động tính tuổi của đối tượng, tính chính xác ngày tháng năm, giờ phút, kiểm soát chặt chẽ thời hạn tạm giữ, tạm giam tố tụng.', illust:ILLUST.clockIcon, url:'Data/TinhTuoiThoiHan.html', accent:'', footer:'' },
-            { id:'huong-dan-so-do-tu-duy', span:'span-4', badge:'HƯỚNG DẪN', badgeClass:'badge-emerald', title:'Tạo sơ đồ tư duy', desc:'Thao tác chi tiết và bộ promt mẫu để tạo sơ đồ tư duy tự động.', illust:ILLUST.mindmap, url:'Data/HuongDan.html', accent:'', footer:'' },
-            { id:'an-danh-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tự động che thông tin - không kết nối mạng', desc:'Tự động ẩn toàn bộ thông tin cá nhân trong văn bản trước khi công bố hoặc giao cho AI xử lý.', illust:ILLUST.censor, url:'Tool/AnDanh/index.html', accent:'', footer:'Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk' },
-            { id:'file-renamer-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Tự động đổi tên file - không kết nối mạng', desc:'Tự động sửa tên file để AI dễ tiếp cận hoặc cho phép đổi tên file hàng loạt (ví dụ: Đánh số bút lục, tài liệu).', illust:ILLUST.rename, url:'Tool/FileRenamer/index.html', accent:'', footer:'Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk' },
-            { id:'spell-checker-tool', span:'span-4', badge:'CÔNG CỤ OFFLINE', badgeClass:'badge-emerald', title:'Rà soát chính tả văn bản Word', desc:'Tự động phát hiện lỗi chính tả, cụm từ nghiệp vụ, khoảng trắng và dấu câu; xuất bản Word tô vàng vị trí cần kiểm tra hoặc bản đã sửa.', illust:ILLUST.spellCheck, url:'Tool/SpellChecker/index.html', accent:'', footer:'<span>Không AI · Không gửi dữ liệu lên mạng</span>' },
-            { id:'ocr-pdf-tool', span:'span-4', badge:'CÔNG CỤ', badgeClass:'badge-teal', title:'Nhận dạng chữ trong fille PDF, file ảnh - không kết nối mạng', desc:'Tự động trích xuất chữ từ file pdf, file ảnh mà không cần kết nối mạng, cho phép chọn đầu ra (word, md, txt).', illust:ILLUST.scan, url:'Tool/OCR_PDF_Tool/index.html', accent:'', footer:'' },
-            { id:'thu-ly-an-ds', span:'span-12', badge:'PHẦN MỀM NGHIỆP VỤ', badgeClass:'badge-emerald', title:'Quản lý Thông báo thụ lý vụ án', desc:'Tự động đọc PDF scan, nhận diện thông tin vụ án và đương sự; hỗ trợ quản lý hồ sơ, ghi sổ Excel và soạn thảo các văn bản kiểm sát theo mẫu.', illust:ILLUST.caseFolder, url:'Tool/ThuLyAnDS/index.html', accent:'', footer:'<span>Dành cho cán bộ, Kiểm sát viên</span><span style="margin-left:auto;font-weight:700;color:#047857;">Tải bản Portable cho Windows</span>' }
+            { id:'tinh-lai-suat', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tính lãi suất', desc:'Tự động tính tiền lãi trong hạn, lãi quá hạn, lãi chậm trả trong giao dịch dân sự.', illust:ILLUST.chartWave, url:'Tool/App_tinh_lai_suat/index.html', accent:'', footer:'' },
+            { id:'tinh-an-phi', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tính án phí', desc:'Tra cứu và tự động tính nhanh số tiền án phí hình sự và dân sự.', illust:ILLUST.bars, url:'Tool/App_DS/index.html', accent:'', footer:'' },
+            { id:'kiem-sat-ban-an-chung', group:'online', span:'span-4', badge:'TRỰC TUYẾN', badgeClass:'badge-purple', title:'Kiểm sát bản án — Bản dùng chung', desc:'Đối chiếu phát hiện lỗi chính tả, mâu thuẫn, vi phạm, thiếu sót trong Bản án hình sự, dân sự (bản miễn phí - dùng chung cho các đơn vị).', illust:ILLUST.laser, url:'https://udify.app/chat/FoGbxKbFMFZSylhe', accent:'', footer:'' },
+            { id:'kiem-sat-ban-an-nang-cao', group:'online', span:'span-4', badge:'ĐỘC QUYỀN VIP', badgeClass:'badge-amber', title:'Kiểm sát bản án — Bản chuyên biệt', desc:'Bản nâng cấp tối ưu đặc biệt.', illust:ILLUST.shield, url:'https://udify.app/chat/Ho3TdpoYQ9OjTbIq', accent:'accent-vip', footer:'<span>Phiên bản chuyên biệt</span><span style="margin-left:auto;">Dành riêng Viện KSND KV5 Bắc Ninh</span>' },
+            { id:'notebook-lm', group:'online', span:'span-4', badge:'TRỢ LÝ ẢO AI', badgeClass:'badge-purple', title:'Hình sự & Tố tụng hình sự', desc:'Tra cứu Điều luật, hỗ trợ lập luận tố tụng dựa trên kho tri thức hiện hành.', illust:ILLUST.aiNodes, url:'https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee', accent:'', newTab:true, footer:'<span>Nền tảng tri thức</span><span style="margin-left:auto;font-weight:700;color:#7e22ce;">notebookLM</span>' },
+            { id:'tinh-tuoi-thoi-han', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tính tuổi — Tính thời hạn', desc:'Tự động tính tuổi của đối tượng, tính chính xác ngày tháng năm, giờ phút, kiểm soát chặt chẽ thời hạn tạm giữ, tạm giam tố tụng.', illust:ILLUST.clockIcon, url:'Data/TinhTuoiThoiHan.html', accent:'', footer:'' },
+            { id:'huong-dan-so-do-tu-duy', group:'online', span:'span-5', badge:'HƯỚNG DẪN AI', badgeClass:'badge-purple', title:'Tạo sơ đồ tư duy', desc:'Thao tác chi tiết và bộ promt mẫu để tạo sơ đồ tư duy tự động.', illust:ILLUST.mindmap, url:'Data/HuongDan.html', accent:'', footer:'<span>Cần kết nối Internet để sử dụng nền tảng AI</span>' },
+            { id:'an-danh-tool', group:'offline', span:'span-7', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tự động che thông tin', desc:'Tự động ẩn toàn bộ thông tin cá nhân trong văn bản trước khi công bố hoặc giao cho AI xử lý.', illust:ILLUST.censor, url:'Tool/AnDanh/index.html', accent:'', footer:'' },
+            { id:'file-renamer-tool', group:'offline', span:'span-5', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tự động đổi tên file', desc:'Tự động sửa tên file để AI dễ tiếp cận hoặc cho phép đổi tên file hàng loạt (ví dụ: Đánh số bút lục, tài liệu).', illust:ILLUST.rename, url:'Tool/FileRenamer/index.html', accent:'', footer:'' },
+            { id:'spell-checker-tool', group:'offline', span:'span-5', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Rà soát chính tả văn bản Word', desc:'Tự động phát hiện lỗi chính tả, cụm từ nghiệp vụ, khoảng trắng và dấu câu; xuất bản Word tô vàng vị trí cần kiểm tra hoặc bản đã sửa.', illust:ILLUST.spellCheck, url:'Tool/SpellChecker/index.html', accent:'', footer:'<span>Không AI · Không gửi dữ liệu lên mạng</span>' },
+            { id:'ocr-pdf-tool', group:'offline', span:'span-7', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Nhận dạng chữ trong file PDF, file ảnh', desc:'Tự động trích xuất chữ từ file PDF, file ảnh mà không cần kết nối mạng, cho phép chọn đầu ra (Word, Markdown, TXT).', illust:ILLUST.scan, url:'Tool/OCR_PDF_Tool/index.html', accent:'', footer:'' },
+            { id:'thu-ly-an-ds', group:'online', span:'span-7', badge:'CẦN KẾT NỐI MẠNG', badgeClass:'badge-purple', title:'Quản lý thông báo thụ lý vụ án', desc:'Tự động đọc PDF scan, nhận diện thông tin vụ án và đương sự bằng Gemini; hỗ trợ quản lý hồ sơ, ghi sổ Excel và soạn thảo các văn bản kiểm sát theo mẫu.', illust:ILLUST.caseFolder, url:'Tool/ThuLyAnDS/index.html', accent:'', footer:'<span>Sử dụng Gemini</span><span style="margin-left:auto;font-weight:700;color:#6d28d9;">Phần mềm nghiệp vụ</span>' }
         ];
 
         var isDashboardVisible=false, isInToolView=false, currentToolId=null, activeToolTitle='';
@@ -487,7 +583,10 @@
         var winTitle=document.getElementById('win-title');
         var osClock=document.getElementById('os-clock');
         var breadcrumb=document.getElementById('taskbar-breadcrumb');
-        var toolsGrid=document.getElementById('tools-grid');
+        var offlineToolsGrid=document.getElementById('offline-tools-grid');
+        var onlineToolsGrid=document.getElementById('online-tools-grid');
+        var offlineToolsCount=document.getElementById('offline-tools-count');
+        var onlineToolsCount=document.getElementById('online-tools-count');
 
         function init(){ renderToolCards(); startClock(); document.body.classList.add('landing-locked'); }
 
@@ -504,20 +603,25 @@
         }
 
         function renderToolCards(){
-            var html='';
+            var offlineHtml='', onlineHtml='', offlineCount=0, onlineCount=0;
             for(var i=0;i<TOOLS.length;i++){
                 var t=TOOLS[i];
-                html+='<div class="bento-card '+t.span+' '+t.accent+'" data-tool-id="'+t.id+'" onclick="openTool(\''+t.id+'\')">';
-                html+='<div>';
-                html+='<div class="bento-card-top"><div>';
-                html+='<span class="bento-card-badge '+t.badgeClass+'">'+t.badge+'</span>';
-                html+='<h3 class="bento-card-title">'+t.title+'</h3></div>';
-                html+='<div class="bento-illust">'+t.illust+'</div></div>';
-                html+='<p class="bento-card-desc">'+t.desc+'</p></div>';
-                if(t.footer) html+='<div class="bento-card-footer">'+t.footer+'</div>';
-                html+='</div>';
+                var card='<div class="bento-card '+t.span+' '+t.accent+'" data-tool-id="'+t.id+'" onclick="openTool(\''+t.id+'\')">';
+                card+='<div>';
+                card+='<div class="bento-card-top"><div>';
+                card+='<span class="bento-card-badge '+t.badgeClass+'">'+t.badge+'</span>';
+                card+='<h3 class="bento-card-title">'+t.title+'</h3></div>';
+                card+='<div class="bento-illust">'+t.illust+'</div></div>';
+                card+='<p class="bento-card-desc">'+t.desc+'</p></div>';
+                if(t.footer) card+='<div class="bento-card-footer">'+t.footer+'</div>';
+                card+='</div>';
+                if(t.group==='offline'){ offlineHtml+=card; offlineCount++; }
+                else { onlineHtml+=card; onlineCount++; }
             }
-            toolsGrid.innerHTML=html;
+            offlineToolsGrid.innerHTML=offlineHtml;
+            onlineToolsGrid.innerHTML=onlineHtml;
+            offlineToolsCount.textContent=offlineCount+' công cụ';
+            onlineToolsCount.textContent=onlineCount+' công cụ';
         }
 
         function showTools(){ fadeToDashboard(); }

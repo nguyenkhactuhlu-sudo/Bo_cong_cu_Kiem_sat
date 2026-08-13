@@ -17,6 +17,9 @@
             box-shadow: 0 3px 15px rgba(0,0,0,0.1);
         }
         .header-content-wrapper { display: flex; align-items: center; width: 100%; position: relative; height: 100%; }
+        .header-tool-actions { margin-left: auto; display: flex; gap: 10px; z-index: 3; }
+        .header-tool-btn { border: 1px solid rgba(255,255,255,.65); border-radius: 8px; background: rgba(255,255,255,.14); color: #fff; padding: 9px 13px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .header-tool-btn:hover,.header-tool-btn.active { background: #fff; color: #16568c; }
         .header-text-container { margin-left: 20px; z-index: 2; }
         .header-text-container h1 { color: #ffffff; font-weight: bold; font-size: 1.6rem; margin: 0; letter-spacing: 0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.15); }
         .header-text-container p { color: #fff3cc; font-size: 13px; margin: 3px 0 0 0; font-weight: 500; }
@@ -33,14 +36,14 @@
         .app-layout-container { display: flex; margin-top: 150px; padding: 0 20px 20px 20px; gap: 15px; width: 100%; align-items: flex-start; }
         
         /* SIDEBAR TRÁI - TRA CỨU LUẬT THU GỌN TRÁI PHẢI */
-        .law-sidebar-container { width: 380px; min-width: 380px; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .law-sidebar-container.collapsed { width: 55px; min-width: 55px; }
-        .law-sidebar-container.collapsed .law-card { display: none !important; }
+        .law-sidebar-container { display:none; position:fixed; left:20px; top:142px; bottom:18px; width:min(420px,calc(100vw - 40px)); z-index:1040; overflow:auto; }
+        .law-sidebar-container.open { display:block; }
         
         /* SIDEBAR PHẢI - CÔNG CỤ THỜI GIAN THỰC THU GỌN TRÁI PHẢI */
-        .time-sidebar-container { width: 320px; min-width: 320px; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .time-sidebar-container.collapsed { width: 55px; min-width: 55px; }
-        .time-sidebar-container.collapsed .time-card { display: none !important; }
+        .time-sidebar-container { display:none; position:fixed; right:20px; top:142px; width:min(360px,calc(100vw - 40px)); z-index:1040; }
+        .time-sidebar-container.open { display:block; }
+        .law-sidebar-container .btn-gold-toggle,.time-sidebar-container .btn-gold-toggle{display:none}
+        .law-card,.time-card{max-height:calc(100vh - 165px);overflow:auto;box-shadow:0 14px 38px rgba(16,42,67,.24)}
         
         /* VÙNG HIỂN THỊ TÍNH TOÁN TRUNG TÂM GIÃN NỞ */
         .main-content-area { flex-grow: 1; transition: all 0.4s ease; min-width: 0; }
@@ -81,6 +84,7 @@
         
         .author-footer { text-align: center; margin-top: 40px; padding: 15px 0 35px 0; border-top: 1px solid #bad5f0; color: #5a738e; font-size: 14px; }
         .footer-logo-large { height: 1.6rem; width: auto; vertical-align: middle; margin-left: 10px; }
+        @media(max-width:800px){.header-text-container p{display:none}.header-tool-actions{position:absolute;right:0;bottom:8px}.header-tool-btn{padding:7px 9px;font-size:10px}.fixed-header-banner{padding:0 14px}}
     </style>
 </head>
 <body>
@@ -97,6 +101,10 @@
                 <path d="M32 4V56M20 16H44M20 16L14 36H26L20 16ZM44 16L38 36H50L44 16ZM12 56H52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M27 51H37V56H27V51Z" fill="currentColor"/>
             </svg>
+        </div>
+        <div class="header-tool-actions">
+            <button type="button" id="toggleLawBtnTop" class="header-tool-btn" onclick="toggleLawSidebar()">📖 Tra cứu luật</button>
+            <button type="button" id="toggleTimeBtnTop" class="header-tool-btn" onclick="toggleTimeSidebar()">🗓 Tiện ích ngày</button>
         </div>
     </div>
 </div>
@@ -403,16 +411,6 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
 </div>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="author-footer">
-                <span style="color: #16568c; font-weight: 500;">
-                    Phát triển bởi: Viện KSND khu vực 5 - Bắc Ninh
-                </span>
-                <img src="static/logo_moi.png" alt="Logo Tác Giả" class="footer-logo-large">
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -431,25 +429,15 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
     // THU GỌN / MỞ RỘNG TRÁI NGANG (TRA CỨU LUẬT)
     function toggleLawSidebar() {
         const container = document.getElementById('lawSidebarContainer');
-        const btn = document.getElementById('toggleLawBtn');
-        container.classList.toggle('collapsed');
-        if (container.classList.contains('collapsed')) {
-            btn.innerHTML = "LUẬT ▶";
-        } else {
-            btn.innerHTML = "◀ THU GỌN TRA CỨU LUẬT";
-        }
+        container.classList.toggle('open');
+        document.getElementById('toggleLawBtnTop').classList.toggle('active', container.classList.contains('open'));
     }
 
     // THU GỌN / MỞ RỘNG TRÁI NGANG (QUY ĐỔI NGÀY THÁNG)
     function toggleTimeSidebar() {
         const container = document.getElementById('timeSidebarContainer');
-        const btn = document.getElementById('toggleTimeBtn');
-        container.classList.toggle('collapsed');
-        if (container.classList.contains('collapsed')) {
-            btn.innerHTML = "◀ TIỆN ÍCH";
-        } else {
-            btn.innerHTML = "THU GỌN QUY ĐỔI ▶";
-        }
+        container.classList.toggle('open');
+        document.getElementById('toggleTimeBtnTop').classList.toggle('active', container.classList.contains('open'));
     }
 
     // MỚI: HÀM CỘNG THỜI GIAN THEO THỜI GIAN THỰC TẾ (YÊU CẦU SỐ 2)

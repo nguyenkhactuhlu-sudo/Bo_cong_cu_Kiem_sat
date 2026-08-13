@@ -159,6 +159,10 @@
             gap: 10px;
             line-height: 1.5;
         }
+        .legal-note.collapsed > :not(.legal-toggle) { display: none !important; }
+        .legal-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; border:0; background:transparent; color:inherit; font:inherit; font-weight:700; cursor:pointer; padding:2px 0; }
+        .legal-toggle::after { content:"Mở ▾"; font-size:12px; }
+        .legal-note:not(.collapsed) .legal-toggle::after { content:"Thu gọn ▴"; }
 
         .legal-note i {
             font-size: 16px;
@@ -1001,7 +1005,7 @@
                 </div>
 
                 <!-- Ghi chú pháp lý Điều 117, 118 BLTTHS -->
-                <div class="legal-note legal-note-tamgiu" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;">
+                <div class="legal-note legal-note-tamgiu collapsed" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
                     <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
                     <div>
                         <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
@@ -1116,7 +1120,7 @@
                 </div>
 
                 <!-- Ghi chú pháp lý Điều 17 TT 01/2026 -->
-                <div class="legal-note legal-note-tamgiam" style="max-height: 450px; overflow-y: auto; font-size: 13px; line-height: 1.7;">
+                <div class="legal-note legal-note-tamgiam collapsed" style="max-height: 450px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
                     <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
                     <div>
                         <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
@@ -1273,7 +1277,7 @@
                 </div>
 
                 <!-- Ghi chú pháp lý Điều 134, 135 BLTTHS -->
-                <div class="legal-note legal-note-thoihan" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;">
+                <div class="legal-note legal-note-thoihan collapsed" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
                     <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
                     <div>
                         <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
@@ -1310,6 +1314,7 @@
     </div>
 
     <script>
+        function toggleLegalNote(button) { button.closest('.legal-note').classList.toggle('collapsed'); }
         // ============================================================
         // BIẾN TOÀN CỤC
         // ============================================================
@@ -2040,6 +2045,5 @@
         }
     </script>
 
-    <footer class="ks-page-footer">Bộ công cụ nghiệp vụ — Ngành Kiểm sát nhân dân</footer>
 </body>
 </html>

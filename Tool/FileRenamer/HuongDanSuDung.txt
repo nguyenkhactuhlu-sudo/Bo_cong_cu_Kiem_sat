@@ -113,7 +113,3 @@ Sau:   "QD ve viec KTo vu an HS so 123-QD-VKS.pdf"
 
 Trước: "Báo cáo tổng kết công tác năm 2024 - Viện kiểm sát nhân dân.docx"
 Sau:   "BC tong ket cong tac nam 2024 - VKS nhan dan.docx"
-
-====================================================================
-  Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
-====================================================================

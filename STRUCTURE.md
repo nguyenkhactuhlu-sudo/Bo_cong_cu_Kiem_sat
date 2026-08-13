@@ -1,299 +1,166 @@
-<!-- 
-  ╔══════════════════════════════════════════════════════════════╗
-  ║  AI_README_FIRST                                            ║
-  ║  >>> ĐÂY LÀ FILE MÔ TẢ CẤU TRÚC DỰ ÁN <<<                   ║
-  ║  Khi bạn là một AI agent được giao nhiệm vụ làm việc với    ║
-  ║  mã nguồn này, hãy ĐỌC TOÀN BỘ FILE NÀY TRƯỚC TIÊN.        ║
-  ║  File này chứa tổng quan kiến trúc, danh sách công cụ,      ║
-  ║  port mapping, pattern thêm tool mới, và các ghi chú kỹ    ║
-  ║  thuật quan trọng.                                          ║
-  ╚══════════════════════════════════════════════════════════════╝
--->
+# Cấu trúc hệ thống — Bộ công cụ nghiệp vụ Kiểm sát
 
-# BỘ CÔNG CỤ NGHIỆP VỤ – VIỆN KIỂM SÁT NHÂN DÂN
+> Cập nhật: 13/08/2026. Tài liệu này phản ánh mã nguồn đang tồn tại trong repository.
 
-> **Mục đích file này:** Giúp AI nắm tổng quan dự án nhanh, tiết kiệm token.
-> **Tác giả:** Nguyễn Khắc Tú – Viện KSND KV5 Bắc Ninh
+## 1. Tổng quan
 
----
+Dự án có hai bề mặt sử dụng chung mã nghiệp vụ:
 
-## 1. TỔNG QUAN
+1. **Dashboard web** tại `index.html`, triển khai như website tĩnh. Dashboard bento chia công cụ thành nhóm ngoại tuyến và trực tuyến/AI; công cụ nội bộ mở trong iframe, liên kết ngoài mở theo cấu hình từng card.
+2. **Bộ desktop offline** tại `DesktopOffline/`, dùng Python + Flask cục bộ + pywebview/WebView2. Người dùng nhận một file cài đặt; máy đích không cần Python, pip, Chrome/Edge hay Internet.
 
-- **Loại dự án:** Web dashboard tập hợp các công cụ nghiệp vụ kiểm sát
-- **Frontend:** HTML/CSS/JS (thuần, không framework), file chính `index.html`
-- **Backend GUI tools:** Python Flask (HTML template inline trong file `.py`), đóng gói `.exe` bằng PyInstaller
-- **Deploy:** GitHub Pages (static) + file `.exe` / `.zip` tải về cho tool offline
-- **Port mapping:** Mỗi tool Flask chạy trên port riêng để tránh xung đột:
-  - FileRenamer: **5789**
-  - PdfToMd: **tự động** (5100+)
-  - SpellChecker: **5790** (tự chuyển nếu bận)
+Mã nguồn trong `Tool/`, `Data/` và `static/` là nguồn chuẩn. Quy trình desktop sao chép các phần cần thiết vào `DesktopOffline/stage/payload`, thay CDN bằng tài nguyên cục bộ và đóng gói; không sửa ngược mã nguồn trong bước staging.
 
----
+## 2. Sơ đồ thư mục hiện tại
 
-## 2. CẤU TRÚC THƯ MỤC GỐC
-
-```
+```text
 Bo_cong_cu_Kiem_sat/
-├── STRUCTURE.md                  ← File này (AI ĐỌC TRƯỚC TIÊN)
-├── index.html                    ← Dashboard chính
-├── .gitignore
-│
-├── static/                       ← Ảnh, tài nguyên tĩnh
-│   ├── logo_moi.png
-│   └── Nen.jpg
-│
-├── Data/                         ← Công cụ tĩnh (HTML) + tài liệu
-│   ├── TinhTuoiThoiHan.html
-│   ├── HuongDan.html
-│   ├── Slide.html
-│   ├── slide.docx
-│   ├── slide.md
-│   └── Recording.mp4
-│
-└── Tool/                         ← Các công cụ Python GUI (có thể build .exe)
-    ├── auto_install.py           ← Module dùng chung: tự động kiểm tra & cài thư viện thiếu
-    ├── App_DS/                   ← Tính án phí (HTML standalone)
-    │   └── index.html            ← Công cụ tính án phí
-    │
-    ├── App_tinh_lai_suat/        ← Tính lãi suất (HTML standalone)
-    │   └── index.html            ← Công cụ tính lãi suất
-    │
-    ├── PdfToMd/                  ← PDF / Ảnh → Markdown
-    │   ├── pdf_to_md.py          ← Engine OCR (Gemini API + pypdf)
-    │   ├── pdf_to_md_gui.py      ← Flask GUI (port tự động 5100+)
-    │   ├── PdfToMdGUI.spec       ← PyInstaller spec
-    │   ├── PdfToMdGUI.exe        ← GUI standalone (trong dist/)
-    │   ├── PdfToMd.zip           ← File phân phối (~50MB, tải về từ index.html)
-    │   ├── index.html            ← Trang giới thiệu + nút tải .zip
-    │   ├── API keys.txt          ← Hướng dẫn lấy Gemini API Key
-    │   └── HuongDanSuDung.txt
-    │
-    ├── AnDanh/                   ← Ẩn danh văn bản (HTML app)
-    │   ├── index.html            ← Công cụ ẩn danh
-    │   ├── AnDanhTool.exe        ← Bản standalone
-    │   ├── AnDanhTool.zip        ← File phân phối
-    │   └── HuongDanSuDung.txt
-    │
-    ├── FileRenamer/              ← Đổi tên file hàng loạt
-        ├── file_renamer.py       ← Engine chuẩn hóa tên file
-        ├── file_renamer_gui.py   ← Flask GUI (port 5789)
-        ├── FileRenamerGUI.spec   ← PyInstaller spec (GUI)
-        ├── FileRenamerGUI.exe    ← GUI standalone
-        ├── FileRenamer.exe       ← CLI standalone
-        ├── FileRenamer.zip       ← File phân phối
-        ├── index.html            ← Trang giới thiệu + nút tải .zip
-    │   └── HuongDanSuDung.txt
-    │
-    ├── SpellChecker/             ← Rà soát chính tả DOC/DOCX hoàn toàn offline
-    │   ├── app.py                ← Flask GUI local (port 5790)
-    │   ├── engine.py             ← Engine từ điển + luật tiếng Việt/nghiệp vụ
-    │   ├── docx_processor.py     ← Tô vàng và sửa trên bản sao DOCX, không tạo comment
-    │   ├── word_converter.py     ← Word COM chuyển DOC sang DOCX tạm, không sửa tệp gốc
-    │   ├── data/vi.dic           ← Từ điển tiếng Việt MIT
-    │   ├── SpellChecker.spec     ← Build một file RaSoatChinhTa.exe
-    │   ├── index.html            ← Trang giới thiệu và tải bản portable
-    │   └── tests/                ← Unit test + benchmark engine
-    │
-    └── ThuLyAnDS/                ← Giới thiệu phần mềm Quản lý TBTL vụ án
-        └── index.html            ← Tính năng, hướng dẫn và nút mở Google Drive tải Portable ZIP
+├── index.html                     Dashboard web chính và danh sách TOOLS
+├── STRUCTURE.md                   Tài liệu kiến trúc này
+├── TASK.md                        Ghi chép/yêu cầu phát triển
+├── static/
+│   ├── logo_moi.png               Logo dùng chung
+│   ├── Nen.jpg                    Ảnh nền
+│   └── tool-page-theme.css        Theme trang giới thiệu công cụ
+├── Data/
+│   ├── TinhTuoiThoiHan.html       Tính tuổi, thời hạn, tạm giữ/tạm giam
+│   ├── HuongDan.html              Hướng dẫn tạo sơ đồ tư duy
+│   ├── Slide.html                 Slide nhúng
+│   └── slide.docx, slide.md, Recording.mp4
+├── Tool/
+│   ├── auto_install.py            Hỗ trợ dependency cho bản chạy nguồn cũ
+│   ├── App_tinh_lai_suat/         Flask + HTML tính lãi suất
+│   ├── App_DS/                    Flask + HTML tính án phí
+│   ├── AnDanh/
+│   │   ├── index.html             Trang giới thiệu web
+│   │   └── andanh_app/            Flask, detector và xử lý DOCX
+│   ├── FileRenamer/               Engine + Flask GUI đổi tên hàng loạt
+│   ├── OCR_PDF_Tool/
+│   │   ├── index.html             Trang giới thiệu web
+│   │   └── source/                Flask, PyMuPDF, Tesseract, xuất DOCX/MD/TXT
+│   ├── SpellChecker/              Flask, engine chính tả và xử lý Word
+│   ├── ThuLyAnDS/                 Trang giới thiệu công cụ cần mạng/Gemini
+│   └── _local_archive/            Dữ liệu lưu trữ cục bộ, không phải runtime chính
+└── DesktopOffline/
+    ├── main.py                    Launcher, cửa sổ tool và API native
+    ├── tool_registry.py           Registry 7 công cụ desktop
+    ├── prepare_payload.py         Staging, local hóa asset, tích hợp Save As
+    ├── brand.css                  Font/theme áp dụng cho payload
+    ├── BoCongCuOffline.spec       PyInstaller spec
+    ├── installer.iss              Inno Setup: một file cài đặt
+    ├── build.ps1                  Pipeline build đầy đủ
+    ├── vendor/                    WebView2, font, icon và thư viện giao diện
+    ├── stage/payload/             Bản sao phát hành được sinh tự động
+    ├── dist/app/                  EXE ứng dụng + Tesseract trước khi cài đặt
+    ├── dist/BoCongCuKiemSat_Offline_Setup.exe
+    └── qa_*.py, capture_ui.ps1    Kiểm thử phát hành
 ```
 
----
+Các thư mục `build/`, `dist/`, `stage/`, `vendor/`, `__pycache__/` là đầu ra hoặc tài nguyên build, không phải nơi sửa logic nghiệp vụ gốc.
 
-## 3. DANH SÁCH CÔNG CỤ
+## 3. Dashboard web
 
-### 3.1. Tính lãi suất
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `tinh-lai-suat` |
-| **Loại** | Static HTML (iframe) |
-| **URL** | `Tool/App_tinh_lai_suat/index.html` |
-| **Accent** | `accent-sky` |
+`index.html` chứa mảng JavaScript `TOOLS`; mỗi phần tử có các trường chính: `id`, `group`, `span`, `badge`, `badgeClass`, `title`, `desc`, `illust`, `url`, `accent`, `footer`, `newTab`.
 
-### 3.2. Tính án phí
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `tinh-an-phi` |
-| **Loại** | Static HTML (iframe) |
-| **URL** | `Tool/App_DS/index.html` |
-| **Accent** | `accent-bronze` |
+### Công cụ ngoại tuyến
 
-### 3.3. Kiểm sát Bản án (bản dùng chung)
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `kiem-sat-ban-an-chung` |
-| **Loại** | Web app external (iframe) |
-| **URL** | `https://udify.app/chat/FoGbxKbFMFZSylhe` |
-| **Accent** | `accent-plum` |
-
-### 3.4. Kiểm sát Bản án (bản nâng cấp)
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `kiem-sat-ban-an-nang-cao` |
-| **Loại** | Web app external (iframe) |
-| **URL** | `https://udify.app/chat/Ho3TdpoYQ9OjTbIq` |
-| **Accent** | `accent-plum` |
-| **Ghi chú** | Dành riêng Viện KSND KV5 Bắc Ninh |
-
-### 3.5. Hỏi đáp AI – Hình sự & Tố tụng hình sự
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `notebook-lm` |
-| **Loại** | External link, mở tab mới (`newTab: true`) |
-| **URL** | `https://notebooklm.google.com/notebook/af52b719-3125-4b4e-aaad-93432843b0ee` |
-| **Accent** | `accent-sky` |
-
-### 3.6. Tính tuổi – Tính thời hạn – Đếm tạm giữ
-| Thuộc tính | Giá trị |
+| ID web | Công cụ | Nguồn/chế độ |
 |---|---|---|
-| **ID** | `tinh-tuoi-thoi-han` |
-| **Loại** | Static HTML (iframe) |
-| **URL** | `Data/TinhTuoiThoiHan.html` |
-| **Accent** | `accent-sky` |
-| **Chức năng** | Tính tuổi, tính thời hạn tố tụng (Điều 135 BLTTHS), đếm thời gian tạm giữ (Điều 117 BLTTHS) |
-| **Sửa lỗi** | Đã sửa lỗi lệch ngày: thời hạn tính từ ngày tiếp theo của ngày xác định sự kiện |
-| **Tính năng mới** | Thêm phần đếm thời gian tạm giữ với cảnh báo màu (đỏ < 6h, vàng < 24h) |
+| `tinh-lai-suat` | Tính lãi suất | `Tool/App_tinh_lai_suat/index.html` |
+| `tinh-an-phi` | Tính án phí | `Tool/App_DS/index.html` |
+| `tinh-tuoi-thoi-han` | Tính tuổi — thời hạn | `Data/TinhTuoiThoiHan.html` |
+| `an-danh-tool` | Che thông tin Word | Trang giới thiệu `Tool/AnDanh/index.html`; app Flask trong `andanh_app/` |
+| `file-renamer-tool` | Đổi tên file hàng loạt | Trang giới thiệu + Flask/engine trong `Tool/FileRenamer/` |
+| `spell-checker-tool` | Rà chính tả Word | Trang giới thiệu + Flask/engine trong `Tool/SpellChecker/` |
+| `ocr-pdf-tool` | OCR PDF | Trang giới thiệu + Flask/Tesseract trong `Tool/OCR_PDF_Tool/source/` |
 
-### 3.7. Hướng dẫn tạo sơ đồ tư duy tự động
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `huong-dan-so-do-tu-duy` |
-| **Loại** | Static HTML (iframe) |
-| **URL** | `Data/HuongDan.html` |
-| **Accent** | `accent-bronze` |
+### Công cụ trực tuyến/AI
 
-### 3.8. Ẩn danh văn bản (che thông tin)
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `an-danh-tool` |
-| **Loại** | HTML app (iframe) |
-| **URL** | `Tool/AnDanh/index.html` |
-| **Accent** | `accent-plum` |
-| **Ghi chú** | Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk |
-
-### 3.9. File Renamer – Đổi tên file hàng loạt
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `file-renamer-tool` |
-| **Loại** | Python Flask GUI → `.exe` standalone |
-| **URL** | `Tool/FileRenamer/index.html` |
-| **Accent** | `accent-sky` |
-| **Files** | `Tool/FileRenamer/file_renamer.py`, `Tool/FileRenamer/file_renamer_gui.py` |
-| **Port** | 5789 |
-| **Backend** | Flask + ctypes native Windows folder browser |
-| **Đặc điểm** | 1 file `.py` chứa cả backend lẫn HTML template inline; quét đệ quy; xem trước trước khi đổi tên; **click vào tên mới (màu xanh) để tự đặt tên file tùy chỉnh**, hỗ trợ khôi phục tên đề xuất |
-| **File phân phối** | `FileRenamer.zip` (chứa `FileRenamerGUI.exe`) |
-
-### 3.10. PdfToMd – PDF/Ảnh sang Markdown
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `pdf-to-md-tool` |
-| **Loại** | Python Flask GUI → `.exe` standalone |
-| **URL** | `Tool/PdfToMd/index.html` |
-| **Accent** | `accent-sky` |
-| **Files** | `Tool/PdfToMd/pdf_to_md_gui.py`, `Tool/PdfToMd/pdf_to_md.py`, `Tool/PdfToMd/PdfToMdGUI.spec` |
-| **Port** | Tự động (5100+) |
-| **Engine** | Gemini 2.5 Flash API (OCR) + pypdf (PDF có text) |
-| **Yêu cầu** | Gemini API Key (người dùng tự lấy tại Google AI Studio) |
-| **Đặc điểm** | Hỗ trợ `.pdf`, `.jpg`, `.png`, `.tiff`, `.bmp`, `.gif`, `.webp`; anti-hallucination (fuzzy check); async concurrent với asyncio |
-| **File phân phối** | `PdfToMd.zip` (~50MB, chứa `PdfToMdGUI.exe`) |
-
-### 3.11. Rà soát chính tả văn bản Word (offline)
-| Thuộc tính | Giá trị |
-|---|---|
-| **ID** | `spell-checker-tool` |
-| **Loại** | Python Flask GUI → một file `.exe` portable |
-| **URL** | `Tool/SpellChecker/index.html` |
-| **Files** | `app.py`, `engine.py`, `docx_processor.py`, `word_converter.py`, `data/vi.dic` |
-| **Port** | 5790; tự chọn cổng trống nếu cổng này đang bận |
-| **Engine** | Từ điển âm tiết tiếng Việt MIT + luật cụm từ nghiệp vụ/dấu câu; chấp nhận Unicode tổ hợp |
-| **Riêng tư** | Chỉ chạy tại `127.0.0.1`, không AI, không API, không kết nối mạng |
-| **Định dạng** | `.docx` xử lý trực tiếp; `.doc` tự chuyển qua Microsoft Word COM và yêu cầu máy đã cài Word |
-| **Đầu ra** | Bản DOCX chỉ tô vàng vị trí cần kiểm tra, không comment; bản DOCX áp dụng lỗi đã chấp nhận |
-| **File phân phối** | `RaSoatChinhTa.zip` chứa duy nhất `RaSoatChinhTa.exe` |
-
----
-
-## 4. PATTERN CHUNG – CÁCH THÊM TOOL GUI MỚI
-
-```
-1. Tạo thư mục Tool/<TenTool>/
-2. File <ten>_gui.py ← Flask backend + toàn bộ HTML/CSS/JS template inline
-3. File engine.py ← Logic xử lý chính
-4. File index.html ← Trang giới thiệu + link tải .exe
-5. File HuongDanSuDung.txt ← Hướng dẫn sử dụng
-6. File *.spec ← PyInstaller spec (nếu cần build .exe)
-7. File .exe / .zip ← File phân phối (nén .exe thành .zip để tránh bị chặn)
-8. Thêm entry vào TOOLS array trong index.html
-```
-
-**Template TOOLS entry:**
-```js
-{
-    id: 'tool-id',
-    label: 'CÔNG CỤ',
-    title: 'Tên công cụ',
-    subtitle: 'Mô tả ngắn',
-    url: 'Tool/TenTool/index.html',
-    accent: 'accent-sky'  // hoặc accent-bronze, accent-plum
-}
-```
-
-**Template PyInstaller spec:**
-```python
-a = Analysis(
-    ['<ten>_gui.py'],
-    datas=[('<engine>.py', '.')],
-    hiddenimports=[],
-)
-exe = EXE(pyz, a.scripts, ..., name='TenToolGUI', console=True, ...)
-```
-
----
-
-## 5. DASHBOARD CHÍNH (`index.html`)
-
-- **TOOLS array** trong `index.html` định nghĩa tất cả công cụ
-- Mỗi tool có: `id`, `span`, `badge`, `badgeClass`, `title`, `desc`, `illust`, `url`, `accent`, `footer` và `newTab` (tùy chọn)
-- `newTab: true` → mở tab mới. Mặc định → mở trong iframe workspace
-- URL tool local: `Tool/<TenTool>/index.html`
-- Khi người dùng bấm card, iframe workspace mở trang giới thiệu tương ứng. Các tool nhỏ tải ZIP cục bộ; ThuLyAnDS mở thư mục Google Drive ở tab mới để không lưu gói Portable dung lượng lớn trong dự án.
-
----
-
-## 6. GHI CHÚ KỸ THUẬT
-
-| Mục | Chi tiết |
-|---|---|
-| **Python version** | 3.14 (Windows, portable: `C:\Users\Admin\AppData\Local\Python\pythoncore-3.14-64`) |
-| **PyInstaller** | Đã cài, dùng `python -m PyInstaller xxx.spec` |
-| **Build .exe** | `console=True`, `upx=True`, `--clean --noconfirm` |
-| **File .exe → .zip** | Nén lại để tránh bị trình duyệt/antivirus chặn khi tải |
-| **Deploy** | GitHub Pages phục vụ file tĩnh; file `.zip` >50MB nên dùng Git LFS nếu cần |
-| **Folder Browser** | Dùng `ctypes.windll.shell32.SHBrowseForFolderW` (native Windows, không phụ thuộc tkinter) |
-| **Auto-install library** | Mỗi tool GUI dùng module chung `Tool/auto_install.py` để tự động kiểm tra & cài thư viện thiếu khi chạy file `.py` |
-| **File .zip** | File `.zip` phân phối (trong `Tool/*/`) được push lên Git để người dùng tải về qua GitHub Pages; file `.zip` trong `build/` và `dist/` bị `.gitignore` chặn |
-
----
-
-## 7. PORT MAPPING (TRÁNH XUNG ĐỘT)
-
-| Tool | Port | Cơ chế |
+| ID web | Công cụ | Ghi chú |
 |---|---|---|
-| FileRenamer GUI | **5789** | Cố định |
-| PdfToMd GUI | **5100+ tự động** | `find_free_port()` |
-| SpellChecker GUI | **5790** | Giữ cổng bằng `make_server()`, tự chuyển nếu bận |
+| `kiem-sat-ban-an-chung` | Kiểm sát bản án bản dùng chung | Liên kết Udify |
+| `kiem-sat-ban-an-nang-cao` | Kiểm sát bản án chuyên biệt | Liên kết Udify |
+| `notebook-lm` | Hình sự & tố tụng hình sự | Mở NotebookLM ở tab mới |
+| `huong-dan-so-do-tu-duy` | Hướng dẫn tạo sơ đồ tư duy | Nội dung local, quy trình đích cần dịch vụ AI |
+| `thu-ly-an-ds` | Quản lý thông báo thụ lý vụ án | Cần mạng vì sử dụng Gemini |
 
-> **Quan trọng:** Không để 2 tool dùng chung 1 port. PdfToMd dùng `socket.bind()` để tìm port trống, an toàn nhất.
+Dashboard tổng là nơi duy nhất hiển thị chữ ký phát triển. Các công cụ con không chứa chữ ký riêng.
 
----
+## 4. Kiến trúc desktop offline
 
-## 8. QUY ƯỚC CHO AI AGENT
+### 4.1. Luồng chạy
 
-Khi một AI agent được giao nhiệm vụ làm việc với mã nguồn này:
+```text
+Launcher WebView2 (main.py)
+  ├─ trang launcher và nền `static/lotus.png` được phục vụ qua 127.0.0.1
+  └─ người dùng chọn tool
+      └─ tạo process BoCongCuOffline.exe --tool <id> (ẩn console)
+          ├─ Flask chỉ bind 127.0.0.1 trên cổng trống
+          ├─ pywebview mở cửa sổ riêng, không thanh địa chỉ
+          └─ ToolApi cung cấp chọn thư mục và Save As native
+```
 
-1. **Đọc file này đầu tiên** (`STRUCTURE.md`) — nó chứa toàn bộ kiến trúc và quy ước
-2. Không thay đổi port của các tool đã có
-3. Không commit file `.exe`, `.zip`, `build/`, `dist/`, `__pycache__/` (đã `.gitignore`)
-4. Khi thêm tool mới: theo đúng pattern ở mục 4
-5. Cập nhật file này sau khi thay đổi cấu trúc dự án
+`tool_registry.py` đăng ký 7 ID desktop: `interest`, `court_fee`, `deadline`, `anonymizer`, `renamer`, `spell_checker`, `ocr`.
+
+### 4.2. Phụ thuộc đi kèm bộ cài
+
+- Python runtime và thư viện được PyInstaller đóng vào `BoCongCuOffline.exe`.
+- WebView2 Fixed Version x64 nằm cạnh ứng dụng tại `runtime/WebView2`.
+- Tesseract portable và dữ liệu ngôn ngữ `vie`, `eng` nằm tại `Tesseract-OCR`.
+- Be Vietnam Pro Regular/SemiBold/Bold, Font Awesome, Bootstrap và Bootstrap Icons được lưu cục bộ.
+- Microsoft Word chỉ cần cho việc chuyển `.doc` cũ sang `.docx`; `.docx` không cần COM để đọc/ghi.
+
+### 4.3. Build và phát hành
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\DesktopOffline\build.ps1
+```
+
+Pipeline: kiểm tra/tải vendor trên máy build → tạo payload → chạy QA → PyInstaller → chép Tesseract → Inno Setup. Đầu ra cho người dùng là:
+
+`DesktopOffline/dist/BoCongCuKiemSat_Offline_Setup.exe`
+
+## 5. Hỗ trợ đường dẫn Unicode tiếng Việt
+
+Tất cả luồng chọn file/thư mục của bản phát hành phải hỗ trợ đường dẫn và tên tiếng Việt có dấu.
+
+| Công cụ | Đầu vào | Cơ chế bảo đảm |
+|---|---|---|
+| FileRenamer | Thư mục, cây file | `FolderBrowserDialog` của Windows chạy trong tiến trình STA ẩn; kết quả trả về UTF-8; backend dùng `pathlib.Path`; JSON/Flask UTF-8 |
+| AnDanh | `.docx` | Browser/WebView upload; tên tạm UUID ASCII; `python-docx` đọc/ghi file tạm |
+| SpellChecker | `.doc`, `.docx` | Tên hiển thị Unicode được giữ cho đầu ra; file tạm UUID ASCII; Word COM nhận đường dẫn tuyệt đối Unicode |
+| OCR | `.pdf`, một hoặc nhiều file | Tên gốc Unicode giữ cho file kết quả; PDF/ảnh trung gian dùng UUID ASCII để tương thích Tesseract |
+
+Không truyền đường dẫn bằng chuỗi lệnh shell. Khi gọi subprocess phải dùng danh sách đối số. Không dùng `encode/decode` thủ công cho đường dẫn. Kiểm thử bắt buộc: `DesktopOffline/qa_unicode_paths.py`.
+
+## 6. Mô-đun nghiệp vụ chính
+
+- **AnDanh:** `app.py` nhận/xuất DOCX; `docx_io.py` đọc và thay thế trong đoạn, bảng, header/footer; `detector.py` phát hiện dữ liệu cá nhân.
+- **FileRenamer:** `file_renamer.py` quét và sinh tên; `file_renamer_gui.py` cung cấp API scan/execute và giao diện xem trước. Luôn xem trước, không tự đổi tên khi chưa xác nhận.
+- **SpellChecker:** `engine.py` phát hiện lỗi; `docx_processor.py` xuất bản đánh dấu/bản sửa; `word_converter.py` dùng phiên Word riêng cho `.doc`.
+- **OCR:** `pdf_processor.py` render PDF bằng PyMuPDF; `ocr_engine.py` gọi Tesseract không hiện CMD; `output_generator.py` tạo DOCX/Markdown/TXT; `main.py` xử lý đơn lẻ, hàng loạt và download ZIP.
+
+## 7. Kiểm thử quan trọng
+
+```powershell
+$env:PYTHONIOENCODING='utf-8'
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\prepare_payload.py
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\qa_unicode_paths.py
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\qa_choose_folder.py
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\qa_ocr_save_as.py
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\qa_save_as.py
+& .\DesktopOffline\.build-venv\Scripts\python.exe .\DesktopOffline\qa_ui_behavior.py
+```
+
+Ngoài ra chạy unit test trong `Tool/SpellChecker/tests/` và `Tool/AnDanh/andanh_app/tests/`. `qa_ui_assets.py` kiểm tra tài nguyên local, logo, font và không còn CDN trong payload.
+
+## 8. Quy ước bảo trì
+
+1. Sửa logic ở `Tool/`, `Data/`, `static/` trước; chạy lại `prepare_payload.py`, không sửa tay `stage/payload`.
+2. Mọi công cụ cần file/thư mục phải có kiểm thử tên Unicode tiếng Việt.
+3. Desktop chỉ bind `127.0.0.1`, không thêm phụ thuộc mạng cho công cụ offline.
+4. Không thêm chữ ký vào công cụ con; chỉ dashboard tổng có chữ ký.
+5. Không commit cache/build tạm. Không xóa hay ghi đè thay đổi khác trong worktree.
+6. Khi thêm tool desktop, cập nhật `tool_registry.py`, `prepare_payload.py`, PyInstaller hidden imports/datas, QA và tài liệu này.
+7. Khi thêm card web, cập nhật mảng `TOOLS` trong `index.html` và phân nhóm online/offline đúng khả năng kết nối.
+8. Nền dashboard dùng `static/lotus.png` neo ở chân trang và phủ gradient để hòa phần trên ảnh; launcher desktop phải phục vụ ảnh qua Flask cục bộ, không nhúng base64 ảnh lớn vào HTML.

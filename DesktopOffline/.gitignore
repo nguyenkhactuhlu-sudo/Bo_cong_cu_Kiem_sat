@@ -1,0 +1,10 @@
+.build-cache/
+.build-venv/
+build/
+dist/
+stage/
+vendor/
+qa/
+tmp/
+__pycache__/
+*.pyc

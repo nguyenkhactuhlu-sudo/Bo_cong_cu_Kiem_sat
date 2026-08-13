@@ -71,9 +71,15 @@ def get_tesseract_version():
     """Trả về phiên bản Tesseract nếu có."""
     try:
         import subprocess
+        options = {}
+        if os.name == "nt":
+            startup = subprocess.STARTUPINFO()
+            startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startup.wShowWindow = subprocess.SW_HIDE
+            options = {"creationflags": subprocess.CREATE_NO_WINDOW, "startupinfo": startup}
         result = subprocess.run(
             [TESSERACT_EXE, "--version"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=10, **options
         )
         return result.stdout.split("\n")[0] if result.returncode == 0 else "Unknown"
     except Exception:

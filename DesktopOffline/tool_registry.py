@@ -1,0 +1,62 @@
+"""Khai báo công cụ desktop; không import hay thay đổi ứng dụng gốc."""
+
+TOOLS = {
+    "interest": {
+        "title": "Tính lãi suất",
+        "kind": "flask",
+        "source": "Tool/App_tinh_lai_suat/app.py",
+        "template_folder": "Tool/App_tinh_lai_suat",
+        "width": 1240,
+        "height": 820,
+    },
+    "court_fee": {
+        "title": "Tính án phí",
+        "kind": "flask",
+        "source": "Tool/App_DS/app.py",
+        "template_folder": "Tool/App_DS",
+        "width": 1120,
+        "height": 800,
+    },
+    "deadline": {
+        "title": "Tính tuổi — Tính thời hạn",
+        "kind": "html",
+        "source": "Data/TinhTuoiThoiHan.html",
+        "static_folder": "static",
+        "width": 1220,
+        "height": 840,
+    },
+    "anonymizer": {
+        "title": "Tự động che thông tin",
+        "kind": "flask",
+        "source": "Tool/AnDanh/andanh_app/app.py",
+        "template_folder": "Tool/AnDanh/andanh_app/templates",
+        "static_folder": "Tool/AnDanh/andanh_app/static",
+        "width": 1220,
+        "height": 840,
+    },
+    "renamer": {
+        "title": "Tự động đổi tên file",
+        "kind": "flask",
+        "source": "Tool/FileRenamer/file_renamer_gui.py",
+        "static_folder": "static",
+        "width": 1240,
+        "height": 840,
+    },
+    "spell_checker": {
+        "title": "Rà soát chính tả văn bản Word",
+        "kind": "flask",
+        "source": "Tool/SpellChecker/app.py",
+        "static_folder": "static",
+        "width": 1220,
+        "height": 840,
+    },
+    "ocr": {
+        "title": "Nhận dạng chữ trong PDF, ảnh",
+        "kind": "flask",
+        "source": "Tool/OCR_PDF_Tool/source/main.py",
+        "template_folder": "Tool/OCR_PDF_Tool/source/templates",
+        "static_folder": "Tool/OCR_PDF_Tool/source/static",
+        "width": 1280,
+        "height": 860,
+    },
+}

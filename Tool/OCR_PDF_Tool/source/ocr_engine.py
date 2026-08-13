@@ -9,6 +9,16 @@ import os
 from config import TESSERACT_EXE, TESSDATA_DIR, TESSERACT_PSM, TESSERACT_OEM
 
 
+def _hidden_process_options():
+    """Không hiện cửa sổ console của Tesseract trên Windows."""
+    if os.name != "nt":
+        return {}
+    startup = subprocess.STARTUPINFO()
+    startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startup.wShowWindow = subprocess.SW_HIDE
+    return {"creationflags": subprocess.CREATE_NO_WINDOW, "startupinfo": startup}
+
+
 class OCREngine:
     """Engine OCR sử dụng Tesseract portable."""
 
@@ -36,7 +46,7 @@ class OCREngine:
         try:
             result = subprocess.run(
                 [self.tesseract_path, "--version"],
-                capture_output=True, text=True, timeout=10
+                capture_output=True, text=True, timeout=10, **_hidden_process_options()
             )
             if result.returncode != 0:
                 raise RuntimeError(f"Tesseract không hoạt động: {result.stderr}")
@@ -83,7 +93,8 @@ class OCREngine:
                 capture_output=True,
                 text=True,
                 timeout=120,  # 2 phút timeout mỗi trang
-                env={**os.environ, "TESSDATA_PREFIX": self.tessdata_path}
+                env={**os.environ, "TESSDATA_PREFIX": self.tessdata_path},
+                **_hidden_process_options()
             )
 
             # Tesseract tạo file output_base.txt

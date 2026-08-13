@@ -1,7 +1,6 @@
 HƯỚNG DẪN SỬ DỤNG CÔNG CỤ ẨN DANH VĂN BẢN
 ================================================
 
-Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
 Phiên bản: 1.1
 
 I. GIỚI THIỆU
@@ -50,9 +49,3 @@ IV. YÊU CẦU HỆ THỐNG
 - Windows 10/11
 - Không yêu cầu kết nối Internet
 - File đầu vào tối đa 50 MB
-
-V. LIÊN HỆ
-================================================
-
-Phối hợp phát triển với: Trần Huy - Viện KSND khu vực 11 - Đắk Lắk
-Đơn vị: Viện KSND khu vực 11 - Đắk Lắk

@@ -35,7 +35,6 @@ def _check_and_install():
 _check_and_install()
 
 from flask import Flask, request, render_template, send_file, jsonify
-from werkzeug.utils import secure_filename
 from offline_server import run_desktop_app
 from docx_io import DocxIO
 from detector import PIIDetector
@@ -87,8 +86,9 @@ def upload():
     if not file.filename.lower().endswith('.docx'):
         return jsonify({'error': 'Only .docx allowed'}), 400
 
-    safe_name = secure_filename(file.filename) or 'document.docx'
-    path = os.path.join(app.config['UPLOAD_FOLDER'], f'{uuid.uuid4().hex}_{safe_name}')
+    # Tên lưu nội bộ dùng UUID để không phụ thuộc bảng mã hay ký tự đặc biệt;
+    # tên gốc Unicode vẫn được trình duyệt truyền và kiểm tra phần mở rộng bình thường.
+    path = os.path.join(app.config['UPLOAD_FOLDER'], f'{uuid.uuid4().hex}.docx')
     file.save(path)
 
     doc = DocxIO(path)

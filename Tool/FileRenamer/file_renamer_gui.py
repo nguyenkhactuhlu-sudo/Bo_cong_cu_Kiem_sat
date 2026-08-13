@@ -29,7 +29,7 @@ import ctypes
 from ctypes import wintypes
 from pathlib import Path
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from offline_server import run_desktop_app
 
 # --------------- Import FileRenamer từ file_renamer.py ---------------
@@ -115,9 +115,9 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --sky: #5da9d9; --sky-light: #a8d4f0; --sky-dark: #1e5a8a;
-            --bronze: #c9952e; --bronze-light: #e8c675;
-            --plum: #7b2d42; --plum-dark: #5a1f30; --plum-light: #a84560;
+            --sky: #1976bd; --sky-light: #eaf4ff; --sky-dark: #0757a6;
+            --bronze: #f2b705; --bronze-light: #ffe48a;
+            --plum: #0757a6; --plum-dark: #063b73; --plum-light: #1976bd;
             --green: #2e7d32; --green-light: #e8f5e9;
             --red: #c62828; --red-light: #ffebee;
             --gray-bg: #f5f5f5; --border: #e0e0e0;
@@ -125,28 +125,22 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Be Vietnam Pro', Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            background: #eef5fb;
             color: #333; min-height: 100vh; overflow-x: hidden;
         }
         .header {
-            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            background: linear-gradient(135deg, #063b73, #0757a6);
             border-bottom: 3px solid var(--bronze);
             padding: 14px 28px; display: flex; align-items: center; gap: 14px;
             flex-wrap: wrap; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             position: sticky; top: 0; z-index: 100;
         }
-        .header-icon {
-            width: 46px; height: 46px;
-            background: linear-gradient(135deg, var(--bronze), #e8a830);
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: #fff;
-            box-shadow: 0 4px 12px rgba(201,149,46,0.3); flex-shrink: 0;
-        }
+        .header-logo{height:72px;width:auto;object-fit:contain;flex-shrink:0}
         .header-title {
             font-size: clamp(15px, 2vw, 20px); font-weight: 800; color: #fff;
             text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        .header-title span { color: var(--bronze-light); }
+        .header-title span { color: #fff3cc; }
         .header-sub {
             font-size: 11px; color: rgba(255,255,255,0.7);
             font-weight: 600; letter-spacing: 1.5px;
@@ -155,7 +149,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         .main-content { max-width: 1150px; margin: 0 auto; padding: 28px 16px; }
 
         .step-card {
-            background: #fff; border-radius: 16px; padding: 24px 28px;
+            background: #fff; border-radius: 12px; padding: 24px 28px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.08);
             border: 1px solid rgba(93,169,217,0.15); margin-bottom: 22px;
         }
@@ -167,7 +161,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         .step-num {
             display: inline-flex; align-items: center; justify-content: center;
             width: 30px; height: 30px;
-            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            background: var(--sky-dark);
             color: #fff; border-radius: 50%; font-size: 14px; font-weight: 800; flex-shrink: 0;
         }
 
@@ -188,7 +182,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             cursor: pointer; transition: all 0.25s ease; white-space: nowrap;
         }
         .btn-primary {
-            color: #fff; background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            color: #fff; background: var(--sky-dark);
             box-shadow: 0 4px 14px rgba(30,90,138,0.3);
         }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(30,90,138,0.4); }
@@ -371,7 +365,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
 <body>
     <!-- HEADER -->
     <div class="header">
-        <div class="header-icon"><i class="fas fa-i-cursor"></i></div>
+        <img class="header-logo" src="/static/logo_moi.png" alt="Logo ngành Kiểm sát">
         <div>
             <div class="header-title">File Renamer - <span>Đổi tên hàng loạt file</span></div>
             <div class="header-sub"><i class="fas fa-folder-tree"></i> Chuẩn hóa tên file - Tự động hóa</div>
@@ -497,17 +491,20 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         var executeResults = null;
 
         // ============ FOLDER BROWSE ============
-        function browseFolder() {
-            fetch('/api/browse-folder')
-                .then(r => r.json())
-                .then(d => {
-                    if (d.path) {
-                        document.getElementById('folderPath').value = d.path;
-                    }
-                })
-                .catch(e => {
-                    alert('Không thể mở hộp thoại chọn thư mục. Hãy nhập đường dẫn thủ công.');
-                });
+        async function browseFolder() {
+            try {
+                var d;
+                if (window.pywebview && window.pywebview.api && window.pywebview.api.choose_folder) {
+                    d = await window.pywebview.api.choose_folder();
+                } else {
+                    var response = await fetch('/api/browse-folder');
+                    d = await response.json();
+                }
+                if (d && d.ok === false) throw new Error(d.message || 'Không thể chọn thư mục');
+                if (d && d.path) document.getElementById('folderPath').value = d.path;
+            } catch (e) {
+                alert('Không thể mở hộp thoại chọn thư mục. Hãy nhập đường dẫn thủ công.');
+            }
         }
 
         // ============ SCAN ============
@@ -890,6 +887,11 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
 @app.route('/')
 def index():
     return HTML_TEMPLATE
+
+
+@app.route('/static/<path:filename>')
+def shared_static(filename):
+    return send_from_directory(Path(__file__).resolve().parents[2] / "static", filename)
 
 
 @app.route('/api/browse-folder')

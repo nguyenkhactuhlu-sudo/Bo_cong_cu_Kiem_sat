@@ -280,29 +280,22 @@
             </ul>
         </div>
 
-        <!-- KHỞI CHẠY -->
+        <!-- TẢI XUỐNG -->
         <div class="launch-section">
-            <button class="btn-launch" onclick="launchTool()">
-                <i class="fas fa-play"></i>
+            <button class="btn-launch" onclick="downloadTool()">
+                <i class="fas fa-download"></i>
                 <span>
-                    KHỞI CHẠY CÔNG CỤ
-                    <span class="sub-text">Click để mở ứng dụng AnDanhTool</span>
+                    TẢI XUỐNG CÔNG CỤ
+                    <span class="sub-text">Tải AnDanhTool.zip về máy</span>
                 </span>
             </button>
         </div>
 
-        <!-- THÔNG TIN PHÁT TRIỂN -->
         <div class="info-card">
-            <h2><i class="fas fa-code-branch"></i> Thông tin phát triển</h2>
-            <div class="dev-info">
-                <p><i class="fas fa-user-group"></i> Phối hợp phát triển với: <strong>Trần Huy - Viện KSND khu vực 11 - Đắk Lắk</strong></p>
-                <p><i class="fas fa-tools"></i> Phiên bản: <strong>1.0</strong></p>
-            </div>
-
             <div class="note-box">
                 <i class="fas fa-lightbulb"></i>
                 <p>
-                    <strong>Lưu ý:</strong> Sau khi nhấn "Khởi chạy công cụ", trình duyệt sẽ tải xuống 
+                    <strong>Lưu ý:</strong> Sau khi nhấn "Tải xuống công cụ", trình duyệt sẽ tải xuống
                     tệp <strong>AnDanhTool.zip</strong>. Vui lòng giải nén và chạy tệp 
                     <strong>AnDanhTool.exe</strong> bên trong để sử dụng công cụ.
                 </p>
@@ -311,10 +304,10 @@
     </div>
 
     <script>
-        function launchTool() {
+        function downloadTool() {
             // Tạo một thông báo hướng dẫn người dùng
             var confirmed = confirm(
-                'Công cụ AnDanhTool sẽ được khởi chạy.\n\n' +
+                'Bạn sắp tải công cụ AnDanhTool về máy.\n\n' +
                 'Vui lòng làm theo hướng dẫn:\n' +
                 '1. Nhấn OK để tải tệp AnDanhTool.zip\n' +
                 '2. Giải nén tệp vừa tải xuống\n' +
@@ -342,7 +335,5 @@
             }
         }
     </script>
-    <footer class="ks-page-footer">Bộ công cụ nghiệp vụ — Ngành Kiểm sát nhân dân</footer>
-    <footer class="ks-page-footer">Bộ công cụ nghiệp vụ — Ngành Kiểm sát nhân dân</footer>
 </body>
 </html>

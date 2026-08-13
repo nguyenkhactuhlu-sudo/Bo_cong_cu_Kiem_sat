@@ -11,8 +11,7 @@ import uuid
 import zipfile
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template_string, request, send_file
-from werkzeug.utils import secure_filename
+from flask import Flask, jsonify, render_template_string, request, send_file, send_from_directory
 
 APP_DIR = Path(__file__).resolve().parent
 if str(APP_DIR) not in sys.path:
@@ -24,7 +23,7 @@ from offline_server import run_desktop_app
 from word_converter import DocConversionError, convert_doc_to_docx
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
 WORK_DIR = Path(tempfile.mkdtemp(prefix="ra_chinh_ta_"))
 atexit.register(shutil.rmtree, WORK_DIR, ignore_errors=True)
@@ -38,7 +37,7 @@ PAGE = r'''<!doctype html>
 <style>
 :root{--navy:#102a43;--blue:#2563eb;--red:#b42318;--amber:#b54708;--cyan:#087e8b;--line:#d8e2ec;--paper:#fff;--bg:#f4f7fb}
 *{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:#243b53}
-.top{background:linear-gradient(135deg,#0b2743,#164e7a);color:white;padding:22px 28px;box-shadow:0 4px 18px #102a4322}
+.top{background:linear-gradient(135deg,#063b73,#0757a6);color:white;padding:16px 28px;box-shadow:0 4px 18px #102a4322;display:flex;align-items:center;gap:16px;border-bottom:3px solid #f2b705}.top img{height:72px;width:auto;object-fit:contain}.top-text{min-width:0}
 .top h1{margin:0 0 5px;font-size:25px}.top p{margin:0;color:#d9eaf7}.wrap{max-width:1200px;margin:24px auto;padding:0 18px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 28px #102a430d;padding:22px;margin-bottom:18px}
 .drop{border:2px dashed #84a9c5;border-radius:12px;padding:32px;text-align:center;background:#f8fbfe;transition:.2s}.drop.drag{border-color:var(--blue);background:#eff6ff}
@@ -51,7 +50,7 @@ input[type=file]{display:none}.btn{border:0;border-radius:9px;background:var(--b
 mark.error{background:#ffc9c5}mark.warning{background:#ffe8a3}mark.style{background:#a9edf0}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.filters button{padding:7px 10px;border:1px solid var(--line);background:white;border-radius:20px;cursor:pointer}.filters button.active{background:var(--navy);color:white}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.bulk-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:10px 0}.bulk-actions .btn{padding:8px 11px;font-size:12px}.accepted-count{margin-left:auto;color:#526d82;font-size:12px;font-weight:700}.note{font-size:13px;color:#627d98;margin-top:10px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.preview,.issues{height:420px}.accepted-count{width:100%;margin-left:0}}
 </style></head><body>
-<header class="top"><h1>RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT</h1><p>Kiểm tra DOC/DOCX ngay trên máy · Không AI · Không gửi dữ liệu lên mạng</p></header>
+<header class="top"><img src="/static/logo_moi.png" alt="Logo ngành Kiểm sát"><div class="top-text"><h1>RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT</h1><p>Kiểm tra DOC/DOCX ngay trên máy · Không AI · Không gửi dữ liệu lên mạng</p></div></header>
 <main class="wrap">
 <section class="card" id="uploadCard"><div class="drop" id="drop">
   <h2>Thả tệp Word vào đây</h2><p>Hỗ trợ .doc và .docx, tối đa 50 MB</p>
@@ -105,6 +104,11 @@ def index():
     return render_template_string(PAGE)
 
 
+@app.get("/static/<path:filename>")
+def shared_static(filename):
+    return send_from_directory(Path(__file__).resolve().parents[2] / "static", filename)
+
+
 @app.post("/api/analyze")
 def analyze():
     uploaded = request.files.get("file")
@@ -114,15 +118,17 @@ def analyze():
     if suffix not in {".doc", ".docx"}:
         return jsonify(error="Chỉ hỗ trợ tệp Word .doc hoặc .docx."), 400
     job_id = uuid.uuid4().hex
-    original_name = secure_filename(uploaded.filename) or f"van_ban{suffix}"
-    source_path = WORK_DIR / f"{job_id}_{original_name}"
+    # Giữ tên hiển thị Unicode (kể cả tiếng Việt có dấu), nhưng dùng UUID cho
+    # file tạm để Word/Python không phụ thuộc tên hoặc đường dẫn do người dùng nhập.
+    original_name = Path(uploaded.filename).name or f"van_ban{suffix}"
+    source_path = WORK_DIR / f"{job_id}{suffix}"
     source_path.unlink(missing_ok=True)
     uploaded.save(source_path)
     review_path = source_path
     converted = suffix == ".doc"
     try:
         if converted:
-            review_path = WORK_DIR / f"{job_id}_{Path(original_name).stem}_converted.docx"
+            review_path = WORK_DIR / f"{job_id}_converted.docx"
             convert_doc_to_docx(source_path, review_path)
         review = DocxReview(review_path, CHECKER)
         issues, word_count = review.analyze()

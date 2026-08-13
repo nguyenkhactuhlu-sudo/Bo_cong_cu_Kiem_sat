@@ -1,0 +1,12 @@
+@font-face{font-family:"Be Vietnam Pro Offline";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Regular.ttf") format("truetype");font-style:normal;font-weight:400;font-display:block}
+@font-face{font-family:"Be Vietnam Pro Offline";src:url("/__offline_assets/brand/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");font-style:normal;font-weight:600;font-display:block}
+@font-face{font-family:"Be Vietnam Pro Offline";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Bold.ttf") format("truetype");font-style:normal;font-weight:700 900;font-display:block}
+:root{--ks-blue:#0757a6;--ks-blue-dark:#063b73;--ks-blue-light:#eaf4ff;--ks-gold:#f2b705;--ks-ink:#15324f}
+html,body,button,input,select,textarea{font-family:"Be Vietnam Pro Offline",Arial,sans-serif!important;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased}
+body{color:var(--ks-ink)}
+header,.header,.app-header,.top-header,.hero-header{background-color:var(--ks-blue)!important;background-image:linear-gradient(120deg,var(--ks-blue-dark),var(--ks-blue))!important;border-bottom-color:var(--ks-gold)!important}
+header h1,header h2,header h3,header p,.header h1,.header h2,.header h3,.header p,.app-header h1,.app-header h2,.app-header h3,.app-header p{color:#fff!important}
+button,.btn,[type="submit"]{font-weight:600}
+button.primary,.btn-primary,[type="submit"]{background-color:var(--ks-blue)!important;border-color:var(--ks-blue)!important}
+img[src*="/__offline_assets/brand/logo_moi.png"]{object-fit:contain!important;object-position:center!important}
+.ks-header-logo{display:block!important;width:auto!important;height:78px!important;max-width:110px!important;max-height:78px!important;object-fit:contain!important;flex:0 0 auto!important}

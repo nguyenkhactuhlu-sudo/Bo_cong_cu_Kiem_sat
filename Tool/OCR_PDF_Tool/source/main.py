@@ -10,6 +10,7 @@ import uuid
 import shutil
 import zipfile
 from io import BytesIO
+from pathlib import Path
 
 # Thêm thư mục hiện tại vào path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -42,6 +43,16 @@ else:
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB max
 
+
+def _uploaded_pdf(file):
+    """Trả đường dẫn tạm ASCII-safe và tên gốc Unicode không kèm đuôi."""
+    original_name = Path(file.filename).name
+    if Path(original_name).suffix.casefold() != '.pdf':
+        raise ValueError("Chỉ hỗ trợ file PDF.")
+    upload_path = os.path.join(UPLOAD_DIR, f"{uuid.uuid4().hex}.pdf")
+    file.save(upload_path)
+    return upload_path, Path(original_name).stem
+
 # ── Routes ──────────────────────────────────────────────────
 
 @app.route('/')
@@ -69,11 +80,8 @@ def process_ocr():
     if not file.filename.lower().endswith('.pdf'):
         return jsonify({"error": "Chỉ hỗ trợ file PDF."}), 400
 
-    # Lưu file upload
-    file_id = str(uuid.uuid4())[:8]
-    filename = f"{file_id}_{file.filename}"
-    upload_path = os.path.join(UPLOAD_DIR, filename)
-    file.save(upload_path)
+    # File tạm dùng UUID ASCII; tên gốc Unicode được giữ riêng cho file kết quả.
+    upload_path, original_stem = _uploaded_pdf(file)
 
     # Đọc params
     lang_key = request.form.get('language', DEFAULT_LANGUAGE)
@@ -86,7 +94,7 @@ def process_ocr():
         engine = OCREngine(lang_code)
         pdf_proc = PDFProcessor(upload_path)
         total = pdf_proc.get_page_count()
-        fname = pdf_proc.get_file_name()
+        fname = original_stem
 
         pages_text = []
         for i in range(total):
@@ -160,16 +168,13 @@ def process_ocr_batch():
         if not file.filename.lower().endswith('.pdf'):
             return {"filename": file.filename, "error": "Không phải file PDF."}
 
-        file_id = str(uuid.uuid4())[:8]
-        filename = f"{file_id}_{file.filename}"
-        upload_path = os.path.join(UPLOAD_DIR, filename)
-        file.save(upload_path)
+        upload_path, original_stem = _uploaded_pdf(file)
 
         try:
             engine = OCREngine(lang_code)
             pdf_proc = PDFProcessor(upload_path)
             total = pdf_proc.get_page_count()
-            fname = pdf_proc.get_file_name()
+            fname = original_stem
 
             pages_text = []
             for i in range(total):

@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Công cụ Tra cứu & Tính toán Án phí</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; }
-        .header { background-color: #0056b3; color: white; padding: 25px; text-align: center; border-bottom: 5px solid #d4af37; }
-        .container { max-width: 1000px; margin: 20px auto; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { width: 120px; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #eef5fa; color: #333; }
+        .header {
+            position: fixed; inset: 0 0 auto 0; z-index: 1050; height: 130px;
+            display: flex; align-items: center; padding: 0 30px; overflow: hidden;
+            color: white; background: linear-gradient(135deg, #4ba3e3, #1d71b8);
+            border-bottom: 4px solid #d4af37; box-shadow: 0 3px 15px rgba(0,0,0,.1);
+        }
+        .header-inner { display: flex; align-items: center; width: 100%; height: 100%; position: relative; }
+        .header-copy { margin-left: 20px; position: relative; z-index: 2; }
+        .header h1 { margin: 0; font-size: 1.6rem; letter-spacing: .5px; text-shadow: 1px 1px 3px rgba(0,0,0,.15); }
+        .header p { margin: 3px 0 0; color: #fff3cc; font-size: 13px; font-weight: 500; }
+        .header-watermark { position: absolute; right: 0; top: 5%; width: 25%; height: 90%; opacity: .12; color: #fff; display: flex; justify-content: flex-end; pointer-events: none; }
+        .header-watermark svg { width: auto; height: 100%; }
+        .container { max-width: 1000px; margin: 150px auto 20px; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.06); border: 1px solid #d3e4f1; }
+        .logo { height: 80px; width: auto; position: relative; z-index: 2; }
         fieldset { border: 2px solid #0056b3; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
         legend { color: #0056b3; font-weight: bold; font-size: 1.2em; padding: 0 10px; }
         button { background-color: #0056b3; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
@@ -32,14 +43,32 @@
         details p { margin: 8px 0; }
         details .indent { margin-left: 20px; }
         details .indent2 { margin-left: 40px; }
+        @media (max-width: 700px) {
+            .header { padding: 0 14px; }
+            .header-copy { margin-left: 12px; }
+            .header h1 { font-size: 1.15rem; }
+            .header p { display: none; }
+            .logo { height: 66px; }
+            .container { margin-top: 142px; padding: 16px; border-radius: 0; }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img src="../../static/logo_moi.png" alt="Logo Ngành" class="logo">
-        <h1>Phần mềm Tính Án phí & Lệ phí</h1>
-        <p>Công cụ hỗ trợ nghiệp vụ Kiểm sát - Bản quyền nội bộ</p>
+        <div class="header-inner">
+            <img src="../../static/logo_moi.png" alt="Logo Ngành Kiểm sát nhân dân" class="logo">
+            <div class="header-copy">
+                <h1>PHẦN MỀM TÍNH ÁN PHÍ &amp; LỆ PHÍ</h1>
+                <p>Tra cứu và tính toán theo Nghị quyết 326/2016/UBTVQH14</p>
+            </div>
+            <div class="header-watermark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4V56M20 16H44M20 16L14 36H26L20 16ZM44 16L38 36H50L44 16ZM12 56H52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M27 51H37V56H27V51Z" fill="currentColor"/>
+                </svg>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -183,8 +212,6 @@
     </div>
 
     <footer>
-        <p>Phát triển bởi: <strong>Viện KSND khu vực 5 - Bắc Ninh</strong></p>
-        
         <p>&copy; 2026 - Công cụ nghiệp vụ Kiểm sát nội bộ</p>
     </footer>
 

@@ -292,7 +292,6 @@ Example: `baocao_ocr.docx`, `tailieu_ocr.md`, `vanban_ocr.txt`
 │ - Single file: preview box + download       │
 │ - Batch: accordion list per file + ZIP dl   │
 ├─────────────────────────────────────────────┤
-│ FOOTER: Phát triển bởi Nguyễn Khắc Tú -    │
 │ Viện KSND khu vực 5 - Bắc Ninh              │
 └─────────────────────────────────────────────┘
 ```
@@ -454,7 +453,6 @@ output_path = gen.generate(texts, "docx")
 | 2026-07-13 | 1.0.0 | Initial Flask web app |
 | 2026-07-13 | 1.0.1 | Added `logo_moi.png` in header |
 | 2026-07-13 | 1.0.2 | Changed app title to "PHẦN MỀM TỰ ĐỘNG CHUYỂN ĐỔI PDF SANG WORD/MARKDOWN/TEXT" |
-| 2026-07-13 | 1.0.3 | Updated footer: "Phát triển bởi Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh" |
 | 2026-07-13 | 1.1.0 | **Batch OCR**: Added `/api/ocr/batch`, `/api/batch/download`, multi-file UI, ZIP download |
 | 2026-07-13 | 1.1.0 | Fixed UnicodeEncodeError in main.py for Vietnamese console output |
 | 2026-07-13 | 1.1.0 | Complete PROJECT.md rewrite for AI/LLM readability |
