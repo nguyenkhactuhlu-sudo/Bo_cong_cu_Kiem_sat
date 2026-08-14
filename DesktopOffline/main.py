@@ -154,12 +154,24 @@ class ToolApi:
 $OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
+$owner = New-Object System.Windows.Forms.Form
+$owner.TopMost = $true
+$owner.ShowInTaskbar = $false
+$owner.StartPosition = [System.Windows.Forms.FormStartPosition]::Manual
+$owner.Left = -32000
+$owner.Top = -32000
+$owner.Width = 1
+$owner.Height = 1
+$owner.Add_Shown({ $owner.Activate() })
+$owner.Show()
+$owner.Activate()
 $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
 $dialog.Description = 'Chọn thư mục chứa các file cần đổi tên'
 $dialog.ShowNewFolderButton = $false
-if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+if ($dialog.ShowDialog($owner) -eq [System.Windows.Forms.DialogResult]::OK) {
     [Console]::Out.Write($dialog.SelectedPath)
 }
+$owner.Dispose()
 """
         encoded_script = base64.b64encode(script.encode("utf-16le")).decode("ascii")
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)

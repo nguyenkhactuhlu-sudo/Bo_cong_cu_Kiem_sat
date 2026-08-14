@@ -1,6 +1,10 @@
 """Kiểm tra các trạng thái UI mặc định và chữ ký giữa nguồn gốc/payload."""
 
+import sys
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 ROOT = Path(__file__).resolve().parents[1]

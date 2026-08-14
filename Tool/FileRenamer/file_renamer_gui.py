@@ -43,18 +43,34 @@ from file_renamer import FileRenamer
 # NATIVE WINDOWS FOLDER BROWSER (luồng STA riêng)
 # ============================================================
 def browse_folder_windows(title="Chọn thư mục"):
-    """Gọi FolderBrowserDialog trên tiến trình STA để không treo luồng Flask."""
+    """Gọi FolderBrowserDialog trên tiến trình STA để không treo luồng Flask.
+
+    Dùng một form ẩn làm owner (TopMost) để hộp thoại luôn hiện lên trước
+    cửa sổ trình duyệt, không bị mở phía sau.
+    """
     safe_title = str(title).replace("'", "''")
     script = rf"""
 $OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
+$owner = New-Object System.Windows.Forms.Form
+$owner.TopMost = $true
+$owner.ShowInTaskbar = $false
+$owner.StartPosition = [System.Windows.Forms.FormStartPosition]::Manual
+$owner.Left = -32000
+$owner.Top = -32000
+$owner.Width = 1
+$owner.Height = 1
+$owner.Add_Shown({{ $owner.Activate() }})
+$owner.Show()
+$owner.Activate()
 $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
 $dialog.Description = '{safe_title}'
 $dialog.ShowNewFolderButton = $false
-if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {{
+if ($dialog.ShowDialog($owner) -eq [System.Windows.Forms.DialogResult]::OK) {{
     [Console]::Out.Write($dialog.SelectedPath)
 }}
+$owner.Dispose()
 """
     encoded = base64.b64encode(script.encode("utf-16le")).decode("ascii")
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
@@ -327,6 +343,67 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         .note-box i { color: #f9a825; font-size: 18px; margin-top: 1px; }
         .note-box p { font-size: 13px; color: #6d4c00; line-height: 1.5; }
 
+        /* PREVIEW MODAL - Xem nhanh file */
+        .btn-preview {
+            background: none; border: 1px solid #ddd; border-radius: 6px;
+            cursor: pointer; color: var(--sky); font-size: 12px; padding: 4px 8px;
+            flex-shrink: 0; transition: all 0.15s; display: inline-flex;
+            align-items: center; gap: 4px;
+        }
+        .btn-preview:hover { background: var(--sky-light); border-color: var(--sky); color: var(--sky-dark); }
+        .preview-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .preview-overlay.active { display: flex; }
+        .preview-box {
+            background: #fff; border-radius: 14px; width: 100%; max-width: 860px;
+            max-height: 88vh; display: flex; flex-direction: column;
+            box-shadow: 0 12px 50px rgba(0,0,0,0.35); overflow: hidden;
+        }
+        .preview-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px; background: var(--sky-dark); color: #fff;
+            flex-shrink: 0;
+        }
+        .preview-header i { color: var(--bronze); }
+        .preview-title { font-weight: 700; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .preview-close {
+            background: none; border: none; color: #fff; font-size: 18px;
+            cursor: pointer; padding: 2px 8px; border-radius: 6px; flex-shrink: 0;
+        }
+        .preview-close:hover { background: rgba(255,255,255,0.2); }
+        .preview-body { flex: 1; overflow: auto; padding: 16px 18px; background: #fafafa; }
+        .preview-body pre {
+            background: #fff; border: 1px solid var(--border); border-radius: 8px;
+            padding: 14px; font-family: Consolas, 'Courier New', monospace;
+            font-size: 12.5px; line-height: 1.6; white-space: pre-wrap;
+            word-break: break-word; max-height: 65vh; overflow: auto; color: #333;
+        }
+        .preview-body img {
+            max-width: 100%; max-height: 70vh; display: block; margin: 0 auto;
+            border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .preview-external {
+            text-align: center; padding: 40px 20px; color: #666;
+        }
+        .preview-external i { font-size: 48px; color: #ccc; display: block; margin-bottom: 14px; }
+        .preview-external p { font-size: 14px; margin-bottom: 18px; }
+        .preview-footer {
+            padding: 10px 18px; border-top: 1px solid var(--border);
+            font-size: 12px; color: #888; display: flex; align-items: center;
+            gap: 8px; flex-shrink: 0; background: #fff;
+        }
+        .preview-footer .spacer { flex: 1; }
+        .preview-loading { text-align: center; padding: 40px; color: #888; }
+        .preview-loading .spinner {
+            width: 32px; height: 32px; border: 3px solid #e0e0e0;
+            border-top-color: var(--sky-dark); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+        }
+
         @media (max-width: 650px) {
             .header { padding: 12px 14px; }
             .main-content { padding: 16px 8px; }
@@ -461,10 +538,34 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
         </div>
     </div>
 
+    <!-- PREVIEW MODAL - Xem nhanh file -->
+    <div class="preview-overlay" id="previewOverlay" onclick="if(event.target===this) closePreview()">
+        <div class="preview-box">
+            <div class="preview-header">
+                <i class="fas fa-eye"></i>
+                <span class="preview-title" id="previewTitle">Xem nhanh</span>
+                <button class="preview-close" onclick="closePreview()" title="Đóng (Esc)"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="preview-body" id="previewBody">
+                <div class="preview-loading">
+                    <div class="spinner"></div>
+                    <p>Đang tải nội dung...</p>
+                </div>
+            </div>
+            <div class="preview-footer" id="previewFooter">
+                <i class="fas fa-lock" style="color:var(--green);"></i>
+                <span>Chế độ xem nhanh - chỉ đọc, không sửa đổi</span>
+                <span class="spacer"></span>
+                <span id="previewMeta"></span>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============ STATE ============
         var scanData = null;      // {path, results: [{folder, old_name, new_name, reason, rel_path}]}
         var executeResults = null;
+        var previewRelPath = null;
 
         // ============ FOLDER BROWSE ============
         async function browseFolder() {
@@ -582,6 +683,7 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
                     html += '<input type="checkbox" id="' + cbId + '" checked data-idx="' + fileIdx + '" data-folder="' + escHtml(fname) + '" onchange="updateStats()" />';
                     html += '<i class="fas fa-file-lines file-icon"></i>';
                     html += '<span class="file-old-name" title="' + escHtml(f.old_name) + '">' + escHtml(f.old_name) + '</span>';
+                    html += '<button class="btn-preview" title="Xem nhanh file" onclick="previewFile(' + fileIdx + ')"><i class="fas fa-eye"></i></button>';
                     html += '<i class="fas fa-arrow-right file-arrow"></i>';
                     html += '<input type="text" class="file-new-name-input" id="' + inpId + '" value="' + escHtmlAttr(f.new_name) + '" data-idx="' + fileIdx + '" data-original="' + escHtmlAttr(f.new_name) + '" oninput="onNameModified(this)" />';
                     html += '<button class="btn-reset-name hidden" id="' + rstId + '" title="Khôi phục tên đề xuất" onclick="resetSingleName(' + fileIdx + ')"><i class="fas fa-undo"></i></button>';
@@ -829,6 +931,108 @@ HTML_TEMPLATE = r'''<!DOCTYPE html>
             }
         }
 
+        // ============ PREVIEW (Xem nhanh) ============
+        function previewFile(idx) {
+            if (!scanData || !scanData.results) return;
+            var f = scanData.results[idx];
+            if (!f) return;
+            previewRelPath = f.rel_path;
+
+            document.getElementById('previewTitle').textContent = 'Xem nhanh: ' + f.old_name;
+            document.getElementById('previewMeta').textContent = '';
+            document.getElementById('previewBody').innerHTML =
+                '<div class="preview-loading"><div class="spinner"></div><p>Đang tải nội dung...</p></div>';
+            document.getElementById('previewOverlay').classList.add('active');
+
+            fetch('/api/preview', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({path: scanData.path, rel_path: f.rel_path})
+            })
+            .then(function(r) {
+                var ct = r.headers.get('Content-Type') || '';
+                if (ct.indexOf('application/json') !== -1) {
+                    return r.json().then(function(d) { d._json = true; return d; });
+                }
+                return r.blob().then(function(b) { return {_json: false, _blob: b, _type: ct}; });
+            })
+            .then(function(d) {
+                if (d._json) {
+                    if (d.error) {
+                        document.getElementById('previewBody').innerHTML =
+                            '<div class="preview-external"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i><p>' + escHtml(d.error) + '</p></div>';
+                        return;
+                    }
+                    if (d.type === 'text') {
+                        var sizeTxt = formatSize(d.size);
+                        document.getElementById('previewMeta').textContent = sizeTxt + (d.truncated ? ' (hiển thị 200KB đầu)' : '');
+                        var pre = document.createElement('pre');
+                        pre.textContent = d.content;
+                        document.getElementById('previewBody').innerHTML = '';
+                        document.getElementById('previewBody').appendChild(pre);
+                    } else if (d.type === 'external') {
+                        document.getElementById('previewMeta').textContent = formatSize(d.size);
+                        document.getElementById('previewBody').innerHTML =
+                            '<div class="preview-external">' +
+                            '<i class="fas fa-file"></i>' +
+                            '<p>' + escHtml(d.message) + '</p>' +
+                            '<button class="btn btn-primary" onclick="openExternalPreview()"><i class="fas fa-external-link-alt"></i> Mở bằng trình xem mặc định</button>' +
+                            '</div>';
+                    }
+                } else {
+                    // Image blob
+                    var url = URL.createObjectURL(d._blob);
+                    document.getElementById('previewMeta').textContent = 'Ảnh';
+                    document.getElementById('previewBody').innerHTML = '';
+                    var img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Xem nhanh ảnh';
+                    document.getElementById('previewBody').appendChild(img);
+                }
+            })
+            .catch(function(e) {
+                document.getElementById('previewBody').innerHTML =
+                    '<div class="preview-external"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i><p>Lỗi khi tải nội dung: ' + escHtml(String(e)) + '</p></div>';
+            });
+        }
+
+        function openExternalPreview() {
+            if (!scanData || !previewRelPath) return;
+            fetch('/api/open-file', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({path: scanData.path, rel_path: previewRelPath})
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.error) {
+                    showToast(d.error, 'error');
+                } else {
+                    showToast(d.message || 'Đã mở file bằng trình xem mặc định.', 'success');
+                }
+            })
+            .catch(function(e) {
+                showToast('Lỗi: ' + e, 'error');
+            });
+        }
+
+        function closePreview() {
+            document.getElementById('previewOverlay').classList.remove('active');
+            previewRelPath = null;
+        }
+
+        function formatSize(bytes) {
+            if (bytes === undefined || bytes === null) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // Esc to close preview
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePreview();
+        });
+
         // ============ UI HELPERS ============
         function showToast(msg, type) {
             var t = document.getElementById('toast');
@@ -1033,6 +1237,140 @@ def execute_rename():
         'custom_used': custom_used,
         'details': details
     })
+
+
+# ============================================================
+# PREVIEW ROUTES - Xem nhanh file (nhanh, nhẹ, chỉ xem không sửa)
+# ============================================================
+
+TEXT_EXTENSIONS = {
+    '.txt', '.md', '.csv', '.log', '.json', '.xml', '.html', '.htm',
+    '.py', '.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.less',
+    '.ini', '.yml', '.yaml', '.cfg', '.conf', '.toml',
+    '.sh', '.bat', '.ps1', '.vbs',
+    '.sql', '.r', '.go', '.java', '.cpp', '.c', '.h', '.hpp',
+    '.rust', '.rb', '.php', '.pl', '.lua', '.dart', '.swift',
+    '.sln', '.csproj', '.props', '.targets',
+    '.env', '.gitignore', '.gitattributes', '.editorconfig',
+    '.rst', '.tex', '.bib',
+    '.srt', '.vtt', '.sub',
+}
+
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.webp', '.ico'}
+
+EXTERNAL_EXTENSIONS = {
+    '.doc', '.docx', '.pdf', '.xls', '.xlsx', '.ppt', '.pptx',
+    '.odt', '.ods', '.odp', '.rtf',
+    '.zip', '.rar', '.7z', '.tar', '.gz',
+    '.exe', '.msi', '.dll', '.so', '.dmg',
+    '.mp3', '.mp4', '.avi', '.mkv', '.mov', '.wmv',
+    '.iso', '.vhd', '.vhdx',
+}
+
+
+def _classify_preview(rel_path: str) -> str:
+    """Phân loại file để quyết định hình thức xem trước."""
+    ext = Path(rel_path).suffix.lower()
+    if ext in TEXT_EXTENSIONS:
+        return 'text'
+    if ext in IMAGE_EXTENSIONS:
+        return 'image'
+    return 'external'
+
+
+def _read_text_file_safe(file_path: Path, max_bytes: int = 524288) -> str:
+    """Đọc nội dung file văn bản với tự động dò encoding,
+    giới hạn dung lượng (mặc định 512KB) để giữ nhanh/nhẹ."""
+    raw = file_path.read_bytes()[:max_bytes]
+    for enc in ('utf-8-sig', 'utf-16', 'utf-8', 'cp1252', 'latin-1'):
+        try:
+            return raw.decode(enc)
+        except (UnicodeDecodeError, LookupError):
+            continue
+    return raw.decode('utf-8', errors='replace')
+
+
+@app.route('/api/preview', methods=['POST'])
+def api_preview():
+    """Xem nhanh nội dung file: text → trả nội dung; image → trả file;
+    external → thông báo mở ngoài."""
+    data = request.get_json()
+    base_path = data.get('path', '')
+    rel_path = data.get('rel_path', '')
+
+    if not base_path or not rel_path:
+        return jsonify({'error': 'Thiếu thông tin path hoặc rel_path.'}), 400
+
+    # Bảo mật: resolve để tránh path traversal
+    ws = Path(base_path).resolve()
+    full = (ws / rel_path).resolve()
+
+    if not str(full).startswith(str(ws)):
+        return jsonify({'error': 'Đường dẫn không hợp lệ (nằm ngoài thư mục gốc).'}), 403
+
+    if not full.is_file():
+        return jsonify({'error': 'File không tồn tại.'}), 404
+
+    file_type = _classify_preview(rel_path)
+
+    if file_type == 'text':
+        try:
+            content = _read_text_file_safe(full)
+            max_preview = 200 * 1024  # 200 KB hiển thị
+            truncated = len(content) > max_preview
+            if truncated:
+                content = content[:max_preview]
+            return jsonify({
+                'type': 'text',
+                'content': content,
+                'truncated': truncated,
+                'filename': full.name,
+                'size': full.stat().st_size,
+            })
+        except Exception as e:
+            return jsonify({'error': f'Không thể đọc file: {str(e)}'}), 500
+
+    elif file_type == 'image':
+        # Trả file ảnh trực tiếp
+        try:
+            return send_from_directory(str(full.parent), full.name)
+        except Exception as e:
+            return jsonify({'error': f'Không thể gửi file ảnh: {str(e)}'}), 500
+
+    else:
+        # File nhị phân / tài liệu → hướng dẫn mở ngoài
+        return jsonify({
+            'type': 'external',
+            'filename': full.name,
+            'size': full.stat().st_size,
+            'message': 'File này không xem trực tiếp được. Bấm "Mở bằng trình xem mặc định" để xem.',
+        })
+
+
+@app.route('/api/open-file', methods=['POST'])
+def api_open_file():
+    """Mở file bằng trình xem mặc định của Windows (os.startfile). Chỉ xem, không sửa."""
+    data = request.get_json()
+    base_path = data.get('path', '')
+    rel_path = data.get('rel_path', '')
+
+    if not base_path or not rel_path:
+        return jsonify({'error': 'Thiếu thông tin path hoặc rel_path.'}), 400
+
+    ws = Path(base_path).resolve()
+    full = (ws / rel_path).resolve()
+
+    if not str(full).startswith(str(ws)):
+        return jsonify({'error': 'Đường dẫn không hợp lệ (nằm ngoài thư mục gốc).'}), 403
+
+    if not full.is_file():
+        return jsonify({'error': 'File không tồn tại.'}), 404
+
+    try:
+        os.startfile(str(full))
+        return jsonify({'ok': True, 'message': f'Đã mở: {full.name}'})
+    except Exception as e:
+        return jsonify({'error': f'Không thể mở file: {str(e)}'}), 500
 
 
 # ============================================================

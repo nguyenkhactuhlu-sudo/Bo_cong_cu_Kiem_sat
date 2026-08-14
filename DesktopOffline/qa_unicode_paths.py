@@ -11,6 +11,9 @@ from unittest.mock import patch
 
 from docx import Document
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 
 ROOT = Path(__file__).resolve().parents[1]
 STAGE = Path(__file__).resolve().parent / "stage" / "payload"

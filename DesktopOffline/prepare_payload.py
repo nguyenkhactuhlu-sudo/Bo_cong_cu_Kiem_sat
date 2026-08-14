@@ -44,6 +44,23 @@ def copy_sources() -> None:
             )
         else:
             shutil.copy2(source, target)
+    _remove_download_pages()
+
+
+def _remove_download_pages() -> None:
+    """Loại các trang tải xuống web (chứa link .zip trên GitHub) khỏi payload.
+
+    Những file index.html này là trang tải bản portable cho web portal, không
+    được bản desktop offline sử dụng (tool_registry nạp file_renamer_gui.py /
+    app.py). Giữ chúng sẽ làm audit_no_remote_assets() fail vì còn link mạng.
+    """
+    download_pages = [
+        STAGE / "Tool" / "FileRenamer" / "index.html",
+        STAGE / "Tool" / "SpellChecker" / "index.html",
+    ]
+    for path in download_pages:
+        if path.exists():
+            path.unlink()
 
 
 def localize_html() -> None:

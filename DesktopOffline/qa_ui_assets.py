@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from PIL import Image
 from flask import Flask, send_from_directory
