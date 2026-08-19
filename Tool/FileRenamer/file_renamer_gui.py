@@ -53,20 +53,33 @@ def browse_folder_windows(title="Chọn thư mục"):
 $OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
+function Activate-Window([IntPtr]$hwnd) {{
+    Add-Type -Namespace Win32 -Name Native -MemberDefinition @'
+[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+[DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr hWnd);
+'@
+    [Win32.Native]::BringWindowToTop($hwnd) | Out-Null
+    [Win32.Native]::SetForegroundWindow($hwnd) | Out-Null
+}}
+# Form owner nho, trong suot, dat giua man hinh de dialog co owner hop le
+# va Windows cho phep hien len foreground (khong dat off-screen).
 $owner = New-Object System.Windows.Forms.Form
 $owner.TopMost = $true
 $owner.ShowInTaskbar = $false
-$owner.StartPosition = [System.Windows.Forms.FormStartPosition]::Manual
-$owner.Left = -32000
-$owner.Top = -32000
+$owner.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::None
+$owner.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
 $owner.Width = 1
 $owner.Height = 1
-$owner.Add_Shown({{ $owner.Activate() }})
+$owner.Opacity = 0.01
+$owner.AllowTransparency = $true
+$owner.Add_Shown({{ $owner.Activate(); Activate-Window $owner.Handle }})
 $owner.Show()
 $owner.Activate()
+Activate-Window $owner.Handle
 $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
 $dialog.Description = '{safe_title}'
 $dialog.ShowNewFolderButton = $false
+$dialog.UseDescriptionForTitle = $true
 if ($dialog.ShowDialog($owner) -eq [System.Windows.Forms.DialogResult]::OK) {{
     [Console]::Out.Write($dialog.SelectedPath)
 }}

@@ -32,6 +32,14 @@ assert "$owner.Activate()" in script, "Thiếu Activate() để đưa hộp tho�
 assert "$dialog.ShowDialog($owner)" in script, "Thiếu ShowDialog với owner"
 assert "$owner.Dispose()" in script, "Thiếu Dispose() giải phóng form ẩn"
 
+# Kiểm tra cơ chế chống mở hộp thoại phía sau cửa sổ trình duyệt:
+# form owner đặt giữa màn hình (không off-screen) để Windows cấp foreground hợp lệ.
+assert '[System.Windows.Forms.FormStartPosition]::CenterScreen' in script, "Owner phải đặt giữa màn hình"
+assert '$owner.Opacity = 0.01' in script, "Owner phải trong suốt để không hiện khung nhỏ"
+assert 'SetForegroundWindow' in script, "Thiếu hàm SetForegroundWindow chiếm foreground"
+assert '$dialog.UseDescriptionForTitle = $true' in script, "Thiếu dùng title mô tả cho hộp thoại"
+assert '$owner.Left = -32000' not in script, "Không còn đặt owner off-screen"
+
 cancelled_process = SimpleNamespace(returncode=0, stdout="", stderr="")
 with patch.object(main.subprocess, "run", return_value=cancelled_process):
     cancelled = api.choose_folder()

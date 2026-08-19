@@ -14,10 +14,10 @@ Phiên bản standalone: Có thể chạy độc lập, không phụ thuộc và
 cấu trúc thư mục của dự án Deepseek Cowork.
 
 Sử dụng dòng lệnh:
-    python file_renamer.py --path D:\deepseek_workspace --dry-run
-    python file_renamer.py --path D:\deepseek_workspace --execute
-    python file_renamer.py --path D:\deepseek_workspace --subdir "Kho_tai_lieu" --dry-run
-    python file_renamer.py --path D:\deepseek_workspace --file "Quyết định khởi tố.docx" --dry-run
+    python file_renamer.py --path D:/deepseek_workspace --dry-run
+    python file_renamer.py --path D:/deepseek_workspace --execute
+    python file_renamer.py --path D:/deepseek_workspace --subdir "Kho_tai_lieu" --dry-run
+    python file_renamer.py --path D:/deepseek_workspace --file "Quyết định khởi tố.docx" --dry-run
 
 Sử dụng như module Python:
     from file_renamer import FileRenamer
