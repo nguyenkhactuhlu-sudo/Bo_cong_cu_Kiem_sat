@@ -2,7 +2,7 @@
 
 TOOLS = {
     "interest": {
-        "title": "Tính lãi suất",
+        "title": "Tự động tính tiền lãi",
         "kind": "flask",
         "source": "Tool/App_tinh_lai_suat/app.py",
         "template_folder": "Tool/App_tinh_lai_suat",

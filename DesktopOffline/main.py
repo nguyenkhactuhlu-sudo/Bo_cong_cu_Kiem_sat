@@ -287,7 +287,7 @@ h1{font-size:28px;margin:0 0 8px}.sub{color:#64748b;font-size:14px}.safe{backgro
 @media(max-width:800px){body{background-size:auto 42vh}.card,.wide{grid-column:span 12}.head{align-items:flex-start;gap:12px;flex-direction:column}.shell{padding:20px}}
 </style></head><body><main class="shell"><header class="head"><div class="brand"><img src="__LOGO_DATA__" alt="Logo ngành Kiểm sát nhân dân"><div><h1>BỘ CÔNG CỤ KIỂM SÁT OFFLINE</h1><div class="sub">Chọn công cụ để mở trong một cửa sổ riêng</div></div></div><div class="safe">✓ XỬ LÝ TRÊN MÁY</div></header>
 <section class="grid">
-<button class="card" onclick="go('interest')"><span class="badge">NGOẠI TUYẾN</span><span class="icon">⌁</span><div class="title">Tính lãi suất</div><div class="desc">Tính lãi trong hạn, quá hạn và chậm trả.</div></button>
+<button class="card" onclick="go('interest')"><span class="badge">NGOẠI TUYẾN</span><span class="icon">⌁</span><div class="title">Tự động tính tiền lãi</div><div class="desc">Tính lãi trong hạn, quá hạn và chậm trả.</div></button>
 <button class="card" onclick="go('court_fee')"><span class="badge">NGOẠI TUYẾN</span><span class="icon">▥</span><div class="title">Tính án phí</div><div class="desc">Tra cứu và tính án phí hình sự, dân sự.</div></button>
 <button class="card" onclick="go('deadline')"><span class="badge">NGOẠI TUYẾN</span><span class="icon">◷</span><div class="title">Tính tuổi — Thời hạn</div><div class="desc">Tính chính xác tuổi và thời hạn tố tụng.</div></button>
 <button class="card wide" onclick="go('anonymizer')"><span class="badge">BẢO MẬT</span><span class="icon">▰</span><div class="title">Tự động che thông tin</div><div class="desc">Ẩn thông tin cá nhân trong văn bản Word trước khi chia sẻ.</div></button>
