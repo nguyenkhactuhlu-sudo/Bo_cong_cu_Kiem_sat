@@ -87,25 +87,9 @@ def localize_html() -> None:
         )
         if "</head>" in updated and BRAND_STYLESHEET not in updated:
             updated = updated.replace("</head>", BRAND_STYLESHEET + "</head>", 1)
-        # WebView không xử lý <a download> như trình duyệt đầy đủ. Riêng bản
-        # desktop của công cụ ẩn danh gọi API native để hiện Save As của Windows.
-        if path.as_posix().endswith("Tool/AnDanh/andanh_app/templates/index.html"):
-            download_pattern = re.compile(
-                r'''const res = await fetch\('/export', \{.*?'''
-                r'''statusDiv\.innerHTML = '✅ Xuất file thành công! File đã được tải về\.';''',
-                re.DOTALL,
-            )
-            native_download = """const result = await window.pywebview.api.save_anonymized(replacements);
-            if (!result.ok) {
-                throw new Error(result.message || 'Không thể lưu file');
-            }
-            statusDiv.className = result.cancelled ? 'status status-info' : 'status status-success';
-            statusDiv.innerHTML = result.cancelled
-                ? 'ℹ️ Đã hủy lưu file.'
-                : '✅ Đã lưu file tại: ' + result.path;"""
-            updated, count = download_pattern.subn(native_download, updated, count=1)
-            if count != 1:
-                raise SystemExit("Không thể tích hợp hộp thoại Save As cho công cụ ẩn danh.")
+        # Công cụ ẩn danh: template đã tự phát hiện môi trường desktop (pywebview)
+        # và gọi window.pywebview.api.save_anonymized để hiện Save As của Windows,
+        # nên không cần patch tại thời điểm đóng gói nữa.
         if path.as_posix().endswith("Tool/OCR_PDF_Tool/source/templates/index.html"):
             updated = updated.replace(
                 '<a id="downloadLink" href="#" download class="btn btn-success btn-sm fw-bold">',
