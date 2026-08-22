@@ -263,21 +263,62 @@
         }
         .tool-sections { display: flex; flex-direction: column; gap: 24px; }
         .tool-section {
-            border: 1px solid; border-radius: 24px;
+            --section-surface-a: rgba(255,255,255,.96);
+            --section-surface-b: rgba(248,250,252,.94);
+            --section-border-a: rgba(100,116,139,.32);
+            --section-border-b: rgba(148,163,184,.15);
+            --section-glow: rgba(148,163,184,.16);
+            border: 1px solid transparent; border-radius: 26px;
             padding: 20px 18px 18px; position: relative; overflow: hidden;
-            box-shadow: 0 8px 22px rgba(51,65,85,.06);
+            background:
+                linear-gradient(145deg,var(--section-surface-a),var(--section-surface-b)) padding-box,
+                linear-gradient(135deg,var(--section-border-a),var(--section-border-b) 48%,rgba(255,255,255,.72)) border-box;
+            box-shadow: 0 8px 22px rgba(51,65,85,.055), inset 0 1px 0 rgba(255,255,255,.58);
+            transition: transform .34s cubic-bezier(.2,.75,.25,1), box-shadow .34s ease;
+            isolation: isolate;
         }
         .tool-section::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            content: ''; position: absolute; z-index: 2; top: 0; left: 22px; right: 22px; height: 4px;
+            border-radius: 0 0 999px 999px; transform-origin: center;
+            transition: transform .34s cubic-bezier(.2,.75,.25,1), filter .34s ease;
+        }
+        .tool-section::after {
+            content: ''; position: absolute; z-index: 0; width: 260px; height: 260px;
+            right: -105px; top: -145px; border-radius: 50%; pointer-events: none;
+            background: radial-gradient(circle,var(--section-glow),transparent 68%);
+            opacity: .5; transform: scale(.88);
+            transition: opacity .4s ease, transform .45s cubic-bezier(.2,.75,.25,1);
         }
         .tool-section-offline {
-            background: #e7f5ed; border-color: #9bcdb6;
+            --section-surface-a: rgba(236,249,242,.97);
+            --section-surface-b: rgba(222,243,232,.94);
+            --section-border-a: rgba(22,128,90,.5);
+            --section-border-b: rgba(155,205,182,.24);
+            --section-glow: rgba(22,128,90,.2);
         }
         .tool-section-online {
-            background: #e9eef9; border-color: #a8b9dc;
+            --section-surface-a: rgba(241,245,253,.97);
+            --section-surface-b: rgba(228,235,249,.94);
+            --section-border-a: rgba(64,95,164,.48);
+            --section-border-b: rgba(168,185,220,.24);
+            --section-glow: rgba(64,95,164,.2);
         }
         .tool-section-offline::before { background: #16805a; }
         .tool-section-online::before { background: #405fa4; }
+        .tool-section > * { position: relative; z-index: 1; }
+        @media (hover: hover) and (pointer: fine) {
+            .tool-section:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 18px 42px rgba(51,65,85,.12), 0 5px 14px rgba(51,65,85,.06), inset 0 1px 0 rgba(255,255,255,.72);
+            }
+            .tool-section:hover::before { transform: scaleX(.78); filter: saturate(1.12) brightness(1.05); }
+            .tool-section:hover::after { opacity: .9; transform: translate3d(-12px,10px,0) scale(1.08); }
+            .tool-section:hover .tool-section-icon { transform: translateY(-2px) rotate(-2deg); box-shadow: 0 8px 18px rgba(51,65,85,.12); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .tool-section, .tool-section::before, .tool-section::after, .tool-section-icon { transition: none !important; }
+            .tool-section:hover { transform: none; }
+        }
         .tool-section-header {
             display: flex; align-items: center; justify-content: space-between;
             gap: 16px; margin: 0 2px 16px;
@@ -286,6 +327,7 @@
         .tool-section-icon {
             width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
             display: grid; place-items: center; font-size: 21px;
+            transition: transform .3s cubic-bezier(.2,.75,.25,1), box-shadow .3s ease;
         }
         .tool-section-offline .tool-section-icon { background: #c7ead8; color: #075f43; }
         .tool-section-online .tool-section-icon { background: #d3dcf1; color: #344e8a; }
@@ -487,12 +529,19 @@
         }
         .site-footer .footer-author span { color: var(--teal-600); font-weight: 700; }
         .site-footer .footer-contact {
-            margin: 7px 0 0; color: var(--slate-500); font-size: 12px; font-weight: 500;
+            display: grid; gap: 2px; margin: 7px 0 0; color: var(--slate-500);
+            font-size: 11px; font-weight: 400; font-style: italic; line-height: 1.5;
+            text-transform: none;
         }
         .site-footer .footer-logo { display: block; flex: 0 0 auto; width: auto; height: 30px; object-fit: contain; }
         @media (max-width: 640px) {
-            .site-footer .footer-author { font-size: 11px; gap: 6px; }
-            .site-footer .footer-contact { font-size: 10.5px; }
+            .site-footer { padding-inline: 8px; }
+            .site-footer .footer-author {
+                flex-wrap: wrap; white-space: normal; min-width: 0;
+                font-size: 11px; line-height: 1.55; gap: 5px 6px;
+            }
+            .site-footer .footer-author span { min-width: 0; }
+            .site-footer .footer-contact { font-size: 9.5px; }
             .site-footer .footer-logo { height: 26px; }
         }
 
@@ -571,10 +620,11 @@
             .span-4, .span-5, .span-7, .span-12 { grid-column: span 1; }
             #dashboard-page { padding: 12px 12px calc(var(--taskbar-height) + 20px); }
             .tool-section { padding: 14px; border-radius: 22px; }
-            .tool-section-header { align-items: flex-start; }
+            .tool-section-header { flex-direction: column; align-items: stretch; gap: 12px; }
+            .tool-section-heading { width: 100%; }
             .tool-section-count { display: none; }
             .tool-section-actions { width: 100%; }
-            .offline-download { width: 100%; justify-content: center; }
+            .offline-download { width: 100%; max-width: 100%; min-height: 44px; justify-content: center; text-align: center; white-space: normal; }
             .landing-copy { margin-top: clamp(-4px, -0.8vh, 2px); }
             .header { padding: 15px; margin-bottom: 18px; }
             .header-emblem { width: 44px; height: 44px; }
@@ -714,7 +764,10 @@
         </div>
         <footer class="site-footer">
             <p class="footer-author"><span class="footer-label">Phát triển bởi:</span><span>Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</span><img class="footer-logo" src="./static/logo_moi.png" alt="Logo ngành Kiểm sát"></p>
-            <p class="footer-contact">Liên hệ báo lỗi, góp ý hoàn thiện Bộ công cụ qua email: nguyenkhactu.hlu@gmail.com</p>
+            <p class="footer-contact">
+                <span>Bộ công cụ đang trong giai đoạn phát triển và có thể có lỗi khi sử dụng.</span>
+                <span>Liên hệ báo lỗi, góp ý hoàn thiện Bộ công cụ qua email: nguyenkhactu.hlu@gmail.com</span>
+            </p>
         </footer>
     </div>
 
