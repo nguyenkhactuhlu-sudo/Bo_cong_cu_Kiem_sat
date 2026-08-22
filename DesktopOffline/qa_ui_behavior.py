@@ -60,7 +60,7 @@ if dashboard.count("Phát triển bởi:") != 1 or 'class="footer-logo"' not in 
     raise SystemExit("Bảng điều hành gốc phải có đúng một chữ ký và logo footer riêng.")
 if "display: flex; align-items: center; justify-content: center" not in dashboard or "white-space: nowrap" not in dashboard:
     raise SystemExit("Chữ ký bảng điều hành gốc chưa khóa chữ và logo trên cùng một dòng.")
-if 'class="dashboard-lotus-bg"' not in dashboard or 'src="./static/lotus.png"' not in dashboard or "#dashboard-page::before" not in dashboard:
+if 'class="dashboard-lotus-bg"' not in dashboard or 'srcset="./static/lotus.webp"' not in dashboard or 'src="./static/lotus.png"' not in dashboard or "#dashboard-page::before" not in dashboard:
     raise SystemExit("Bảng điều hành gốc chưa dùng nền hoa sen không cắt ở chân trang.")
 anonymizer_download = read(ROOT, "Tool/AnDanh/index.html")
 if "TẢI XUỐNG CÔNG CỤ" not in anonymizer_download or "KHỞI CHẠY CÔNG CỤ" in anonymizer_download:

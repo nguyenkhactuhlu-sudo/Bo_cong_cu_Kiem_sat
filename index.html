@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bộ Công Cụ Nghiệp Vụ - VKSND</title>
+    <link rel="preload" href="./static/lotus.webp" as="image" type="image/webp" fetchpriority="high">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -71,6 +72,7 @@
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
             mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
         }
+        .lotus-picture { display: contents; }
         body.landing-locked {
             overflow: hidden;
         }
@@ -579,7 +581,10 @@
 
     <!-- ===== LANDING PAGE - NEURAL MODE ===== -->
     <div id="landing-page" class="relative flex items-center justify-center select-none">
-        <img class="landing-lotus-bg" src="./static/lotus.png" alt="" aria-hidden="true">
+        <picture class="lotus-picture">
+            <source srcset="./static/lotus.webp" type="image/webp">
+            <img class="landing-lotus-bg" src="./static/lotus.png" width="2560" height="958" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+        </picture>
 
         <!-- TRUNG TÂM (vòng sóng nước đồng tâm tỏa từ logo + nội dung) -->
         <div class="landing-stage relative z-10 flex flex-col items-center justify-center">
@@ -622,7 +627,10 @@
 
     <!-- ===== DASHBOARD ===== -->
     <div id="dashboard-page">
-        <img class="dashboard-lotus-bg" src="./static/lotus.png" alt="" aria-hidden="true">
+        <picture class="lotus-picture">
+            <source srcset="./static/lotus.webp" type="image/webp">
+            <img class="dashboard-lotus-bg" src="./static/lotus.png" width="2560" height="958" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low">
+        </picture>
         <div class="header">
             <div class="header-left">
                 <img class="header-emblem" src="./static/logo_moi.png" alt="Biểu trưng ngành Kiểm sát">
