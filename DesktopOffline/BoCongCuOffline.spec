@@ -13,7 +13,7 @@ a = Analysis(
     datas=datas,
     hiddenimports=[
         "flask", "werkzeug", "webview", "webview.platforms.edgechromium",
-        "clr", "pythonnet", "docx", "lxml", "pandas", "openpyxl",
+        "clr", "pythonnet", "docx", "lxml",
         "fitz", "PIL", "pythoncom", "pywintypes", "win32com", "win32com.client",
     ],
     excludes=["tkinter", "PyQt5", "PyQt6", "PySide2", "PySide6", "cefpython3"],

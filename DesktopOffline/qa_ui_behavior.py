@@ -28,13 +28,28 @@ for root, label in ((ROOT, "gốc"), (STAGE, "desktop")):
     for marker in ("function parseDate", "function formatDmyInput", "function validateDmyInput", "function dateInputToIso"):
         if marker not in interest:
             raise SystemExit(f"Tính lãi suất {label} thiếu bộ chuẩn hóa ngày: {marker}")
+    for marker in (
+        'data-mode="basic"', "function setLoanMode", "function updatePaymentSummary",
+        "advancedMode ? document.getElementById('co_so_tinh_lai').value : 'du_no_thuc_te'",
+        "lai_suat_cham_tra: advancedMode ?",
+    ):
+        if marker not in interest:
+            raise SystemExit(f"Tính lãi suất {label} thiếu giao diện cơ bản/nâng cao hoặc mặc định an toàn: {marker}")
+
+    advisory = "Kết quả tính toán trên phần mềm chỉ mang tính chất tham khảo nghiệp vụ, không thay thế cho các quyết định tố tụng chính thức của cơ quan có thẩm quyền."
+    if advisory not in interest:
+        raise SystemExit(f"Tính lãi suất {label} thiếu khuyến cáo sử dụng nghiệp vụ.")
 
     court_fee = read(root, "Tool/App_DS/index.html")
     for marker in ("height: 130px", "header-inner", "header-watermark", "margin: 150px auto 20px"):
         if marker not in court_fee:
             raise SystemExit(f"Tính án phí {label} chưa đồng bộ topbar với công cụ tính lãi suất: {marker}")
+    if advisory not in court_fee:
+        raise SystemExit(f"Tính án phí {label} thiếu khuyến cáo sử dụng nghiệp vụ.")
 
     deadline = read(root, "Data/TinhTuoiThoiHan.html")
+    if advisory not in deadline:
+        raise SystemExit(f"Tính thời hạn {label} thiếu khuyến cáo sử dụng nghiệp vụ.")
     if deadline.count("legal-note") < 3 or deadline.count("legal-toggle") < 4:
         raise SystemExit(f"Tính thời hạn {label} thiếu nút căn cứ pháp lý.")
     if deadline.count("legal-note-tamgiu collapsed") != 1 or deadline.count("legal-note-tamgiam collapsed") != 1 or deadline.count("legal-note-thoihan collapsed") != 1:

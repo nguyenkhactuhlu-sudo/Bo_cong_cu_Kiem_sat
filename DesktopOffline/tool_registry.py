@@ -3,17 +3,17 @@
 TOOLS = {
     "interest": {
         "title": "Tự động tính tiền lãi",
-        "kind": "flask",
-        "source": "Tool/App_tinh_lai_suat/app.py",
-        "template_folder": "Tool/App_tinh_lai_suat",
+        "kind": "html",
+        "source": "Tool/App_tinh_lai_suat/index.html",
+        "static_folder": "Tool/App_tinh_lai_suat/static",
         "width": 1240,
         "height": 820,
     },
     "court_fee": {
         "title": "Tính án phí",
-        "kind": "flask",
-        "source": "Tool/App_DS/app.py",
-        "template_folder": "Tool/App_DS",
+        "kind": "html",
+        "source": "Tool/App_DS/index.html",
+        "static_folder": "Tool/App_DS/static",
         "width": 1120,
         "height": 800,
     },
