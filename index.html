@@ -31,7 +31,7 @@
             --sky: #5da9d9; --sky-light: #a8d4f0; --sky-dark: #1e5a8a;
             --bronze: #c9952e; --bronze-light: #e8c675;
             --plum: #7b2d42; --plum-dark: #5a1f30; --plum-light: #a84560;
-            --taskbar-height: 42px;
+            --taskbar-height: 48px;
             --teal-50: #f0fdfa; --teal-100: #ccfbf1; --teal-500: #14b8a6; --teal-600: #0d9488;
             --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
             --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b;
@@ -51,11 +51,10 @@
             font-family: 'Inter', sans-serif;
             background-color: #eef7f9;
             background-image:
-                radial-gradient(circle at center, rgba(255,255,255,.96) 0%, rgba(197,217,236,.9) 40%, rgba(141,180,212,.56) 100%),
-                linear-gradient(to bottom, rgba(238,247,249,.92) 0%, rgba(238,247,249,.7) 48%, rgba(238,247,249,.2) 100%),
-                url('static/lotus.png');
-            background-position: center center, center bottom, center bottom;
-            background-size: auto, 100% 100%, 100% auto;
+                radial-gradient(circle at center, rgba(255,255,255,.90) 0%, rgba(197,217,236,.70) 40%, rgba(141,180,212,.36) 100%),
+                linear-gradient(to bottom, rgba(238,247,249,.72) 0%, rgba(238,247,249,.46) 48%, rgba(238,247,249,.10) 100%);
+            background-position: center center, center bottom;
+            background-size: auto, 100% 100%;
             background-repeat: no-repeat;
             width: 100%;
             min-height: 100vh;
@@ -65,11 +64,15 @@
             padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
                      max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
         }
+        .landing-lotus-bg {
+            position: absolute; z-index: 0; left: 0; right: 0; bottom: 0;
+            display: block; width: 100%; height: auto; opacity: .84;
+            pointer-events: none; user-select: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
+        }
         body.landing-locked {
             overflow: hidden;
-        }
-        @media (max-width: 640px) {
-            #landing-page { background-size: auto, 100% 100%, auto 42vh; }
         }
         .landing-stage {
             width: min(100%, 760px);
@@ -80,9 +83,6 @@
             height: clamp(180px, min(64vw, 58svh), 480px);
             flex: 0 0 auto;
         }
-        .landing-logo-trigger .ping-ring:nth-child(1) { width: 166.667%; height: 166.667%; }
-        .landing-logo-trigger .ping-ring:nth-child(2) { width: 133.333%; height: 133.333%; }
-        .landing-logo-trigger .ping-ring:nth-child(3) { width: 108.333%; height: 108.333%; }
         .landing-logo {
             width: 70.833%;
             height: 70.833%;
@@ -109,30 +109,38 @@
             letter-spacing: clamp(0.08em, 0.8vw, 0.1em);
         }
 
-        /* Lưới công nghệ mờ siêu mảnh */
-        .tech-grid {
-            background-image: 
-                radial-gradient(rgba(30, 64, 175, 0.06) 1px, transparent 1px),
-                linear-gradient(to right, rgba(30, 64, 175, 0.015) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 64, 175, 0.015) 1px, transparent 1px);
-            background-size: 32px 32px, 96px 96px, 96px 96px;
-            background-position: center center;
+        /* Vòng tròn đồng tâm tỏa từ logo với nhịp sóng nước biến thiên */
+        @keyframes logo-water-ring {
+            0% { transform: translate(-50%, -50%) scale(.64); opacity: 0; }
+            13% { opacity: var(--wave-peak, .55); }
+            58% { opacity: .2; }
+            100% { transform: translate(-50%, -50%) scale(var(--wave-end, 1.7)); opacity: 0; }
         }
-
-        /* Sóng tròn đồng tâm lan tỏa (Concentric Ping Rings) */
-        @keyframes ping-ring {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+        .water-ring {
+            position: absolute; z-index: 0; top: 50%; left: 50%;
+            width: 100%; height: 100%; pointer-events: none;
+            border: 2px solid rgba(49,139,192,.28); border-radius: 50%;
+            box-shadow: 0 0 11px rgba(69,151,198,.08), inset 0 0 8px rgba(255,255,255,.16);
+            transform: translate(-50%, -50%) scale(.64);
+            animation-name: logo-water-ring;
+            animation-duration: 4.8s;
+            animation-timing-function: cubic-bezier(.17,.55,.3,1);
+            animation-iteration-count: infinite;
+            animation-play-state: running;
+            will-change: transform, opacity;
         }
-        .ping-ring {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%; pointer-events: none;
-            animation: ping-ring 3.5s ease-out infinite;
+        .water-ring::after {
+            content: ''; position: absolute; inset: -2px; border-radius: 50%;
+            border: 1px solid transparent; border-top-color: rgba(255,255,255,.6);
+            border-left-color: rgba(112,186,224,.2); opacity: .62;
         }
-        .ping-ring:nth-child(1) { animation-delay: 0s; }
-        .ping-ring:nth-child(2) { animation-delay: 1.2s; }
-        .ping-ring:nth-child(3) { animation-delay: 2.4s; }
+        .water-ring:nth-child(2) { width: 92%; height: 92%; animation-duration: 5.15s; animation-delay: -.9s; border-color: rgba(75,157,203,.23); }
+        .water-ring:nth-child(3) { width: 106%; height: 106%; animation-duration: 4.55s; animation-delay: -1.8s; border-color: rgba(38,119,173,.22); }
+        .water-ring:nth-child(4) { width: 97%; height: 97%; animation-duration: 5.35s; animation-delay: -2.7s; border-width: 1px; border-color: rgba(105,180,218,.3); }
+        .water-ring:nth-child(5) { width: 112%; height: 112%; animation-duration: 4.7s; animation-delay: -3.6s; border-width: 1px; border-color: rgba(46,131,184,.2); }
+        @media (prefers-reduced-motion: reduce) {
+            .water-ring { animation-duration: 6.5s !important; }
+        }
 
         /* Kính mờ cao cấp cho Logo */
         .glass-core {
@@ -145,11 +153,6 @@
             transform: scale(1.05);
         }
 
-        /* Ping rings rõ hơn */
-        .ping-ring:nth-child(1) { border-width: 3px; border-color: rgba(59, 130, 246, 0.2); }
-        .ping-ring:nth-child(2) { border-width: 2px; border-color: rgba(59, 130, 246, 0.15); }
-        .ping-ring:nth-child(3) { border-width: 2px; border-color: rgba(59, 130, 246, 0.2); }
-
         /* ===== DASHBOARD - BENTO GRID ===== */
         #dashboard-page {
             display: none; opacity: 0; transition: opacity 0.5s ease;
@@ -158,41 +161,85 @@
             position: relative; isolation: isolate;
         }
         #dashboard-page::before {
-            content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            content: ''; position: fixed; inset: 0; z-index: -2; pointer-events: none;
             background-color: #eef7f9;
             background-image:
-                linear-gradient(to bottom, rgba(238,247,249,1) 0%, rgba(238,247,249,.96) 48%, rgba(238,247,249,.38) 100%),
-                url('static/lotus.png');
-            background-position: center bottom;
-            background-size: 100% auto;
+                radial-gradient(circle at center, rgba(255,255,255,.94) 0%, rgba(210,228,240,.78) 46%, rgba(160,195,218,.44) 100%),
+                linear-gradient(to bottom, rgba(238,247,249,.90) 0%, rgba(238,247,249,.70) 52%, rgba(238,247,249,.24) 100%);
+            background-position: center center, center bottom;
+            background-size: auto, 100% 100%;
             background-repeat: no-repeat;
+        }
+        .dashboard-lotus-bg {
+            position: fixed; z-index: -1; left: 0; right: 0; bottom: 0;
+            display: block; width: 100%; height: auto; opacity: .68;
+            pointer-events: none; user-select: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.22) 12%, #000 34%);
         }
         #dashboard-page.visible-layout { display: flex; flex-direction: column; }
 
         .header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 0 20px; flex-wrap: wrap; gap: 12px;
+            padding: 18px 22px; margin: 4px 0 24px; flex-wrap: wrap; gap: 14px;
+            background: linear-gradient(135deg, #4aa3d8, #1e5a8a); color: #fff;
+            border: 1px solid rgba(255,255,255,.42);
+            border-radius: 18px; box-shadow: 0 10px 26px rgba(30,90,138,.20);
+            position: relative; overflow: hidden; isolation: isolate;
+            transition: box-shadow .35s ease, transform .35s ease;
         }
+        .header::before {
+            content: ''; position: absolute; z-index: 0; inset: 0; pointer-events: none;
+            background: linear-gradient(110deg, transparent 28%, rgba(255,255,255,.08) 38%, rgba(255,255,255,.72) 49%, rgba(255,255,255,.12) 58%, transparent 70%);
+            transform: translateX(-125%); opacity: .9;
+        }
+        .header::after {
+            content: ''; position: absolute; z-index: 0; inset: 0; pointer-events: none;
+            background: radial-gradient(circle at 35% 45%, rgba(255,255,255,.24), transparent 48%);
+            opacity: 0; transition: opacity .35s ease;
+        }
+        .header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(30,90,138,.32), inset 0 0 28px rgba(255,255,255,.10);
+        }
+        .header:hover::before { animation: header-shine-sweep .95s ease-out both; }
+        .header:hover::after { opacity: 1; }
+        @keyframes header-shine-sweep {
+            from { transform: translateX(-125%); }
+            to { transform: translateX(125%); }
+        }
+        .header > * { position: relative; z-index: 1; }
+        @media (prefers-reduced-motion: reduce) {
+            .header, .header::before, .header::after, .header-emblem { transition: none !important; animation: none !important; }
+            .header:hover { transform: none; }
+            .header:hover::before, .header:hover::after { opacity: 0; }
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; min-width: 0; }
+        .header-emblem {
+            width: 54px; height: 54px; flex: 0 0 auto; object-fit: contain;
+            padding: 4px; background: rgba(255,255,255,.95); border: 1px solid rgba(255,255,255,.72);
+            border-radius: 50%; filter: drop-shadow(0 4px 7px rgba(20,65,104,.30));
+            transition: transform .35s ease, filter .35s ease;
+        }
+        .header:hover .header-emblem { transform: scale(1.07); filter: drop-shadow(0 0 10px rgba(255,255,255,.65)); }
+        .header-copy { min-width: 0; }
         .header-left h1 {
-            font-size: clamp(18px,3vw,24px); font-weight: 800;
-            color: var(--slate-800); margin: 0; letter-spacing: 0.5px;
+            font-size: clamp(21px,3vw,30px); font-weight: 900;
+            color: #fff; margin: 1px 0 0; letter-spacing: .25px; line-height: 1.25;
+            text-shadow: 0 2px 4px rgba(20,65,104,.34);
         }
-        .header-left p {
-            font-size: 12px; color: var(--slate-400); margin: 4px 0 0;
-            font-weight: 500; letter-spacing: 0.5px;
+        .header-left .header-kicker {
+            font-size: 10px; color: #e7f5fc; margin: 0 0 4px;
+            font-weight: 800; letter-spacing: 1.7px; text-transform: uppercase;
         }
         .header-underline {
-            height: 3px; width: clamp(160px, 28vw, 360px);
-            background: linear-gradient(to right, transparent, var(--proc-blue), var(--proc-dark), var(--proc-blue), transparent);
-            margin: 10px 0 4px; border-radius: 2px;
-            position: relative;
+            width: 64px; height: 2px; margin: 11px 0 3px;
+            background: rgba(255,255,255,.82); border-radius: 2px; position: relative;
         }
         .header-underline::after {
-            content: ''; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--proc-blue);
-            box-shadow: 0 0 8px var(--proc-blue), 0 0 16px rgba(107,138,203,0.5);
+            content: ''; position: absolute; top: 50%; right: -9px;
+            width: 6px; height: 6px; background: #fff;
+            transform: translateY(-50%) rotate(45deg); border-radius: 1px;
         }
 
         .bento-grid {
@@ -201,17 +248,21 @@
         }
         .tool-sections { display: flex; flex-direction: column; gap: 24px; }
         .tool-section {
-            border: 1px solid rgba(203,213,225,0.55); border-radius: 28px;
-            padding: 18px; position: relative; overflow: hidden;
+            border: 1px solid; border-radius: 24px;
+            padding: 20px 18px 18px; position: relative; overflow: hidden;
+            box-shadow: 0 8px 22px rgba(51,65,85,.06);
+        }
+        .tool-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
         }
         .tool-section-offline {
-            background: linear-gradient(145deg, rgba(236,253,245,0.82), rgba(240,253,250,0.48) 42%, rgba(255,255,255,0.9));
-            border-color: rgba(16,185,129,0.2);
+            background: #e7f5ed; border-color: #9bcdb6;
         }
         .tool-section-online {
-            background: linear-gradient(145deg, rgba(245,243,255,0.82), rgba(239,246,255,0.48) 42%, rgba(255,255,255,0.9));
-            border-color: rgba(139,92,246,0.18);
+            background: #e9eef9; border-color: #a8b9dc;
         }
+        .tool-section-offline::before { background: #16805a; }
+        .tool-section-online::before { background: #405fa4; }
         .tool-section-header {
             display: flex; align-items: center; justify-content: space-between;
             gap: 16px; margin: 0 2px 16px;
@@ -221,16 +272,18 @@
             width: 42px; height: 42px; border-radius: 14px; flex-shrink: 0;
             display: grid; place-items: center; font-size: 21px;
         }
-        .tool-section-offline .tool-section-icon { background: #d1fae5; color: #047857; }
-        .tool-section-online .tool-section-icon { background: #ede9fe; color: #6d28d9; }
+        .tool-section-offline .tool-section-icon { background: #c7ead8; color: #075f43; }
+        .tool-section-online .tool-section-icon { background: #d3dcf1; color: #344e8a; }
         .tool-section-title { font-size: 16px; font-weight: 800; color: var(--slate-800); margin: 0 0 3px; }
-        .tool-section-desc { font-size: 11px; line-height: 1.45; color: var(--slate-400); margin: 0; }
+        .tool-section-offline .tool-section-title { color: #075f43; }
+        .tool-section-online .tool-section-title { color: #304c88; }
+        .tool-section-desc { font-size: 11px; line-height: 1.45; color: var(--slate-600); margin: 0; }
         .tool-section-count {
             border-radius: 999px; padding: 5px 10px; flex-shrink: 0;
             font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
         }
-        .tool-section-offline .tool-section-count { background: #d1fae5; color: #047857; }
-        .tool-section-online .tool-section-count { background: #ede9fe; color: #6d28d9; }
+        .tool-section-offline .tool-section-count { background: #c7ead8; color: #075f43; }
+        .tool-section-online .tool-section-count { background: #d3dcf1; color: #304c88; }
         .tool-section-actions { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
         .offline-download {
             display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px;
@@ -246,17 +299,49 @@
         .span-12 { grid-column: span 12; }
 
         .bento-card {
-            background: #fff; border: 1px solid rgba(203,213,225,0.45);
-            border-radius: 24px; padding: 20px 20px 18px;
-            box-shadow: 0 4px 20px -2px rgba(148,163,184,0.08), 0 2px 8px -1px rgba(148,163,184,0.04);
-            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            --card-accent: #1e5a8a; --card-wash: rgba(30,90,138,.1); --card-ring: rgba(30,90,138,.18);
+            width: 100%; background-color: rgba(255,255,255,.96); color: inherit;
+            border: 1px solid rgba(148,163,184,.38); border-radius: 20px;
+            padding: 20px 20px 18px; font: inherit; text-align: left;
+            box-shadow: 0 5px 12px rgba(51,65,85,.08), 0 14px 28px rgba(51,65,85,.05);
+            transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
             cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 150px; position: relative; overflow: hidden;
+            min-height: 150px; position: relative; overflow: hidden; isolation: isolate;
         }
+        .tool-section-offline .bento-card {
+            --card-accent: #16805a; --card-wash: rgba(22,128,90,.12); --card-ring: rgba(22,128,90,.18);
+            background-color: #fff9ed;
+            background-image:
+                radial-gradient(circle at 91% 8%, rgba(22,128,90,.16), transparent 30%),
+                repeating-linear-gradient(135deg, rgba(22,128,90,.028) 0 1px, transparent 1px 10px);
+        }
+        .tool-section-online .bento-card {
+            --card-accent: #405fa4; --card-wash: rgba(64,95,164,.12); --card-ring: rgba(64,95,164,.18);
+            background-color: #f0f9fb;
+            background-image:
+                radial-gradient(circle at 91% 8%, rgba(64,95,164,.17), transparent 30%),
+                repeating-linear-gradient(135deg, rgba(64,95,164,.03) 0 1px, transparent 1px 10px);
+        }
+        .bento-card::before {
+            content: ''; position: absolute; z-index: 2; left: 0; top: 17px; bottom: 17px;
+            width: 4px; border-radius: 0 4px 4px 0; background: var(--card-accent);
+            transform: scaleY(.55); transform-origin: center; transition: transform .28s ease;
+        }
+        .bento-card::after {
+            content: ''; position: absolute; z-index: 0; inset: 0; pointer-events: none;
+            background: linear-gradient(115deg, transparent 30%, var(--card-wash) 48%, transparent 66%);
+            transform: translateX(-125%); transition: transform .65s ease;
+        }
+        .bento-card > * { position: relative; z-index: 1; }
         .bento-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(148,163,184,0.15), 0 8px 10px -6px rgba(148,163,184,0.1);
+            transform: translateY(-6px);
+            border-color: var(--card-accent);
+            box-shadow: 0 12px 20px rgba(51,65,85,.12), 0 24px 38px rgba(51,65,85,.10);
         }
+        .bento-card:hover::before { transform: scaleY(1); }
+        .bento-card:hover::after { transform: translateX(125%); }
+        .bento-card:active { transform: translateY(-2px) scale(.995); }
+        .bento-card:focus-visible { outline: 3px solid var(--card-accent); outline-offset: 3px; }
         .bento-card.disabled {
             cursor: not-allowed; pointer-events: none;
             background: var(--slate-50); border-style: dashed;
@@ -264,7 +349,24 @@
         }
         .bento-card.disabled:hover { transform: none; box-shadow: 0 4px 20px -2px rgba(148,163,184,0.08); }
 
-        .bento-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+        .bento-card-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            position: relative; isolation: isolate;
+        }
+        .bento-card-top::after {
+            content: ''; position: absolute; z-index: 0; top: -35px; right: -38px;
+            width: 150px; height: 105px; border: 0; border-radius: 0;
+            background: linear-gradient(135deg,
+                transparent 0 30%,
+                var(--card-wash) 30% 44%,
+                transparent 44% 51%,
+                var(--card-ring) 51% 54%,
+                transparent 54% 100%);
+            opacity: .72; pointer-events: none;
+            transition: transform .55s ease, opacity .35s ease;
+        }
+        .bento-card-top > * { position: relative; z-index: 1; }
+        .bento-card:hover .bento-card-top::after { transform: translate(-7px, 6px) scale(1.06); opacity: 1; }
         .bento-card-badge {
             display: inline-flex; padding: 3px 10px; font-size: 10px; font-weight: 700;
             letter-spacing: 1.5px; text-transform: uppercase; border-radius: 20px; white-space: nowrap;
@@ -277,8 +379,9 @@
 
         .bento-card-title {
             font-size: 15px; font-weight: 800; color: var(--slate-800);
-            margin: 10px 0 6px; line-height: 1.3;
+            margin: 10px 0 6px; line-height: 1.3; transition: color .25s ease;
         }
+        .bento-card:hover .bento-card-title { color: var(--card-accent); }
         .bento-card-desc { font-size: 12px; color: var(--slate-400); line-height: 1.5; margin: 0; }
         .bento-card-footer {
             margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--slate-100);
@@ -322,7 +425,21 @@
         @keyframes radar-pulse { 0% { r: 2px; opacity: 1; } 100% { r: 28px; opacity: 0; } }
         .anim-radar-pulse { animation: radar-pulse 2s cubic-bezier(0.1,0.8,0.3,1) infinite; }
 
-        .bento-illust { width: 56px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .bento-illust {
+            width: 62px; height: 54px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; border: 1px solid rgba(148,163,184,.24); border-radius: 15px;
+            background: var(--card-wash); transition: transform .3s ease, box-shadow .3s ease;
+        }
+        .bento-card:hover .bento-illust {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 7px 14px var(--card-wash);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .bento-card, .bento-card::before, .bento-card::after, .bento-card-top::after, .bento-illust { transition: none !important; }
+            .bento-card:hover { transform: none; }
+            .bento-card:hover::after { transform: translateX(-125%); }
+            .bento-card:hover .bento-card-top::after { transform: none; }
+        }
 
         /* Site Footer */
         .site-footer {
@@ -379,31 +496,36 @@
         .os-taskbar {
             position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001;
             height: var(--taskbar-height);
-            background: linear-gradient(135deg, rgba(30,90,138,0.95), rgba(90,31,48,0.95));
-            backdrop-filter: blur(12px); display: none; align-items: center;
+            background: rgba(248,250,252,.97);
+            backdrop-filter: blur(10px); display: none; align-items: center;
             justify-content: space-between; padding: 0 16px;
-            border-top: 2px solid var(--bronze); box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
-            font-size: 12px; color: var(--bronze-light); user-select: none;
+            border-top: 1px solid #b8c7d8; box-shadow: 0 -4px 16px rgba(30,64,96,.12);
+            font-size: 12px; color: var(--slate-600); user-select: none;
         }
         .os-taskbar.visible { display: flex; }
-        .os-taskbar-left { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .os-taskbar-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
         .os-taskbar-start {
-            display: flex; align-items: center; gap: 8px; padding: 5px 14px;
-            border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff;
-            font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;
-            border: 1px solid rgba(255,255,255,0.08);
+            display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+            border-radius: 7px; background: #1e5a8a; color: #fff;
+            font-family: inherit; font-weight: 700; font-size: 12px; cursor: pointer;
+            transition: background .2s, border-color .2s; border: 1px solid #17486f;
         }
-        .os-taskbar-start:hover { background: rgba(255,255,255,0.2); }
-        .os-taskbar-breadcrumb { display: flex; align-items: center; gap: 4px; font-size: 12px; color: rgba(255,255,255,0.7); flex: 1; overflow: hidden; }
+        .os-taskbar-start svg { width: 15px; height: 15px; flex: 0 0 auto; }
+        .os-taskbar-start:hover { background: #17486f; }
+        .os-taskbar-breadcrumb {
+            display: flex; align-items: center; gap: 7px; font-size: 12px;
+            color: var(--slate-500); flex: 1; min-width: 0; overflow: hidden;
+        }
+        .os-taskbar-breadcrumb .breadcrumb-label { color: var(--slate-500); white-space: nowrap; }
         .os-taskbar-breadcrumb .breadcrumb-item {
-            padding: 3px 7px; border-radius: 4px; cursor: pointer; font-weight: 600;
-            white-space: nowrap; transition: background 0.2s, color 0.2s; color: rgba(255,255,255,0.6);
+            min-width: 0; overflow: hidden; text-overflow: ellipsis;
+            white-space: nowrap; font-weight: 700; color: #244c73;
         }
-        .os-taskbar-breadcrumb .breadcrumb-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
-        .os-taskbar-breadcrumb .breadcrumb-item.active { color: var(--bronze-light); cursor: default; }
-        .os-taskbar-breadcrumb .breadcrumb-sep { color: rgba(255,255,255,0.35); font-size: 14px; font-weight: 300; flex-shrink: 0; }
-        .os-taskbar-right { display: flex; align-items: center; gap: 10px; font-size: 12px; color: rgba(255,255,255,0.7); min-width: 120px; justify-content: flex-end; flex-shrink: 0; }
-        .os-clock { font-weight: 600; color: #fff; font-size: 13px; letter-spacing: 0.5px; }
+        .os-taskbar-right {
+            display: flex; align-items: center; margin-left: 14px; padding-left: 14px;
+            border-left: 1px solid var(--slate-300); justify-content: flex-end; flex-shrink: 0;
+        }
+        .os-clock { font-weight: 600; color: var(--slate-600); font-size: 12px; letter-spacing: .2px; }
 
         @media (max-width: 1024px) {
             .bento-grid { grid-template-columns: repeat(6, 1fr); }
@@ -414,13 +536,24 @@
             .bento-grid { grid-template-columns: 1fr; }
             .span-4, .span-5, .span-7, .span-12 { grid-column: span 1; }
             #dashboard-page { padding: 12px 12px calc(var(--taskbar-height) + 20px); }
-            #dashboard-page::before { background-size: auto 38vh; }
             .tool-section { padding: 14px; border-radius: 22px; }
             .tool-section-header { align-items: flex-start; }
             .tool-section-count { display: none; }
             .tool-section-actions { width: 100%; }
             .offline-download { width: 100%; justify-content: center; }
             .landing-copy { margin-top: clamp(-4px, -0.8vh, 2px); }
+            .header { padding: 15px; margin-bottom: 18px; }
+            .header-emblem { width: 44px; height: 44px; }
+            .header-left { gap: 11px; }
+            .header-left h1 { font-size: clamp(18px,5.5vw,23px); }
+            .header-left .header-kicker { font-size: 8px; letter-spacing: 1.2px; }
+            .header-underline { margin-top: 8px; }
+            .os-taskbar { padding: 0 8px; }
+            .os-taskbar-start { padding: 6px 9px; }
+            .os-taskbar-start span { display: none; }
+            .os-taskbar-breadcrumb .breadcrumb-label { display: none; }
+            .os-taskbar-right { margin-left: 8px; padding-left: 8px; }
+            .os-clock { font-size: 10px; }
         }
         @media (max-height: 520px) and (orientation: landscape) {
             .landing-stage {
@@ -446,22 +579,20 @@
 
     <!-- ===== LANDING PAGE - NEURAL MODE ===== -->
     <div id="landing-page" class="relative flex items-center justify-center select-none">
+        <img class="landing-lotus-bg" src="./static/lotus.png" alt="" aria-hidden="true">
 
-        <!-- LỚP NỀN CÔNG NGHỆ -->
-        <div class="absolute inset-0 z-0 overflow-hidden">
-            <div class="absolute inset-0 tech-grid"></div>
-        </div>
-
-        <!-- TRUNG TÂM (ping rings chung tâm logo + logo + text) -->
+        <!-- TRUNG TÂM (vòng sóng nước đồng tâm tỏa từ logo + nội dung) -->
         <div class="landing-stage relative z-10 flex flex-col items-center justify-center">
             
             <!-- LOGO TRONG KHUNG KÍNH MỜ + METALLIC SWEEP -->
             <div class="landing-logo-trigger relative flex items-center justify-center cursor-pointer group z-10" onclick="showTools()">
                 
-                <!-- VÒNG SÓNG LAN TỎA (CONCENTRIC PING) - absolute trong logo container, chung tâm -->
-                <div class="ping-ring"></div>
-                <div class="ping-ring"></div>
-                <div class="ping-ring"></div>
+                <!-- Các vòng tròn đồng tâm có nhịp lan ngẫu nhiên -->
+                <div class="water-ring"></div>
+                <div class="water-ring"></div>
+                <div class="water-ring"></div>
+                <div class="water-ring"></div>
+                <div class="water-ring"></div>
 
                 <!-- Bệ kính mờ logo -->
                 <div class="landing-logo glass-core rounded-full flex items-center justify-center overflow-hidden">
@@ -491,10 +622,15 @@
 
     <!-- ===== DASHBOARD ===== -->
     <div id="dashboard-page">
+        <img class="dashboard-lotus-bg" src="./static/lotus.png" alt="" aria-hidden="true">
         <div class="header">
             <div class="header-left">
-                <h1>BỘ CÔNG CỤ HỖ TRỢ NGHIỆP VỤ KIỂM SÁT</h1>
-                <div class="header-underline"></div>
+                <img class="header-emblem" src="./static/logo_moi.png" alt="Biểu trưng ngành Kiểm sát">
+                <div class="header-copy">
+                    <p class="header-kicker">Hệ thống tiện ích nghiệp vụ</p>
+                    <h1>BỘ CÔNG CỤ HỖ TRỢ NGHIỆP VỤ KIỂM SÁT</h1>
+                    <div class="header-underline"></div>
+                </div>
             </div>
         </div>
         <div class="tool-sections">
@@ -549,7 +685,10 @@
 
     <div class="os-taskbar" id="os-taskbar">
         <div class="os-taskbar-left">
-            <div class="os-taskbar-start" onclick="closeTool()">⬥ Bộ công cụ</div>
+            <button type="button" class="os-taskbar-start" onclick="closeTool()" aria-label="Quay lại menu công cụ">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Menu công cụ</span>
+            </button>
             <div class="os-taskbar-breadcrumb" id="taskbar-breadcrumb"></div>
         </div>
         <div class="os-taskbar-right"><span class="os-clock" id="os-clock">00:00</span></div>
@@ -603,7 +742,25 @@
         var offlineToolsCount=document.getElementById('offline-tools-count');
         var onlineToolsCount=document.getElementById('online-tools-count');
 
-        function init(){ renderToolCards(); startClock(); document.body.classList.add('landing-locked'); }
+        function initWaterRings(){
+            var rings=document.querySelectorAll('.water-ring');
+            for(var i=0;i<rings.length;i++){
+                (function(ring){
+                    function vary(firstRun){
+                        ring.style.setProperty('--wave-end',(1.52+Math.random()*.3).toFixed(2));
+                        ring.style.setProperty('--wave-peak',(.42+Math.random()*.24).toFixed(2));
+                        if(firstRun){
+                            ring.style.animationDuration=(4.15+Math.random()*1.35).toFixed(2)+'s';
+                            ring.style.animationDelay=(-Math.random()*4.8).toFixed(2)+'s';
+                        }
+                    }
+                    vary(true);
+                    ring.addEventListener('animationiteration',function(){ vary(false); });
+                })(rings[i]);
+            }
+        }
+
+        function init(){ renderToolCards(); startClock(); initWaterRings(); document.body.classList.add('landing-locked'); }
 
         function fadeToDashboard(){
             document.body.classList.remove('landing-locked');
@@ -621,7 +778,7 @@
             var offlineHtml='', onlineHtml='', offlineCount=0, onlineCount=0;
             for(var i=0;i<TOOLS.length;i++){
                 var t=TOOLS[i];
-                var card='<div class="bento-card '+t.span+' '+t.accent+'" data-tool-id="'+t.id+'" onclick="openTool(\''+t.id+'\')">';
+                var card='<button type="button" class="bento-card '+t.span+' '+t.accent+'" data-tool-id="'+t.id+'" onclick="openTool(\''+t.id+'\')">';
                 card+='<div>';
                 card+='<div class="bento-card-top"><div>';
                 card+='<span class="bento-card-badge '+t.badgeClass+'">'+t.badge+'</span>';
@@ -629,7 +786,7 @@
                 card+='<div class="bento-illust">'+t.illust+'</div></div>';
                 card+='<p class="bento-card-desc">'+t.desc+'</p></div>';
                 if(t.footer) card+='<div class="bento-card-footer">'+t.footer+'</div>';
-                card+='</div>';
+                card+='</button>';
                 if(t.group==='offline'){ offlineHtml+=card; offlineCount++; }
                 else { onlineHtml+=card; onlineCount++; }
             }
@@ -662,8 +819,8 @@
         }
 
         function updateBreadcrumb(){
-            var h='<span class="breadcrumb-item" onclick="closeTool()">Bộ công cụ</span><span class="breadcrumb-sep">›</span><span class="breadcrumb-item" onclick="closeTool()">Menu chính</span>';
-            if(currentToolId) h+='<span class="breadcrumb-sep">›</span><span class="breadcrumb-item active">'+activeToolTitle+'</span>';
+            var h='';
+            if(currentToolId) h='<span class="breadcrumb-label">Công cụ đang mở:</span><span class="breadcrumb-item active">'+activeToolTitle+'</span>';
             breadcrumb.innerHTML=h;
         }
         function startClock(){ updateClock(); setInterval(updateClock,1000); }
