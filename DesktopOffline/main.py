@@ -349,11 +349,20 @@ $owner.Dispose()
     def save_ocr_file(self, filename: str) -> dict:
         safe_name = Path(str(filename)).name
         suffix = Path(safe_name).suffix.lower()
-        types = {".docx": ("Tài liệu Word (*.docx)",), ".md": ("Markdown (*.md)",), ".txt": ("Văn bản (*.txt)",)}.get(suffix, ("Tất cả tệp (*.*)",))
+        types = {
+            ".docx": (("Tài liệu Word (*.docx)", "*.docx"),),
+            ".md": (("Markdown (*.md)", "*.md"),),
+            ".txt": (("Văn bản (*.txt)", "*.txt"),),
+        }.get(suffix, (("Tất cả tệp (*.*)", "*.*"),))
         return self._save_response(self.base_url + "/api/download/" + urllib.parse.quote(safe_name), safe_name, types)
 
     def save_ocr_zip(self, files: list) -> dict:
-        return self._save_response(self.base_url + "/api/batch/download", "ket_qua_ocr_hang_loat.zip", ("Tệp ZIP (*.zip)",), {"files": files})
+        return self._save_response(
+            self.base_url + "/api/batch/download",
+            "ket_qua_ocr_hang_loat.zip",
+            (("Tệp ZIP (*.zip)", "*.zip"),),
+            {"files": files},
+        )
 
 
 LAUNCHER_HTML = r"""<!doctype html>
@@ -710,14 +719,7 @@ function filterTools(){
 
 
 def run_launcher() -> None:
-    logo = base64.b64encode((resource_root() / "static" / "logo_moi.png").read_bytes()).decode("ascii")
-    def font_data(name: str) -> str:
-        data = (resource_root() / "DesktopOfflineAssets" / "brand" / "fonts" / name).read_bytes()
-        return "data:font/ttf;base64," + base64.b64encode(data).decode("ascii")
-    html = LAUNCHER_HTML.replace("__LOGO_DATA__", f"data:image/png;base64,{logo}")
-    html = html.replace("__FONT_REGULAR__", font_data("BeVietnamPro-Regular.ttf"))
-    html = html.replace("__FONT_SEMIBOLD__", font_data("BeVietnamPro-SemiBold.ttf"))
-    html = html.replace("__FONT_BOLD__", font_data("BeVietnamPro-Bold.ttf"))
+    html = (resource_root() / "DesktopOfflineAssets" / "launcher.html").read_text(encoding="utf-8")
     launcher_app = Flask("bcks_launcher_desktop", static_folder=None)
 
     @launcher_app.get("/")
@@ -727,6 +729,10 @@ def run_launcher() -> None:
     @launcher_app.get("/static/<path:filename>")
     def launcher_static(filename):
         return send_from_directory(resource_root() / "static", filename)
+
+    @launcher_app.get("/__offline_assets/<path:filename>")
+    def launcher_assets(filename):
+        return send_from_directory(resource_root() / "DesktopOfflineAssets", filename)
 
     port = free_port()
     server = make_server("127.0.0.1", port, launcher_app, threaded=True)

@@ -18,16 +18,6 @@ desktop.resource_root = lambda: STAGE
 os.environ["BCKS_DESKTOP_OFFLINE"] = "1"
 
 
-class FakeWindow:
-    def __init__(self, target: Path):
-        self.target = target
-        self.calls = []
-
-    def create_file_dialog(self, dialog_type, **kwargs):
-        self.calls.append((dialog_type, kwargs))
-        return (str(self.target),)
-
-
 with tempfile.TemporaryDirectory() as temporary:
     temp = Path(temporary)
     source = temp / "nguon.docx"
@@ -49,7 +39,11 @@ with tempfile.TemporaryDirectory() as temporary:
     thread.start()
     try:
         api = desktop.ToolApi(f"http://127.0.0.1:{port}")
-        api.window = FakeWindow(target)
+        dialog_calls = []
+        def fake_save_dialog(filename, file_types):
+            dialog_calls.append((filename, file_types))
+            return {"ok": True, "cancelled": False, "path": str(target)}
+        api._save_path_dialog = fake_save_dialog
         result = api.save_anonymized([{"old": "Nguyễn Văn A", "new": "[Ẩn]"}])
     finally:
         server.shutdown()
@@ -62,6 +56,6 @@ with tempfile.TemporaryDirectory() as temporary:
     output = "\n".join(paragraph.text for paragraph in Document(target).paragraphs)
     if "[Ẩn]" not in output or "Nguyễn Văn A" in output:
         raise SystemExit(f"Nội dung file xuất không đúng: {output}")
-    if len(api.window.calls) != 1:
+    if len(dialog_calls) != 1:
         raise SystemExit("Hộp thoại Save As không được gọi đúng một lần.")
     print(f"OK Save As: {target.name}, {target.stat().st_size} bytes, nội dung đã ẩn danh")

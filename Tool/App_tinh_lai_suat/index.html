@@ -228,7 +228,7 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label font-weight-bold text-primary">Ngày cho vay (Ngày giải ngân nguồn vốn):</label>
-                            <input type="date" class="form-control border-primary" id="ngay_vay" required>
+                            <input type="text" class="form-control border-primary date-dmy" id="ngay_vay" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label font-weight-bold">Số tiền gốc vay ban đầu (VNĐ):</label>
@@ -306,7 +306,7 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <label class="form-label font-weight-bold text-danger">Ngày chốt nợ gốc và lãi (Ngày tất toán / Ngày xét xử):</label>
-                            <input type="date" class="form-control border-danger" id="ngay_tra_thuc_te" required>
+                            <input type="text" class="form-control border-danger date-dmy" id="ngay_tra_thuc_te" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off" required>
                         </div>
                     </div>
                 </div>
@@ -376,7 +376,7 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
             
             <div class="mb-2">
                 <label class="form-label small fw-bold">1. Nhập ngày bắt đầu:</label>
-                <input type="date" class="form-control form-control-sm text-center" id="quick_date_start" onchange="calculateFutureTargetDate()">
+                <input type="text" class="form-control form-control-sm text-center date-dmy" id="quick_date_start" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off">
             </div>
             
             <div class="mb-3">
@@ -448,8 +448,9 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
         const addDay = parseInt(document.getElementById('quick_add_day').value) || 0;
         const resBox = document.getElementById('quick_future_result');
         
-        if (startVal) {
-            let baseDate = new Date(startVal);
+        const parsedStartDate = parseDate(startVal);
+        if (parsedStartDate) {
+            let baseDate = new Date(parsedStartDate);
             
             // Thực hiện cộng tịnh tiến Năm, Tháng, Ngày theo đúng cơ chế lịch thực tế
             baseDate.setFullYear(baseDate.getFullYear() + addYear);
@@ -479,8 +480,8 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
                     <option value="thang">%/tháng</option>
                 </select>
             </div>
-            <div class="col-md-3"><input type="date" class="form-control form-control-sm tn-from"></div>
-            <div class="col-md-3"><input type="date" class="form-control form-control-sm tn-to"></div>
+            <div class="col-md-3"><input type="text" class="form-control form-control-sm tn-from date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
+            <div class="col-md-3"><input type="text" class="form-control form-control-sm tn-to date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
             <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger w-100" onclick="this.parentElement.parentElement.remove()">X</button></div>
         `;
         container.appendChild(div);
@@ -491,7 +492,7 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
         const div = document.createElement('div');
         div.className = 'row g-2 mb-2 align-items-center payment-row';
         div.innerHTML = `
-            <div class="col-md-4"><input type="date" class="form-control form-control-sm tt-date"></div>
+            <div class="col-md-4"><input type="text" class="form-control form-control-sm tt-date date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
             <div class="col-md-4"><input type="number" class="form-control form-control-sm tt-goc" placeholder="Tiền gốc trả (VNĐ)"></div>
             <div class="col-md-3"><input type="number" class="form-control form-control-sm tt-lai" placeholder="Tiền lãi trả (VNĐ)"></div>
             <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger w-100" onclick="this.parentElement.parentElement.remove()">X</button></div>
@@ -506,14 +507,23 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
     function executeCalculation(event) {
         event.preventDefault();
 
+        const dateInputs = Array.from(document.querySelectorAll('.date-dmy'));
+        for (const input of dateInputs) {
+            if (!validateDmyInput(input)) {
+                input.reportValidity();
+                input.focus();
+                return;
+            }
+        }
+
         const list_tha_noi = [];
         document.querySelectorAll('.floating-row').forEach(row => {
             if(row.querySelector('.tn-rate').value) {
                 list_tha_noi.push({
                     rate: row.querySelector('.tn-rate').value,
                     unit: row.querySelector('.tn-unit').value,
-                    from: row.querySelector('.tn-from').value,
-                    to: row.querySelector('.tn-to').value
+                    from: dateInputToIso(row.querySelector('.tn-from')),
+                    to: dateInputToIso(row.querySelector('.tn-to'))
                 });
             }
         });
@@ -522,7 +532,7 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
         document.querySelectorAll('.payment-row').forEach(row => {
             if(row.querySelector('.tt-date').value) {
                 list_thanh_toan.push({
-                    date: row.querySelector('.tt-date').value,
+                    date: dateInputToIso(row.querySelector('.tt-date')),
                     goc: row.querySelector('.tt-goc').value,
                     lai: row.querySelector('.tt-lai').value
                 });
@@ -539,8 +549,8 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
             thoi_han_nam: parseInt(document.getElementById('thoi_han_nam').value) || 0,
             thoi_han_thang: parseInt(document.getElementById('thoi_han_thang').value) || 0,
             thoi_han_ngay: parseInt(document.getElementById('thoi_han_ngay').value) || 0,
-            ngay_vay: document.getElementById('ngay_vay').value,
-            ngay_tra_thuc_te: document.getElementById('ngay_tra_thuc_te').value,
+            ngay_vay: dateInputToIso(document.getElementById('ngay_vay')),
+            ngay_tra_thuc_te: dateInputToIso(document.getElementById('ngay_tra_thuc_te')),
             list_tha_noi: list_tha_noi,
             list_thanh_toan: list_thanh_toan
         };
@@ -589,9 +599,70 @@ c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150%
 
 function parseDate(str) {
     if (!str) return null;
-    const parts = str.split('-');
-    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+    const value = String(str).trim();
+    let year, month, day;
+
+    let match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (match) {
+        day = parseInt(match[1], 10);
+        month = parseInt(match[2], 10);
+        year = parseInt(match[3], 10);
+    } else {
+        match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return null;
+        year = parseInt(match[1], 10);
+        month = parseInt(match[2], 10);
+        day = parseInt(match[3], 10);
+    }
+
+    const result = new Date(year, month - 1, day);
+    if (result.getFullYear() !== year || result.getMonth() !== month - 1 || result.getDate() !== day) {
+        return null;
+    }
+    return result;
 }
+
+function formatDmyInput(input) {
+    const digits = input.value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length <= 2) {
+        input.value = digits;
+    } else if (digits.length <= 4) {
+        input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+    } else {
+        input.value = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+    }
+    input.setCustomValidity('');
+}
+
+function validateDmyInput(input) {
+    if (!input.value) {
+        input.setCustomValidity(input.required ? 'Vui lòng nhập ngày theo thứ tự Ngày/Tháng/Năm.' : '');
+        return !input.required;
+    }
+    const valid = parseDate(input.value) !== null;
+    input.setCustomValidity(valid ? '' : 'Ngày không hợp lệ. Vui lòng nhập đúng định dạng Ngày/Tháng/Năm (ví dụ: 31/12/2025).');
+    return valid;
+}
+
+function dateInputToIso(input) {
+    if (!input || !input.value) return '';
+    const date = parseDate(input.value);
+    if (!date) return '';
+    return String(date.getFullYear()).padStart(4, '0') + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0');
+}
+
+document.addEventListener('input', function(event) {
+    if (event.target.matches('.date-dmy')) {
+        formatDmyInput(event.target);
+        if (event.target.id === 'quick_date_start') calculateFutureTargetDate();
+    }
+});
+
+document.addEventListener('blur', function(event) {
+    if (event.target.matches('.date-dmy')) validateDmyInput(event.target);
+}, true);
 
 function addDays(date, days) {
     const result = new Date(date);

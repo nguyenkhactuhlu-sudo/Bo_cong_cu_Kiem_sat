@@ -17,16 +17,6 @@ desktop.resource_root = lambda: STAGE
 os.environ["BCKS_DESKTOP_OFFLINE"] = "1"
 
 
-class FakeWindow:
-    def __init__(self, targets):
-        self.targets = iter(targets)
-        self.calls = 0
-
-    def create_file_dialog(self, *_args, **_kwargs):
-        self.calls += 1
-        return (str(next(self.targets)),)
-
-
 tool = desktop.TOOLS["ocr"]
 module = desktop.load_source_module(STAGE / tool["source"])
 app = module.app
@@ -46,7 +36,12 @@ with tempfile.TemporaryDirectory() as temporary:
     thread.start()
     try:
         api = desktop.ToolApi(f"http://127.0.0.1:{server.server_port}")
-        api.window = FakeWindow([target_a, target_zip])
+        targets = iter((target_a, target_zip))
+        dialog_calls = []
+        def fake_save_dialog(filename, file_types):
+            dialog_calls.append((filename, file_types))
+            return {"ok": True, "cancelled": False, "path": str(next(targets))}
+        api._save_path_dialog = fake_save_dialog
         single = api.save_ocr_file(source_a.name)
         zipped = api.save_ocr_zip([source_a.name, source_b.name])
     finally:
@@ -59,6 +54,6 @@ with tempfile.TemporaryDirectory() as temporary:
         raise SystemExit(f"Lưu kết quả OCR đơn thất bại: {single}")
     if not zipped.get("ok") or not target_zip.read_bytes().startswith(b"PK"):
         raise SystemExit(f"Lưu ZIP OCR thất bại: {zipped}")
-    if api.window.calls != 2:
+    if len(dialog_calls) != 2:
         raise SystemExit("Save As OCR không được gọi đúng hai lần.")
     print(f"OK OCR Save As: file đơn {target_a.stat().st_size} bytes, ZIP {target_zip.stat().st_size} bytes")

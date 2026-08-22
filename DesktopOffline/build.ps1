@@ -27,6 +27,10 @@ New-Item -ItemType Directory -Force -Path $Vendor,$Cache,$Dist,$Work | Out-Null
 Get-RequiredFile "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" (Join-Path $Vendor "bootstrap\bootstrap.min.css")
 Get-RequiredFile "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" (Join-Path $Vendor "bootstrap\bootstrap.bundle.min.js")
 
+# Trang chào mừng dùng cùng giao diện Tailwind với bản phát hành GitHub. Tải
+# runtime một lần trên máy build rồi đóng gói cục bộ để máy đích không cần mạng.
+Get-RequiredFile "https://cdn.tailwindcss.com" (Join-Path $Vendor "tailwind\tailwind.js") 100000
+
 # Font Unicode tiếng Việt được nhúng trong ứng dụng; không cài vào Windows.
 $FontRoot = Join-Path $Vendor "brand\fonts"
 Get-RequiredFile "https://raw.githubusercontent.com/google/fonts/main/ofl/bevietnampro/BeVietnamPro-Regular.ttf" (Join-Path $FontRoot "BeVietnamPro-Regular.ttf") 100000

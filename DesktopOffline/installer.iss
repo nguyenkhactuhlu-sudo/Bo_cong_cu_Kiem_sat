@@ -1,5 +1,5 @@
 #define AppName "Bộ công cụ Kiểm sát Offline"
-#define AppVersion "1.1.0"
+#define AppVersion "1.2.0"
 #define AppExeName "BoCongCuOffline.exe"
 
 [Setup]

@@ -47,6 +47,115 @@ def copy_sources() -> None:
     _remove_download_pages()
 
 
+def prepare_launcher() -> None:
+    """Tạo launcher offline từ giao diện cổng công cụ đang phát hành trên GitHub."""
+    source = (ROOT / "index.html").read_text(encoding="utf-8")
+    source = source.replace(
+        '<script src="https://cdn.tailwindcss.com"></script>',
+        '<script src="/__offline_assets/tailwind/tailwind.js"></script>',
+    )
+    source = source.replace(
+        "<title>Bộ Công Cụ Nghiệp Vụ - VKSND</title>",
+        "<title>Bộ Công Cụ Nghiệp Vụ Offline - VKSND</title>",
+    )
+    local_fonts = """<style>
+@font-face{font-family:"Inter";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Regular.ttf") format("truetype");font-weight:300 500;font-display:block}
+@font-face{font-family:"Inter";src:url("/__offline_assets/brand/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");font-weight:600;font-display:block}
+@font-face{font-family:"Inter";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Bold.ttf") format("truetype");font-weight:700 900;font-display:block}
+@font-face{font-family:"Be Vietnam Pro";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Regular.ttf") format("truetype");font-weight:300 500;font-display:block}
+@font-face{font-family:"Be Vietnam Pro";src:url("/__offline_assets/brand/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");font-weight:600;font-display:block}
+@font-face{font-family:"Be Vietnam Pro";src:url("/__offline_assets/brand/fonts/BeVietnamPro-Bold.ttf") format("truetype");font-weight:700 900;font-display:block}
+</style>"""
+    source = source.replace("</head>", local_fonts + "\n</head>", 1)
+
+    # Bản desktop chỉ quản lý các công cụ đã được đóng gói. Không hiển thị nút
+    # tải setup hoặc nhóm dịch vụ trực tuyến của website.
+    source, download_count = re.subn(
+        r'<a class="offline-download".*?</a>',
+        '<span class="offline-download" title="Ứng dụng đang chạy hoàn toàn ngoại tuyến">'
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">'
+        '<path d="M12 3l7 3v5c0 4.6-2.8 8.3-7 10-4.2-1.7-7-5.4-7-10V6l7-3z"/>'
+        '<path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        'Bản Offline · Xử lý trên máy</span>',
+        source,
+        count=1,
+        flags=re.DOTALL,
+    )
+    source, online_section_count = re.subn(
+        r'\s*<section class="tool-section tool-section-online".*?</section>',
+        "",
+        source,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+    offline_tools = """var TOOLS = [
+            { id:'interest', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tự động tính tiền lãi', desc:'Tự động tính tiền lãi trong hạn, lãi quá hạn, lãi chậm trả trong giao dịch dân sự.', illust:ILLUST.interest, accent:'', footer:'' },
+            { id:'court_fee', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tính án phí', desc:'Tra cứu và tự động tính nhanh số tiền án phí hình sự và dân sự.', illust:ILLUST.courtScale, accent:'', footer:'' },
+            { id:'deadline', group:'offline', span:'span-4', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tính tuổi — Tính thời hạn', desc:'Tính tuổi, ngày tháng năm và kiểm soát thời hạn tạm giữ, tạm giam, tố tụng.', illust:ILLUST.deadline, accent:'', footer:'' },
+            { id:'anonymizer', group:'offline', span:'span-7', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tự động che thông tin', desc:'Tự động ẩn thông tin cá nhân trong văn bản trước khi công bố hoặc giao cho AI xử lý.', illust:ILLUST.anonymize, accent:'', footer:'' },
+            { id:'renamer', group:'offline', span:'span-5', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Tự động đổi tên file', desc:'Chuẩn hóa và đổi tên file hàng loạt, hỗ trợ đánh số bút lục hoặc tài liệu.', illust:ILLUST.rename, accent:'', footer:'' },
+            { id:'spell_checker', group:'offline', span:'span-5', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Rà soát chính tả văn bản Word', desc:'Phát hiện lỗi chính tả, cụm từ nghiệp vụ, khoảng trắng và dấu câu trong văn bản Word.', illust:ILLUST.spellCheck, accent:'', footer:'<span>Không AI · Không gửi dữ liệu lên mạng</span>' },
+            { id:'ocr', group:'offline', span:'span-7', badge:'NGOẠI TUYẾN', badgeClass:'badge-emerald', title:'Nhận dạng chữ trong file PDF, file ảnh', desc:'Trích xuất chữ từ PDF và ảnh, cho phép xuất Word, Markdown hoặc TXT.', illust:ILLUST.ocrScan, accent:'', footer:'' }
+        ];"""
+    source, tools_count = re.subn(
+        r"var TOOLS = \[.*?\n        \];",
+        offline_tools,
+        source,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+    render_function = """function renderToolCards(){
+            var offlineHtml='';
+            for(var i=0;i<TOOLS.length;i++){
+                var t=TOOLS[i];
+                var card='<button type="button" class="bento-card '+t.span+' '+t.accent+'" data-tool-id="'+t.id+'" onclick="openTool(\\''+t.id+'\\')">';
+                card+='<div><div class="bento-card-top"><div><span class="bento-card-badge '+t.badgeClass+'">'+t.badge+'</span>';
+                card+='<h3 class="bento-card-title">'+t.title+'</h3></div><div class="bento-illust">'+t.illust+'</div></div>';
+                card+='<p class="bento-card-desc">'+t.desc+'</p></div>';
+                if(t.footer) card+='<div class="bento-card-footer">'+t.footer+'</div>';
+                offlineHtml+=card+'</button>';
+            }
+            offlineToolsGrid.innerHTML=offlineHtml;
+            offlineToolsCount.textContent=TOOLS.length+' công cụ';
+        }"""
+    source, render_count = re.subn(
+        r"function renderToolCards\(\)\{.*?\n        \}",
+        lambda _match: render_function,
+        source,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+    open_function = """function openTool(toolId){
+            var tool=null;
+            for(var i=0;i<TOOLS.length;i++){ if(TOOLS[i].id===toolId){ tool=TOOLS[i]; break; } }
+            if(!tool) return;
+            if(!(window.pywebview && window.pywebview.api)){
+                alert('Không thể kết nối với bộ khởi chạy Offline.');
+                return;
+            }
+            window.pywebview.api.launch(toolId).then(function(result){
+                if(!result.ok) alert(result.message || 'Không thể mở công cụ.');
+            }).catch(function(error){ alert('Không thể mở công cụ: '+error); });
+        }"""
+    source, open_count = re.subn(
+        r"function openTool\(toolId\)\{.*?\n        \}",
+        lambda _match: open_function,
+        source,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+    if (download_count, online_section_count, tools_count, render_count, open_count) != (1, 1, 1, 1, 1):
+        raise SystemExit("Không thể đồng bộ giao diện launcher offline từ index.html.")
+
+    target = STAGE / "DesktopOfflineAssets" / "launcher.html"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(source, encoding="utf-8", newline="\n")
+
+
 def _remove_download_pages() -> None:
     """Loại các trang tải xuống web (chứa link .zip trên GitHub) khỏi payload.
 
@@ -85,7 +194,8 @@ def localize_html() -> None:
             r'''(?:\.\./)*static/logo_moi\.png|/static/logo_moi\.png|\{\{\s*url_for\(['"]static['"],\s*filename=['"]logo_moi\.png['"]\)\s*\}\}''',
             "/__offline_assets/brand/logo_moi.png", updated, flags=re.IGNORECASE,
         )
-        if "</head>" in updated and BRAND_STYLESHEET not in updated:
+        is_launcher = path.name == "launcher.html" and path.parent.name == "DesktopOfflineAssets"
+        if "</head>" in updated and BRAND_STYLESHEET not in updated and not is_launcher:
             updated = updated.replace("</head>", BRAND_STYLESHEET + "</head>", 1)
         # Công cụ ẩn danh: template đã tự phát hiện môi trường desktop (pywebview)
         # và gọi window.pywebview.api.save_anonymized để hiện Save As của Windows,
@@ -129,6 +239,7 @@ def copy_vendor() -> None:
         vendor / "bootstrap" / "bootstrap.bundle.min.js",
         vendor / "fontawesome" / "css" / "all.min.css",
         vendor / "bootstrap-icons" / "bootstrap-icons.min.css",
+        vendor / "tailwind" / "tailwind.js",
         vendor / "brand" / "fonts" / "BeVietnamPro-Regular.ttf",
         vendor / "brand" / "fonts" / "BeVietnamPro-SemiBold.ttf",
         vendor / "brand" / "fonts" / "BeVietnamPro-Bold.ttf",
@@ -140,7 +251,7 @@ def copy_vendor() -> None:
     assets.mkdir(parents=True, exist_ok=True)
     # Chỉ chép tài nguyên giao diện. WebView2 là runtime cài cạnh file EXE,
     # không được nhét thêm vào payload PyInstaller vì sẽ làm tăng gấp đôi dung lượng.
-    for folder in ("bootstrap", "fontawesome", "bootstrap-icons"):
+    for folder in ("bootstrap", "fontawesome", "bootstrap-icons", "tailwind"):
         shutil.copytree(vendor / folder, assets / folder)
     brand = assets / "brand"
     brand.mkdir(parents=True, exist_ok=True)
@@ -162,7 +273,8 @@ def audit_no_remote_assets() -> None:
 
 if __name__ == "__main__":
     copy_sources()
-    localize_html()
     copy_vendor()
+    prepare_launcher()
+    localize_html()
     audit_no_remote_assets()
     print(f"Payload sẵn sàng: {STAGE}")
