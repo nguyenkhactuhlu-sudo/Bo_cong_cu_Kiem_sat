@@ -150,6 +150,8 @@ body{
   margin-top:22px;padding-top:16px;border-top:3px solid #f2b705;
   color:#0757a6;font-size:12.5px;font-weight:600;text-align:center;
 }
+.foot-copy{display:flex;flex-direction:column;gap:5px}
+.foot-contact{color:#5a738e;font-size:11.5px;font-weight:500}
 .foot img{height:30px;width:auto}
 
 @media(max-width:900px){.card,.card.wide{grid-column:span 6}}
@@ -293,7 +295,10 @@ body{
 
   <!-- FOOTER -->
   <div class="foot">
-    Phát triển bởi: <strong>Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</strong>
+    <div class="foot-copy">
+      <div>Phát triển bởi: <strong>Nguyễn Khắc Tú - Viện KSND khu vực 5 - Bắc Ninh</strong></div>
+      <div class="foot-contact">Liên hệ báo lỗi, góp ý hoàn thiện Bộ công cụ qua email: nguyenkhactu.hlu@gmail.com</div>
+    </div>
     <img id="footer-logo" src="../static/logo_moi.png" alt="Logo ngành Kiểm sát">
   </div>
 </div>
